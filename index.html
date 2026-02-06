@@ -1,0 +1,861 @@
+<index.html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>臨床研究 症例数計算ツール</title>
+    <style>
+        :root {
+            --color-primary: #0284c7;
+            --color-primary-hover: #0369a1;
+            --color-text: #0f172a;
+            --color-text-secondary: #475569;
+            --color-bg: #ffffff;
+            --color-surface: #f8fafc;
+            --color-border: #e2e8f0;
+            --color-success: #16a34a;
+            --color-warning: #ea580c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--color-surface);
+            color: var(--color-text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--color-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--color-border);
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--color-primary);
+        }
+
+        .header p {
+            color: var(--color-text-secondary);
+            font-size: 14px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            background-color: var(--color-surface);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+        }
+
+        .section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--color-text);
+        }
+
+        .form-group .description {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-bottom: 4px;
+            font-weight: normal;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: white;
+            color: var(--color-text);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .slider-container {
+            margin-top: 8px;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(to right, #e2e8f0 0%, #0284c7 50%, #e2e8f0 100%);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider-container input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider-value {
+            font-size: 12px;
+            color: var(--color-primary);
+            font-weight: 600;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--color-surface);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background-color: #f1f5f9;
+        }
+
+        .result-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #f0f4ff 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid var(--color-primary);
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-box {
+            background-color: white;
+            padding: 16px;
+            border-radius: 6px;
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 4px;
+        }
+
+        .result-unit {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+
+        .interpretation {
+            background-color: white;
+            padding: 16px;
+            border-radius: 6px;
+            border-left: 4px solid var(--color-success);
+            font-size: 13px;
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .interpretation strong {
+            color: var(--color-text);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .tab-btn {
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .reference {
+            background-color: #fef3c7;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid var(--color-warning);
+            font-size: 12px;
+            color: #92400e;
+            margin-top: 12px;
+            line-height: 1.5;
+        }
+
+        .note {
+            background-color: #dbeafe;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid var(--color-primary);
+            font-size: 12px;
+            color: #0c4a6e;
+            margin-top: 12px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .result-item {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>臨床研究 症例数計算ツール</h1>
+            <p>Clinical Trial Sample Size Calculator</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('tab1')">対応なしt検定</button>
+            <button class="tab-btn" onclick="switchTab('tab2')">比率の比較</button>
+            <button class="tab-btn" onclick="switchTab('tab3')">対応ありt検定</button>
+            <button class="tab-btn" onclick="switchTab('tab4')">感度・特異度</button>
+        </div>
+
+        <!-- Tab 1: Unpaired t-test -->
+        <div id="tab1" class="tab-content active">
+            <div class="layout">
+                <div class="section">
+                    <h2>?? パラメータ設定</h2>
+                    
+                    <div class="form-group">
+                        <label>検定方法</label>
+                        <select id="test-type-1">
+                            <option value="two-sided">両側検定</option>
+                            <option value="one-sided">片側検定</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>有意水準 (α)</label>
+                        <div class="description">通常は0.05を使用</div>
+                        <input type="number" id="alpha-1" value="0.05" step="0.01" min="0.001" max="0.5">
+                    </div>
+
+                    <div class="form-group">
+                        <label>検定力 (1-β)</label>
+                        <div class="description">通常は0.80または0.90を使用</div>
+                        <input type="number" id="power-1" value="0.80" step="0.01" min="0.5" max="0.99">
+                    </div>
+
+                    <div class="form-group">
+                        <label>対照群の平均</label>
+                        <input type="number" id="mean-control-1" value="100" step="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label>介入群の平均</label>
+                        <input type="number" id="mean-intervention-1" value="110" step="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label>標準偏差 (σ)</label>
+                        <div class="description">両群で等しいと仮定</div>
+                        <input type="number" id="sd-1" value="15" step="0.1" min="0.1">
+                    </div>
+
+                    <div class="form-group">
+                        <label>群の比率 (介入群/対照群)</label>
+                        <div class="slider-container">
+                            <input type="range" id="ratio-1" value="1" step="0.1" min="0.5" max="3" oninput="updateRatio('ratio-1', 'ratio-value-1')">
+                            <div class="slider-value" id="ratio-value-1">1:1</div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="calculateTTest(1)">計算</button>
+                        <button class="btn btn-secondary" onclick="resetForm(1)">リセット</button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>?? 計算結果</h2>
+                    <div id="result-container-1" class="result-section" style="display:none;">
+                        <div class="result-item">
+                            <div class="result-box">
+                                <div class="result-label">対照群（症例数）</div>
+                                <div class="result-value" id="n-control-1">-</div>
+                                <div class="result-unit">人/群</div>
+                            </div>
+                            <div class="result-box">
+                                <div class="result-label">介入群（症例数）</div>
+                                <div class="result-value" id="n-intervention-1">-</div>
+                                <div class="result-unit">人/群</div>
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-box">
+                                <div class="result-label">総症例数</div>
+                                <div class="result-value" id="n-total-1">-</div>
+                                <div class="result-unit">人</div>
+                            </div>
+                            <div class="result-box">
+                                <div class="result-label">効果量 (Cohen's d)</div>
+                                <div class="result-value" id="effect-size-1">-</div>
+                                <div class="result-unit"></div>
+                            </div>
+                        </div>
+                        <div class="interpretation" id="interpretation-1"></div>
+                    </div>
+                    <div id="empty-result-1" style="text-align: center; color: var(--color-text-secondary); padding: 20px;">
+                        左側のパラメータを設定して「計算」をクリックしてください
+                    </div>
+                    <div class="note">
+                        <strong>注意：</strong> この計算は参考値です。実際の症例数決定は生物統計家と相談してください。
+                    </div>
+                    <div class="reference">
+                        <strong>参考：</strong> Cohen's d 0.2=小、0.5=中、0.8=大の効果
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Proportion comparison -->
+        <div id="tab2" class="tab-content">
+            <div class="layout">
+                <div class="section">
+                    <h2>?? パラメータ設定</h2>
+                    
+                    <div class="form-group">
+                        <label>検定方法</label>
+                        <select id="test-type-2">
+                            <option value="two-sided">両側検定</option>
+                            <option value="one-sided">片側検定</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>有意水準 (α)</label>
+                        <input type="number" id="alpha-2" value="0.05" step="0.01" min="0.001" max="0.5">
+                    </div>
+
+                    <div class="form-group">
+                        <label>検定力 (1-β)</label>
+                        <input type="number" id="power-2" value="0.80" step="0.01" min="0.5" max="0.99">
+                    </div>
+
+                    <div class="form-group">
+                        <label>対照群の反応率 (%)</label>
+                        <div class="description">0～100の値を入力</div>
+                        <input type="number" id="p1-2" value="30" step="1" min="1" max="99">
+                    </div>
+
+                    <div class="form-group">
+                        <label>介入群の反応率 (%)</label>
+                        <div class="description">0～100の値を入力</div>
+                        <input type="number" id="p2-2" value="50" step="1" min="1" max="99">
+                    </div>
+
+                    <div class="form-group">
+                        <label>群の比率 (介入群/対照群)</label>
+                        <div class="slider-container">
+                            <input type="range" id="ratio-2" value="1" step="0.1" min="0.5" max="3" oninput="updateRatio('ratio-2', 'ratio-value-2')">
+                            <div class="slider-value" id="ratio-value-2">1:1</div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="calculateProportions(2)">計算</button>
+                        <button class="btn btn-secondary" onclick="resetForm(2)">リセット</button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>?? 計算結果</h2>
+                    <div id="result-container-2" class="result-section" style="display:none;">
+                        <div class="result-item">
+                            <div class="result-box">
+                                <div class="result-label">対照群（症例数）</div>
+                                <div class="result-value" id="n-control-2">-</div>
+                                <div class="result-unit">人/群</div>
+                            </div>
+                            <div class="result-box">
+                                <div class="result-label">介入群（症例数）</div>
+                                <div class="result-value" id="n-intervention-2">-</div>
+                                <div class="result-unit">人/群</div>
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-box">
+                                <div class="result-label">総症例数</div>
+                                <div class="result-value" id="n-total-2">-</div>
+                                <div class="result-unit">人</div>
+                            </div>
+                            <div class="result-box">
+                                <div class="result-label">反応率の差</div>
+                                <div class="result-value" id="risk-diff-2">-</div>
+                                <div class="result-unit">%</div>
+                            </div>
+                        </div>
+                        <div class="interpretation" id="interpretation-2"></div>
+                    </div>
+                    <div id="empty-result-2" style="text-align: center; color: var(--color-text-secondary); padding: 20px;">
+                        左側のパラメータを設定して「計算」をクリックしてください
+                    </div>
+                    <div class="note">
+                        <strong>推奨値：</strong> α=0.05（両側）、検定力=0.80
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Paired t-test -->
+        <div id="tab3" class="tab-content">
+            <div class="layout">
+                <div class="section">
+                    <h2>?? パラメータ設定</h2>
+                    
+                    <div class="form-group">
+                        <label>検定方法</label>
+                        <select id="test-type-3">
+                            <option value="two-sided">両側検定</option>
+                            <option value="one-sided">片側検定</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>有意水準 (α)</label>
+                        <input type="number" id="alpha-3" value="0.05" step="0.01" min="0.001" max="0.5">
+                    </div>
+
+                    <div class="form-group">
+                        <label>検定力 (1-β)</label>
+                        <input type="number" id="power-3" value="0.80" step="0.01" min="0.5" max="0.99">
+                    </div>
+
+                    <div class="form-group">
+                        <label>前値-後値の平均差</label>
+                        <input type="number" id="mean-diff-3" value="5" step="0.1">
+                    </div>
+
+                    <div class="form-group">
+                        <label>対応差の標準偏差</label>
+                        <div class="description">前値-後値の差の標準偏差</div>
+                        <input type="number" id="sd-diff-3" value="10" step="0.1" min="0.1">
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="calculatePairedTTest(3)">計算</button>
+                        <button class="btn btn-secondary" onclick="resetForm(3)">リセット</button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>?? 計算結果</h2>
+                    <div id="result-container-3" class="result-section" style="display:none;">
+                        <div class="result-item">
+                            <div class="result-box">
+                                <div class="result-label">必要症例数</div>
+                                <div class="result-value" id="n-paired-3">-</div>
+                                <div class="result-unit">人</div>
+                            </div>
+                            <div class="result-box">
+                                <div class="result-label">効果量 (Cohen's d)</div>
+                                <div class="result-value" id="effect-size-paired-3">-</div>
+                                <div class="result-unit"></div>
+                            </div>
+                        </div>
+                        <div class="interpretation" id="interpretation-3"></div>
+                    </div>
+                    <div id="empty-result-3" style="text-align: center; color: var(--color-text-secondary); padding: 20px;">
+                        左側のパラメータを設定して「計算」をクリックしてください
+                    </div>
+                    <div class="note">
+                        <strong>用途：</strong> 同じ被験者を前後で測定する場合に使用
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Sensitivity and Specificity -->
+        <div id="tab4" class="tab-content">
+            <div class="layout">
+                <div class="section">
+                    <h2>?? パラメータ設定</h2>
+                    
+                    <div class="form-group">
+                        <label>有意水準 (α)</label>
+                        <input type="number" id="alpha-4" value="0.05" step="0.01" min="0.001" max="0.5">
+                    </div>
+
+                    <div class="form-group">
+                        <label>検定力 (1-β)</label>
+                        <input type="number" id="power-4" value="0.80" step="0.01" min="0.5" max="0.99">
+                    </div>
+
+                    <div class="form-group">
+                        <label>帰無仮説：感度 (%)</label>
+                        <div class="description">判定したい下限値</div>
+                        <input type="number" id="sens0-4" value="80" step="1" min="50" max="99">
+                    </div>
+
+                    <div class="form-group">
+                        <label>対立仮説：感度 (%)</label>
+                        <div class="description">期待される感度</div>
+                        <input type="number" id="sens1-4" value="90" step="1" min="50" max="99">
+                    </div>
+
+                    <div class="form-group">
+                        <label>有病率 (%)</label>
+                        <div class="description">検査対象集団における疾患の割合</div>
+                        <input type="number" id="prevalence-4" value="20" step="1" min="1" max="99">
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="calculateDiagnostic(4)">計算</button>
+                        <button class="btn btn-secondary" onclick="resetForm(4)">リセット</button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>?? 計算結果</h2>
+                    <div id="result-container-4" class="result-section" style="display:none;">
+                        <div class="result-item">
+                            <div class="result-box">
+                                <div class="result-label">疾患保有者</div>
+                                <div class="result-value" id="n-disease-4">-</div>
+                                <div class="result-unit">人</div>
+                            </div>
+                            <div class="result-box">
+                                <div class="result-label">疾患非保有者</div>
+                                <div class="result-value" id="n-no-disease-4">-</div>
+                                <div class="result-unit">人</div>
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-box">
+                                <div class="result-label">総症例数</div>
+                                <div class="result-value" id="n-total-4">-</div>
+                                <div class="result-unit">人</div>
+                            </div>
+                        </div>
+                        <div class="interpretation" id="interpretation-4"></div>
+                    </div>
+                    <div id="empty-result-4" style="text-align: center; color: var(--color-text-secondary); padding: 20px;">
+                        左側のパラメータを設定して「計算」をクリックしてください
+                    </div>
+                    <div class="note">
+                        <strong>用途：</strong> 新しい診断検査の感度を検証する場合
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 正規分布の逆関数（近似）
+        function inverseNormalApprox(p) {
+            if (p < 0.5) {
+                return -inverseNormalApprox(1 - p);
+            }
+            const t = Math.sqrt(-2.0 * Math.log(1.0 - p));
+            const c0 = 2.515517;
+            const c1 = 0.802853;
+            const c2 = 0.010328;
+            const d1 = 1.432788;
+            const d2 = 0.189269;
+            const d3 = 0.001308;
+            const numerator = c0 + c1 * t + c2 * t * t;
+            const denominator = 1 + d1 * t + d2 * t * t + d3 * t * t * t;
+            return t - numerator / denominator;
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function updateRatio(sliderId, displayId) {
+            const ratio = parseFloat(document.getElementById(sliderId).value).toFixed(1);
+            const displayValue = ratio === '1.0' ? '1:1' : `${ratio}:1`;
+            document.getElementById(displayId).textContent = displayValue;
+        }
+
+        function calculateTTest(tab) {
+            const alpha = parseFloat(document.getElementById('alpha-' + tab).value);
+            const power = parseFloat(document.getElementById('power-' + tab).value);
+            const meanControl = parseFloat(document.getElementById('mean-control-' + tab).value);
+            const meanIntervention = parseFloat(document.getElementById('mean-intervention-' + tab).value);
+            const sd = parseFloat(document.getElementById('sd-' + tab).value);
+            const ratio = parseFloat(document.getElementById('ratio-' + tab).value);
+            const testType = document.getElementById('test-type-' + tab).value;
+
+            if (isNaN(alpha) || isNaN(power) || isNaN(sd) || sd <= 0) {
+                alert('有効な値を入力してください');
+                return;
+            }
+
+            const zAlpha = inverseNormalApprox(1 - alpha / (testType === 'two-sided' ? 2 : 1));
+            const zBeta = inverseNormalApprox(power);
+            const effectSize = Math.abs(meanIntervention - meanControl) / sd;
+            
+            const nControl = Math.pow(zAlpha + zBeta, 2) * 2 * Math.pow(sd, 2) / Math.pow(meanIntervention - meanControl, 2);
+            const nIntervention = nControl * ratio;
+            const nTotal = Math.ceil(nControl + nIntervention);
+
+            document.getElementById('n-control-' + tab).textContent = Math.ceil(nControl);
+            document.getElementById('n-intervention-' + tab).textContent = Math.ceil(nIntervention);
+            document.getElementById('n-total-' + tab).textContent = nTotal;
+            document.getElementById('effect-size-' + tab).textContent = effectSize.toFixed(2);
+            
+            let interpretation = `平均値の差は${Math.abs(meanIntervention - meanControl).toFixed(1)}で、標準偏差${sd}の環境下では、`;
+            interpretation += `有意水準${(alpha * 100).toFixed(1)}%で${(power * 100).toFixed(0)}%の検定力を得るには、`;
+            interpretation += `各群最少${Math.ceil(nControl)}人の合計${nTotal}人の症例が必要です。`;
+            document.getElementById('interpretation-' + tab).innerHTML = `<strong>解釈：</strong> ${interpretation}`;
+
+            document.getElementById('result-container-' + tab).style.display = 'block';
+            document.getElementById('empty-result-' + tab).style.display = 'none';
+        }
+
+        function calculateProportions(tab) {
+            const alpha = parseFloat(document.getElementById('alpha-' + tab).value);
+            const power = parseFloat(document.getElementById('power-' + tab).value);
+            const p1 = parseFloat(document.getElementById('p1-' + tab).value) / 100;
+            const p2 = parseFloat(document.getElementById('p2-' + tab).value) / 100;
+            const ratio = parseFloat(document.getElementById('ratio-' + tab).value);
+            const testType = document.getElementById('test-type-' + tab).value;
+
+            if (isNaN(alpha) || isNaN(power) || p1 <= 0 || p2 <= 0) {
+                alert('有効な値を入力してください');
+                return;
+            }
+
+            const zAlpha = inverseNormalApprox(1 - alpha / (testType === 'two-sided' ? 2 : 1));
+            const zBeta = inverseNormalApprox(power);
+            const pBar = (p1 + p2) / 2;
+            
+            const nControl = Math.pow(zAlpha + zBeta, 2) * (p1 * (1 - p1) + p2 * (1 - p2)) / Math.pow(p2 - p1, 2);
+            const nIntervention = nControl * ratio;
+            const nTotal = Math.ceil(nControl + nIntervention);
+            const riskDiff = (p2 - p1) * 100;
+
+            document.getElementById('n-control-' + tab).textContent = Math.ceil(nControl);
+            document.getElementById('n-intervention-' + tab).textContent = Math.ceil(nIntervention);
+            document.getElementById('n-total-' + tab).textContent = nTotal;
+            document.getElementById('risk-diff-' + tab).textContent = riskDiff.toFixed(1);
+            
+            let interpretation = `対照群の反応率${(p1 * 100).toFixed(0)}%から介入群の反応率${(p2 * 100).toFixed(0)}%への改善を、`;
+            interpretation += `有意水準${(alpha * 100).toFixed(1)}%で${(power * 100).toFixed(0)}%の検定力で検出するには、`;
+            interpretation += `各群最少${Math.ceil(nControl)}人の合計${nTotal}人の症例が必要です。`;
+            document.getElementById('interpretation-' + tab).innerHTML = `<strong>解釈：</strong> ${interpretation}`;
+
+            document.getElementById('result-container-' + tab).style.display = 'block';
+            document.getElementById('empty-result-' + tab).style.display = 'none';
+        }
+
+        function calculatePairedTTest(tab) {
+            const alpha = parseFloat(document.getElementById('alpha-' + tab).value);
+            const power = parseFloat(document.getElementById('power-' + tab).value);
+            const meanDiff = parseFloat(document.getElementById('mean-diff-' + tab).value);
+            const sdDiff = parseFloat(document.getElementById('sd-diff-' + tab).value);
+
+            if (isNaN(alpha) || isNaN(power) || isNaN(meanDiff) || isNaN(sdDiff) || sdDiff <= 0) {
+                alert('有効な値を入力してください');
+                return;
+            }
+
+            const zAlpha = inverseNormalApprox(1 - alpha / 2);
+            const zBeta = inverseNormalApprox(power);
+            const effectSize = Math.abs(meanDiff) / sdDiff;
+            
+            const nPaired = Math.pow((zAlpha + zBeta) / (meanDiff / sdDiff), 2);
+            const nFinal = Math.ceil(nPaired);
+
+            document.getElementById('n-paired-' + tab).textContent = nFinal;
+            document.getElementById('effect-size-paired-' + tab).textContent = effectSize.toFixed(2);
+            
+            let interpretation = `平均値の差${Math.abs(meanDiff).toFixed(1)}、標準偏差${sdDiff}の対応のあるデータでは、`;
+            interpretation += `有意水準${(alpha * 100).toFixed(1)}%で${(power * 100).toFixed(0)}%の検定力を得るには、`;
+            interpretation += `最少${nFinal}人の症例が必要です。`;
+            document.getElementById('interpretation-' + tab).innerHTML = `<strong>解釈：</strong> ${interpretation}`;
+
+            document.getElementById('result-container-' + tab).style.display = 'block';
+            document.getElementById('empty-result-' + tab).style.display = 'none';
+        }
+
+        function calculateDiagnostic(tab) {
+            const alpha = parseFloat(document.getElementById('alpha-' + tab).value);
+            const power = parseFloat(document.getElementById('power-' + tab).value);
+            const sens0 = parseFloat(document.getElementById('sens0-' + tab).value) / 100;
+            const sens1 = parseFloat(document.getElementById('sens1-' + tab).value) / 100;
+            const prevalence = parseFloat(document.getElementById('prevalence-' + tab).value) / 100;
+
+            if (isNaN(alpha) || isNaN(power) || sens0 <= 0 || sens1 <= 0) {
+                alert('有効な値を入力してください');
+                return;
+            }
+
+            const zAlpha = inverseNormalApprox(1 - alpha / 2);
+            const zBeta = inverseNormalApprox(power);
+            
+            const nDisease = Math.pow(zAlpha + zBeta, 2) * (sens0 * (1 - sens0) + sens1 * (1 - sens1)) / Math.pow(sens1 - sens0, 2);
+            const nNoDisease = Math.ceil(nDisease * (1 - prevalence) / prevalence);
+            const nTotal = Math.ceil(nDisease + nNoDisease);
+
+            document.getElementById('n-disease-' + tab).textContent = Math.ceil(nDisease);
+            document.getElementById('n-no-disease-' + tab).textContent = nNoDisease;
+            document.getElementById('n-total-' + tab).textContent = nTotal;
+            
+            let interpretation = `感度${(sens0 * 100).toFixed(0)}%から${(sens1 * 100).toFixed(0)}%への改善を、`;
+            interpretation += `有意水準${(alpha * 100).toFixed(1)}%で${(power * 100).toFixed(0)}%の検定力で検出するには、`;
+            interpretation += `疾患保有者${Math.ceil(nDisease)}人、非保有者${nNoDisease}人の合計${nTotal}人が必要です。`;
+            document.getElementById('interpretation-' + tab).innerHTML = `<strong>解釈：</strong> ${interpretation}`;
+
+            document.getElementById('result-container-' + tab).style.display = 'block';
+            document.getElementById('empty-result-' + tab).style.display = 'none';
+        }
+
+        function resetForm(tab) {
+            const inputs = document.querySelectorAll(`#tab${tab} input, #tab${tab} select`);
+            inputs.forEach(input => {
+                input.value = input.getAttribute('value') || input.getAttribute('data-default') || '';
+            });
+            document.getElementById('result-container-' + tab).style.display = 'none';
+            document.getElementById('empty-result-' + tab).style.display = 'block';
+        }
+    </script>
+</body>
+</html>
