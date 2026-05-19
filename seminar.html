@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base target="_top">
+    <title>研修会準備プロジェクト管理デモ</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+    <?!= include('Styles'); ?>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">研</div>
+          <div>
+            <strong>研修会PM</strong>
+            <small>Google Sheets Demo</small>
+          </div>
+        </div>
+        <nav>
+          <a class="active" href="#">ダッシュボード</a>
+          <a href="#list">研修会一覧</a>
+          <a href="#new">新規登録</a>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <header class="hero">
+          <div>
+            <h1>研修会準備プロジェクト管理デモ</h1>
+            <p>Google スプレッドシートと接続し、一覧取得・登録・更新を行う Web アプリの初版です。</p>
+          </div>
+          <div class="hero-actions">
+            <button class="btn secondary" onclick="app.reload()">再読込</button>
+            <button class="btn primary" onclick="app.openCreateModal()">新規研修会登録</button>
+          </div>
+        </header>
+
+        <section class="notice hidden" id="missingFieldsBox"></section>
+
+        <section class="kpis" id="kpis"></section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>研修会一覧</h2>
+            <input id="searchInput" type="search" placeholder="テーマ・講師で検索" oninput="app.filterList()">
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>起案行No</th>
+                  <th>開催日</th>
+                  <th>テーマ</th>
+                  <th>講師</th>
+                  <th>共催</th>
+                  <th>Zoom</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="eventTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="eventModal">
+      <form method="dialog" class="modal-form" onsubmit="return false;">
+        <div class="modal-head">
+          <h3 id="modalTitle">新規研修会登録</h3>
+          <button class="icon-btn" onclick="app.closeModal()" type="button">×</button>
+        </div>
+        <div class="form-grid">
+          <label>起案行No<input name="起案行No" required></label>
+          <label>年度<input name="年度_YEAR_1"></label>
+          <label>開催日<input name="開催日_DATE_1"></label>
+          <label>テーマ<input name="テーマ(標題)_TITLE" required></label>
+          <label>担当講師<input name="担当講師_SPEAKER"></label>
+          <label>共催<input name="共催_COHOST_1"></label>
+          <label>対象<input name="対象_SUBJECT_1"></label>
+          <label>HP URL<input name="HP_URL_url_1"></label>
+          <label>Zoom ID<input name="Zoom_ID_WEBINER_ID"></label>
+          <label>Zoomパスコード<input name="Zoom_パスコード_PASSCODE"></label>
+          <label>起案1<input name="起案1開催DATE_KIAN_1"></label>
+          <label>起案2<input name="起案2資料_DATE_KIAN_2"></label>
+          <label>起案3<input name="起案3受講証修了証_DATE_KIAN_3"></label>
+        </div>
+        <div class="modal-actions">
+          <button class="btn secondary" type="button" onclick="app.closeModal()">閉じる</button>
+          <button class="btn primary" type="button" onclick="app.submitForm()">保存</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script>
+      const INITIAL_STATE = {
+        items: [],
+        filtered: [],
+        headers: [],
+        editing: false
+      };
+    </script>
+    <?!= include('Scripts'); ?>
+  </body>
+</html>
