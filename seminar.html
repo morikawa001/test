@@ -530,329 +530,344 @@
       </div>
     </form>
   </dialog>
+  
+ <script>
+  let events = [];
+  let filteredEvents = [];
+  let editingId = null;
+  let headers = [];
+  let missingFields = [];
 
-  <script>
-    const seedEvents = [
-      {
-        id: "101",
-        year: "2026",
-        date: "2026-05-24",
-        title: "臨床研究の基本と倫理審査",
-        speaker: "山田 太郎",
-        cohost: "院内共催",
-        subject: "全職員",
-        hpUrl: "",
-        zoomId: "",
-        passcode: "",
-        kian1: "2026-05-01",
-        kian2: "2026-05-15",
-        kian3: "2026-05-20",
-        status: "開催直前"
-      },
-      {
-        id: "102",
-        year: "2026",
-        date: "2026-05-28",
-        title: "研究計画書作成の要点",
-        speaker: "佐藤 花子",
-        cohost: "外部共催A",
-        subject: "研究者",
-        hpUrl: "https://example.org/event/102",
-        zoomId: "835-221-999",
-        passcode: "",
-        kian1: "2026-05-03",
-        kian2: "2026-05-18",
-        kian3: "",
-        status: "公開中"
-      },
-      {
-        id: "103",
-        year: "2026",
-        date: "2026-06-03",
-        title: "モニタリング対応の基礎",
-        speaker: "外部講師A",
-        cohost: "",
-        subject: "CRC・事務",
-        hpUrl: "",
-        zoomId: "",
-        passcode: "",
-        kian1: "",
-        kian2: "",
-        kian3: "",
-        status: "起案中"
-      },
-      {
-        id: "104",
-        year: "2026",
-        date: "2026-06-10",
-        title: "研究支援体制と役割分担",
-        speaker: "事務局",
-        cohost: "院内共催",
-        subject: "支援部門",
-        hpUrl: "https://example.org/event/104",
-        zoomId: "888-123-456",
-        passcode: "445566",
-        kian1: "2026-05-12",
-        kian2: "2026-05-22",
-        kian3: "2026-06-01",
-        status: "準備完了"
-      },
-      {
-        id: "105",
-        year: "2026",
-        date: "2026-05-20",
-        title: "倫理審査委員会の基本",
-        speaker: "鈴木 一郎",
-        cohost: "",
-        subject: "初学者",
-        hpUrl: "https://example.org/event/105",
-        zoomId: "812-000-321",
-        passcode: "123123",
-        kian1: "2026-04-22",
-        kian2: "2026-05-02",
-        kian3: "",
-        status: "開催済"
-      }
+  function normalizeItem(row) {
+    return {
+      id: valueOf(row['起案行No']),
+      year: valueOf(row['年度_YEAR_1']),
+      date: toInputDate(row['開催日_DATE_1']),
+      title: valueOf(row['テーマ(標題)_TITLE']),
+      speaker: valueOf(row['担当講師_SPEAKER']),
+      cohost: valueOf(row['共催_COHOST_1']),
+      subject: valueOf(row['対象_SUBJECT_1']),
+      hpUrl: valueOf(row['HP_URL_url_1']),
+      zoomId: valueOf(row['Zoom_ID_WEBINER_ID']),
+      passcode: valueOf(row['Zoom_パスコード_PASSCODE']),
+      kian1: toInputDate(row['起案1開催DATE_KIAN_1']),
+      kian2: toInputDate(row['起案2資料_DATE_KIAN_2']),
+      kian3: toInputDate(row['起案3受講証修了証_DATE_KIAN_3']),
+      status: deriveStatus(row),
+      _raw: row
+    };
+  }
+
+  function valueOf(v) {
+    return v == null ? '' : String(v).trim();
+  }
+
+  function toInputDate(v) {
+    if (!v) return '';
+    if (Object.prototype.toString.call(v) === '[object Date]' && !isNaN(v)) {
+      return formatDateForInput(v);
+    }
+    const s = String(v).trim();
+    if (!s) return '';
+    const d = new Date(s);
+    if (!isNaN(d)) return formatDateForInput(d);
+    return s;
+  }
+
+  function formatDateForInput(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function formatDate(value) {
+    if (!value) return '';
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return value;
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}/${m}/${day}`;
+  }
+
+  function deriveStatus(row) {
+    const hp = valueOf(row['HP_URL_url_1']);
+    const zoom = valueOf(row['Zoom_ID_WEBINER_ID']);
+    const k1 = valueOf(row['起案1開催DATE_KIAN_1']);
+    const k2 = valueOf(row['起案2資料_DATE_KIAN_2']);
+    const k3 = valueOf(row['起案3受講証修了証_DATE_KIAN_3']);
+    const date = toInputDate(row['開催日_DATE_1']);
+
+    if (date) {
+      const today = new Date();
+      const eventDate = new Date(date);
+      const diff = Math.floor((eventDate - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / 86400000);
+      if (!isNaN(diff) && diff < 0) return '開催済';
+      if (hp && zoom && k1 && k2 && k3 && diff <= 7) return '開催直前';
+    }
+
+    if (hp && zoom && k1 && k2 && k3) return '準備完了';
+    if (k1 || k2 || hp) return '公開中';
+    return '起案中';
+  }
+
+  function badgeClass(status) {
+    if (status === '準備完了' || status === '開催済') return 'b-done';
+    if (status === '開催直前' || status === '公開中') return 'b-warn';
+    return 'b-open';
+  }
+
+  function renderKpis() {
+    const total = events.length;
+    const zoomMissing = events.filter(e => !String(e.zoomId || '').trim()).length;
+    const hpMissing = events.filter(e => !String(e.hpUrl || '').trim()).length;
+    const completed = events.filter(e => e.status === '準備完了' || e.status === '開催済').length;
+
+    const data = [
+      { label: '登録件数', value: total, meta: '表示中の研修会データ総数' },
+      { label: 'Zoom未設定', value: zoomMissing, meta: 'Zoom ID が未入力の件数' },
+      { label: 'HP未設定', value: hpMissing, meta: 'HP URL が未入力の件数' },
+      { label: '完了・開催済', value: completed, meta: '準備完了または開催済の件数' }
     ];
 
-    let events = JSON.parse(JSON.stringify(seedEvents));
-    let filteredEvents = [...events];
-    let editingId = null;
+    document.getElementById('kpiGrid').innerHTML = data.map(item => `
+      <article class="card kpi">
+        <div class="label">${item.label}</div>
+        <div class="value">${item.value}</div>
+        <div class="meta">${item.meta}</div>
+      </article>
+    `).join('');
 
-    function formatDate(value) {
-      if (!value) return "";
-      const d = new Date(value);
-      if (Number.isNaN(d.getTime())) return value;
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, "0");
-      const day = String(d.getDate()).padStart(2, "0");
-      return `${y}/${m}/${day}`;
+    document.getElementById('sidebarAlertCount').textContent = zoomMissing + hpMissing;
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('eventTableBody');
+    if (!filteredEvents.length) {
+      tbody.innerHTML = `<tr><td colspan="9" class="empty">該当する研修会がありません。</td></tr>`;
+      return;
     }
 
-    function badgeClass(status) {
-      if (status === "準備完了" || status === "開催済") return "b-done";
-      if (status === "開催直前" || status === "公開中") return "b-warn";
-      return "b-open";
+    tbody.innerHTML = filteredEvents.map(item => `
+      <tr>
+        <td>${escapeHtml(item.id)}</td>
+        <td>${escapeHtml(formatDate(item.date))}</td>
+        <td>${escapeHtml(item.title)}</td>
+        <td>${escapeHtml(item.speaker)}</td>
+        <td>${escapeHtml(item.cohost || '-')}</td>
+        <td>${item.zoomId ? '<span class="badge b-done">設定済</span>' : '<span class="badge b-open">未設定</span>'}</td>
+        <td>${item.hpUrl ? '<span class="badge b-done">設定済</span>' : '<span class="badge b-open">未設定</span>'}</td>
+        <td><span class="badge ${badgeClass(item.status)}">${escapeHtml(item.status || '未設定')}</span></td>
+        <td><button class="btn secondary" onclick="openEditModal('${escapeAttr(item.id)}')">編集</button></td>
+      </tr>
+    `).join('');
+  }
+
+  function renderTodos() {
+    const todoList = document.getElementById('todoList');
+    const items = [];
+
+    events.forEach(e => {
+      if (!e.zoomId) items.push({ title: 'Zoom URL/ID設定', sub: e.title, badge: '未設定', cls: 'b-open' });
+      if (!e.hpUrl) items.push({ title: 'HP掲載準備', sub: e.title, badge: '未設定', cls: 'b-open' });
+      if (!e.kian1) items.push({ title: '起案1対応', sub: e.title, badge: '未着手', cls: 'b-warn' });
+    });
+
+    const view = items.slice(0, 5);
+    if (!view.length) {
+      todoList.innerHTML = `<div class="empty">今日の要対応はありません。</div>`;
+      return;
     }
 
-    function renderKpis() {
-      const total = events.length;
-      const zoomMissing = events.filter(e => !String(e.zoomId || "").trim()).length;
-      const hpMissing = events.filter(e => !String(e.hpUrl || "").trim()).length;
-      const completed = events.filter(e => e.status === "準備完了" || e.status === "開催済").length;
-
-      const data = [
-        { label: "登録件数", value: total, meta: "表示中の研修会データ総数" },
-        { label: "Zoom未設定", value: zoomMissing, meta: "Zoom ID が未入力の件数" },
-        { label: "HP未設定", value: hpMissing, meta: "HP URL が未入力の件数" },
-        { label: "完了・開催済", value: completed, meta: "準備完了または開催済の件数" }
-      ];
-
-      document.getElementById("kpiGrid").innerHTML = data.map(item => `
-        <article class="card kpi">
-          <div class="label">${item.label}</div>
-          <div class="value">${item.value}</div>
-          <div class="meta">${item.meta}</div>
-        </article>
-      `).join("");
-
-      document.getElementById("sidebarAlertCount").textContent = zoomMissing + hpMissing;
-    }
-
-    function renderTable() {
-      const tbody = document.getElementById("eventTableBody");
-      if (!filteredEvents.length) {
-        tbody.innerHTML = `<tr><td colspan="9" class="empty">該当する研修会がありません。</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = filteredEvents.map(item => `
-        <tr>
-          <td>${escapeHtml(item.id)}</td>
-          <td>${escapeHtml(formatDate(item.date))}</td>
-          <td>${escapeHtml(item.title)}</td>
-          <td>${escapeHtml(item.speaker)}</td>
-          <td>${escapeHtml(item.cohost || "-")}</td>
-          <td>${item.zoomId ? '<span class="badge b-done">設定済</span>' : '<span class="badge b-open">未設定</span>'}</td>
-          <td>${item.hpUrl ? '<span class="badge b-done">設定済</span>' : '<span class="badge b-open">未設定</span>'}</td>
-          <td><span class="badge ${badgeClass(item.status)}">${escapeHtml(item.status || "未設定")}</span></td>
-          <td><button class="btn secondary" onclick="openEditModal('${escapeAttr(item.id)}')">編集</button></td>
-        </tr>
-      `).join("");
-    }
-
-    function renderTodos() {
-      const todoList = document.getElementById("todoList");
-      const items = [];
-
-      events.forEach(e => {
-        if (!e.zoomId) items.push({ title: "Zoom URL/ID設定", sub: e.title, badge: "未設定", cls: "b-open" });
-        if (!e.hpUrl) items.push({ title: "HP掲載準備", sub: e.title, badge: "未設定", cls: "b-open" });
-        if (!e.kian1) items.push({ title: "起案1対応", sub: e.title, badge: "未着手", cls: "b-warn" });
-      });
-
-      const view = items.slice(0, 5);
-      if (!view.length) {
-        todoList.innerHTML = `<div class="empty">今日の要対応はありません。</div>`;
-        return;
-      }
-
-      todoList.innerHTML = view.map(item => `
-        <div class="todo">
-          <div>
-            <strong>${escapeHtml(item.title)}</strong>
-            <small>${escapeHtml(item.sub)}</small>
-          </div>
-          <span class="badge ${item.cls}">${escapeHtml(item.badge)}</span>
+    todoList.innerHTML = view.map(item => `
+      <div class="todo">
+        <div>
+          <strong>${escapeHtml(item.title)}</strong>
+          <small>${escapeHtml(item.sub)}</small>
         </div>
-      `).join("");
+        <span class="badge ${item.cls}">${escapeHtml(item.badge)}</span>
+      </div>
+    `).join('');
+  }
+
+  function renderBoard() {
+    const stages = [
+      { title: '起案・依頼', match: e => e.status === '起案中' },
+      { title: '公開準備', match: e => e.status === '公開中' },
+      { title: '開催直前', match: e => e.status === '開催直前' },
+      { title: '完了・開催済', match: e => e.status === '準備完了' || e.status === '開催済' }
+    ];
+
+    const board = document.getElementById('boardGrid');
+    board.innerHTML = stages.map(stage => {
+      const list = events.filter(stage.match);
+      return `
+        <div class="board-col">
+          <h3>${stage.title}</h3>
+          ${
+            list.length
+              ? list.map(item => `
+                <div class="task">
+                  <strong>${escapeHtml(item.title)}</strong>
+                  <span>${escapeHtml(formatDate(item.date))} / ${escapeHtml(item.speaker || '講師未設定')}</span>
+                </div>
+              `).join('')
+              : `<div class="empty">該当なし</div>`
+          }
+        </div>
+      `;
+    }).join('');
+  }
+
+  function filterEvents() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    filteredEvents = events.filter(item => {
+      const text = [item.id, item.title, item.speaker, item.cohost, item.subject, item.status].join(' ').toLowerCase();
+      return text.includes(q);
+    });
+    renderTable();
+  }
+
+  function openCreateModal() {
+    editingId = null;
+    document.getElementById('dialogTitle').textContent = '新規研修会登録';
+    const form = document.querySelector('#eventDialog form');
+    form.reset();
+    document.getElementById('eventDialog').showModal();
+  }
+
+  function openEditModal(id) {
+    const item = events.find(e => e.id === id);
+    if (!item) return;
+
+    editingId = id;
+    document.getElementById('dialogTitle').textContent = '研修会編集';
+    const form = document.querySelector('#eventDialog form');
+
+    form.elements['id'].value = item.id || '';
+    form.elements['year'].value = item.year || '';
+    form.elements['date'].value = item.date || '';
+    form.elements['title'].value = item.title || '';
+    form.elements['speaker'].value = item.speaker || '';
+    form.elements['cohost'].value = item.cohost || '';
+    form.elements['subject'].value = item.subject || '';
+    form.elements['hpUrl'].value = item.hpUrl || '';
+    form.elements['zoomId'].value = item.zoomId || '';
+    form.elements['passcode'].value = item.passcode || '';
+    form.elements['kian1'].value = item.kian1 || '';
+    form.elements['kian2'].value = item.kian2 || '';
+    form.elements['kian3'].value = item.kian3 || '';
+    form.elements['status'].value = item.status || '';
+
+    document.getElementById('eventDialog').showModal();
+  }
+
+  function closeDialog() {
+    document.getElementById('eventDialog').close();
+  }
+
+  function buildPayloadFromForm() {
+    const form = document.querySelector('#eventDialog form');
+    return {
+      '起案行No': form.elements['id'].value.trim(),
+      '年度_YEAR_1': form.elements['year'].value.trim(),
+      '開催日_DATE_1': form.elements['date'].value,
+      'テーマ(標題)_TITLE': form.elements['title'].value.trim(),
+      '担当講師_SPEAKER': form.elements['speaker'].value.trim(),
+      '共催_COHOST_1': form.elements['cohost'].value.trim(),
+      '対象_SUBJECT_1': form.elements['subject'].value.trim(),
+      'HP_URL_url_1': form.elements['hpUrl'].value.trim(),
+      'Zoom_ID_WEBINER_ID': form.elements['zoomId'].value.trim(),
+      'Zoom_パスコード_PASSCODE': form.elements['passcode'].value.trim(),
+      '起案1開催DATE_KIAN_1': form.elements['kian1'].value,
+      '起案2資料_DATE_KIAN_2': form.elements['kian2'].value,
+      '起案3受講証修了証_DATE_KIAN_3': form.elements['kian3'].value
+    };
+  }
+
+  function saveEvent() {
+    const payload = buildPayloadFromForm();
+
+    if (!payload['起案行No'] || !payload['テーマ(標題)_TITLE']) {
+      alert('起案行No と テーマは必須です。');
+      return;
     }
 
-    function renderBoard() {
-      const stages = [
-        { title: "起案・依頼", match: e => e.status === "起案中" },
-        { title: "公開準備", match: e => e.status === "公開中" },
-        { title: "開催直前", match: e => e.status === "開催直前" },
-        { title: "完了・開催済", match: e => e.status === "準備完了" || e.status === "開催済" }
-      ];
+    setLoading(true);
 
-      const board = document.getElementById("boardGrid");
-      board.innerHTML = stages.map(stage => {
-        const list = events.filter(stage.match);
-        return `
-          <div class="board-col">
-            <h3>${stage.title}</h3>
-            ${
-              list.length
-                ? list.map(item => `
-                  <div class="task">
-                    <strong>${escapeHtml(item.title)}</strong>
-                    <span>${escapeHtml(formatDate(item.date))} / ${escapeHtml(item.speaker || "講師未設定")}</span>
-                  </div>
-                `).join("")
-                : `<div class="empty">該当なし</div>`
-            }
-          </div>
-        `;
-      }).join("");
-    }
-
-    function filterEvents() {
-      const q = document.getElementById("searchInput").value.trim().toLowerCase();
-      filteredEvents = events.filter(item => {
-        const text = [item.id, item.title, item.speaker, item.cohost, item.subject, item.status].join(" ").toLowerCase();
-        return text.includes(q);
+    const runner = google.script.run
+      .withSuccessHandler(res => {
+        setLoading(false);
+        closeDialog();
+        loadInitialData();
+        alert(res.message || '保存しました。');
+      })
+      .withFailureHandler(err => {
+        setLoading(false);
+        alert('保存に失敗しました: ' + (err.message || err));
       });
-      renderTable();
+
+    if (editingId) {
+      runner.updateEvent(payload);
+    } else {
+      runner.createEvent(payload);
     }
+  }
 
-    function openCreateModal() {
-      editingId = null;
-      document.getElementById("dialogTitle").textContent = "新規研修会登録";
-      const form = document.querySelector("#eventDialog form");
-      form.reset();
-      document.getElementById("eventDialog").showModal();
-    }
+  function resetDemo() {
+    document.getElementById('searchInput').value = '';
+    loadInitialData();
+  }
 
-    function openEditModal(id) {
-      const item = events.find(e => e.id === id);
-      if (!item) return;
+  function loadInitialData() {
+    setLoading(true);
+    google.script.run
+      .withSuccessHandler(data => {
+        headers = data.headers || [];
+        missingFields = data.missingFields || [];
+        events = (data.items || []).map(normalizeItem);
+        filteredEvents = [...events];
+        setLoading(false);
+        renderAll();
 
-      editingId = id;
-      document.getElementById("dialogTitle").textContent = "研修会編集";
-      const form = document.querySelector("#eventDialog form");
-
-      form.elements["id"].value = item.id || "";
-      form.elements["year"].value = item.year || "";
-      form.elements["date"].value = item.date || "";
-      form.elements["title"].value = item.title || "";
-      form.elements["speaker"].value = item.speaker || "";
-      form.elements["cohost"].value = item.cohost || "";
-      form.elements["subject"].value = item.subject || "";
-      form.elements["hpUrl"].value = item.hpUrl || "";
-      form.elements["zoomId"].value = item.zoomId || "";
-      form.elements["passcode"].value = item.passcode || "";
-      form.elements["kian1"].value = item.kian1 || "";
-      form.elements["kian2"].value = item.kian2 || "";
-      form.elements["kian3"].value = item.kian3 || "";
-      form.elements["status"].value = item.status || "";
-
-      document.getElementById("eventDialog").showModal();
-    }
-
-    function closeDialog() {
-      document.getElementById("eventDialog").close();
-    }
-
-    function saveEvent() {
-      const form = document.querySelector("#eventDialog form");
-      const data = {
-        id: form.elements["id"].value.trim(),
-        year: form.elements["year"].value.trim(),
-        date: form.elements["date"].value,
-        title: form.elements["title"].value.trim(),
-        speaker: form.elements["speaker"].value.trim(),
-        cohost: form.elements["cohost"].value.trim(),
-        subject: form.elements["subject"].value.trim(),
-        hpUrl: form.elements["hpUrl"].value.trim(),
-        zoomId: form.elements["zoomId"].value.trim(),
-        passcode: form.elements["passcode"].value.trim(),
-        kian1: form.elements["kian1"].value,
-        kian2: form.elements["kian2"].value,
-        kian3: form.elements["kian3"].value,
-        status: form.elements["status"].value.trim() || "起案中"
-      };
-
-      if (!data.id || !data.title) {
-        alert("起案行No と テーマは必須です。");
-        return;
-      }
-
-      if (editingId) {
-        const idx = events.findIndex(e => e.id === editingId);
-        if (idx !== -1) events[idx] = data;
-      } else {
-        const exists = events.some(e => e.id === data.id);
-        if (exists) {
-          alert("同じ起案行Noが既にあります。");
-          return;
+        if (missingFields.length) {
+          alert('シートに不足している列があります:\n' + missingFields.join('\n'));
         }
-        events.unshift(data);
-      }
+      })
+      .withFailureHandler(err => {
+        setLoading(false);
+        alert('初期データの取得に失敗しました: ' + (err.message || err));
+      })
+      .getInitialData();
+  }
 
-      filteredEvents = [...events];
-      closeDialog();
-      renderAll();
-    }
+  function setLoading(isLoading) {
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(btn => btn.disabled = isLoading);
+  }
 
-    function resetDemo() {
-      events = JSON.parse(JSON.stringify(seedEvents));
-      filteredEvents = [...events];
-      document.getElementById("searchInput").value = "";
-      renderAll();
-    }
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
 
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
+  function escapeAttr(value) {
+    return String(value ?? '').replace(/'/g, "\\'");
+  }
 
-    function escapeAttr(value) {
-      return String(value ?? "").replace(/'/g, "\\'");
-    }
+  function renderAll() {
+    renderKpis();
+    renderTable();
+    renderTodos();
+    renderBoard();
+  }
 
-    function renderAll() {
-      renderKpis();
-      renderTable();
-      renderTodos();
-      renderBoard();
-    }
-
-    renderAll();
-  </script>
+  document.addEventListener('DOMContentLoaded', loadInitialData);
+</script>
 </body>
 </html>
