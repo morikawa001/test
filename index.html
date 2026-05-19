@@ -1,145 +1,1199 @@
-const SHEET_NAME = 'ResearchEducation_Events';
-const REQUIRED_HEADERS = [
-  '起案行No',
-  '年度_YEAR_1',
-  '開催日_DATE_1',
-  'テーマ(標題)_TITLE',
-  '担当講師_SPEAKER',
-  '共催_COHOST_1',
-  '対象_SUBJECT_1',
-  'HP_URL_url_1',
-  'Zoom_ID_WEBINER_ID',
-  'Zoom_パスコード_PASSCODE',
-  '起案1開催DATE_KIAN_1',
-  '起案2資料_DATE_KIAN_2',
-  '起案3受講証修了証_DATE_KIAN_3'
-];
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>研修会準備プロジェクト管理</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f6f2;
+      --surface: #fbfbf9;
+      --surface-2: #f2eee8;
+      --text: #28251d;
+      --muted: #76736d;
+      --line: #d7d3cc;
+      --primary: #0d6b73;
+      --primary-soft: #dce9e8;
+      --warning: #a56a16;
+      --success: #486d3a;
+      --danger: #a23939;
+      --shadow: 0 10px 28px rgba(35, 28, 20, 0.08);
+      --radius: 18px;
+    }
 
-function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('研修会PM')
-    .addItem('管理画面を開く', 'showApp')
-    .addToUi();
-}
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Satoshi', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
 
-function showApp() {
-  const html = HtmlService
-    .createHtmlOutputFromFile('Index')
-    .setWidth(1400)
-    .setHeight(900);
-  SpreadsheetApp.getUi().showModalDialog(html, '研修会準備プロジェクト管理');
-}
+    button, input {
+      font: inherit;
+    }
 
-function getSheet_() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = ss.getSheetByName(SHEET_NAME);
+    .app {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
 
-  if (!sheet) {
-    sheet = ss.insertSheet(SHEET_NAME);
-    sheet.getRange(1, 1, 1, REQUIRED_HEADERS.length).setValues([REQUIRED_HEADERS]);
-  }
+    .sidebar {
+      background: #1f2423;
+      color: #eef2f1;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
 
-  const lastCol = Math.max(sheet.getLastColumn(), REQUIRED_HEADERS.length);
-  const headerValues = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(v => String(v || '').trim());
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-  if (!headerValues[0]) {
-    sheet.getRange(1, 1, 1, REQUIRED_HEADERS.length).setValues([REQUIRED_HEADERS]);
-  }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #69aaa5, #16666e);
+      font-weight: 700;
+      font-size: 18px;
+    }
 
-  return sheet;
-}
+    .brand small {
+      display: block;
+      color: #b8c5c1;
+      margin-top: 4px;
+    }
 
-function getHeaderMap_(headers) {
-  const map = {};
-  headers.forEach((h, i) => {
-    if (h) map[h] = i;
-  });
-  return map;
-}
+    .nav a {
+      display: block;
+      color: #d8e1de;
+      text-decoration: none;
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      background: transparent;
+    }
 
-function rowToObject_(row, headers) {
-  const obj = {};
-  headers.forEach((h, i) => {
-    if (h) obj[h] = row[i];
-  });
-  return obj;
-}
+    .nav a.active,
+    .nav a:hover {
+      background: rgba(255,255,255,0.08);
+    }
 
-function normalizeDateValue_(v) {
-  if (Object.prototype.toString.call(v) === '[object Date]' && !isNaN(v)) {
-    return Utilities.formatDate(v, Session.getScriptTimeZone(), 'yyyy-MM-dd');
-  }
-  return v == null ? '' : v;
-}
+    .sidebar-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 16px;
+    }
 
-function getEvents() {
-  const sheet = getSheet_();
-  const lastRow = sheet.getLastRow();
-  const lastCol = sheet.getLastColumn();
-  const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(v => String(v || '').trim());
-  const headerMap = getHeaderMap_(headers);
-  const missingFields = REQUIRED_HEADERS.filter(h => !(h in headerMap));
+    .sidebar-card .value {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 8px 0;
+    }
 
-  if (lastRow < 2) {
-    return { headers, items: [], missingFields };
-  }
+    .main {
+      padding: 28px;
+      display: grid;
+      gap: 20px;
+    }
 
-  const values = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
-  const items = values
-    .filter(row => row.some(cell => String(cell || '').trim() !== ''))
-    .map(row => {
-      const obj = rowToObject_(row, headers);
-      Object.keys(obj).forEach(key => {
-        obj[key] = normalizeDateValue_(obj[key]);
+    .hero,
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      max-width: 68ch;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn.primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn.secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .btn.danger {
+      background: #fff4f4;
+      color: var(--danger);
+      border: 1px solid #eccaca;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .kpi {
+      padding: 18px;
+    }
+
+    .kpi .label {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .kpi .value {
+      font-size: 32px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .kpi .meta {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap: 20px;
+    }
+
+    .card {
+      padding: 20px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .status-line {
+      margin-top: 10px;
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .status-line.error {
+      color: var(--danger);
+    }
+
+    .status-line.success {
+      color: var(--success);
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    input[type="search"],
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    input:not([type]) {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: white;
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(13, 107, 115, 0.12);
+    }
+
+    .search-box {
+      width: min(360px, 100%);
+    }
+
+    .table-wrap {
+      overflow: auto;
+      max-height: 460px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid #ebe7e0;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
+      background: #fcfbf8;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .b-open { background: #e3f0ef; color: #165d63; }
+    .b-warn { background: #f8eddc; color: #9a630f; }
+    .b-done { background: #e3eedf; color: #486d3a; }
+
+    .todo-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .todo {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--surface-2);
+    }
+
+    .todo strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .todo small {
+      color: var(--muted);
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .board-col {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      min-height: 220px;
+    }
+
+    .board-col h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .task {
+      background: white;
+      border: 1px solid #ebe7e0;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .task strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .task span {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    dialog {
+      border: none;
+      border-radius: 22px;
+      padding: 0;
+      width: min(920px, calc(100vw - 24px));
+      max-width: 920px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+    }
+
+    dialog::backdrop {
+      background: rgba(20, 24, 23, 0.42);
+    }
+
+    .dialog-fallback {
+      position: fixed;
+      inset: 0;
+      display: none;
+      background: rgba(20, 24, 23, 0.42);
+      padding: 12px;
+      overflow: auto;
+      z-index: 9999;
+    }
+
+    .dialog-fallback.show {
+      display: block;
+    }
+
+    .dialog-fallback .dialog-panel {
+      width: min(920px, calc(100vw - 24px));
+      margin: 24px auto;
+      background: var(--surface);
+      border-radius: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+      overflow: hidden;
+    }
+
+    .modal {
+      padding: 24px;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .icon-btn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 28px;
+      line-height: 1;
+      color: var(--muted);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .form-grid label {
+      display: grid;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .form-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 24px;
+    }
+
+    .loading-bar {
+      display: none;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .loading-bar.show {
+      display: block;
+    }
+
+    .hint {
+      padding: 10px 12px;
+      background: var(--primary-soft);
+      border-radius: 12px;
+      font-size: 13px;
+      color: #1a4d52;
+      margin-bottom: 14px;
+    }
+
+    .table-action {
+      white-space: nowrap;
+    }
+
+    .text-button {
+      border: none;
+      background: transparent;
+      color: var(--primary);
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    @media (max-width: 1100px) {
+      .kpis { grid-template-columns: 1fr 1fr; }
+      .layout { grid-template-columns: 1fr; }
+      .board { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 820px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .hero { flex-direction: column; }
+      .board,
+      .form-grid,
+      .kpis { grid-template-columns: 1fr; }
+      .form-grid .full { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">研</div>
+        <div>
+          <div><strong>研修会PM</strong></div>
+          <small>Google Sheets Connected</small>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="#" class="active">ダッシュボード</a>
+        <a href="#events">研修会一覧</a>
+        <a href="#board">準備ボード</a>
+      </nav>
+
+      <div class="sidebar-card">
+        <div style="font-size:13px;color:#bfd0cb;">本日の要確認</div>
+        <div class="value" id="sidebarAlertCount">0</div>
+        <div style="font-size:13px;color:#bfd0cb;">Zoom未設定・HP未設定・起案未完了の件数</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <div>
+          <h1>研修会準備プロジェクト管理</h1>
+          <p>Google スプレッドシートと連携し、一覧表示・検索・新規登録・編集を行う管理画面です。保存内容はシートに反映され、再読み込み後も保持されます。</p>
+          <div id="loadingBar" class="loading-bar">データを処理しています…</div>
+          <div id="statusLine" class="status-line"></div>
+        </div>
+        <div class="actions">
+          <button class="btn secondary" id="reloadButton" type="button">再読み込み</button>
+          <button class="btn primary" id="createButton" type="button">新規研修会登録</button>
+        </div>
+      </section>
+
+      <section class="kpis" id="kpiGrid"></section>
+
+      <section class="layout">
+        <div class="card" id="events">
+          <div class="section-head">
+            <h2>研修会一覧</h2>
+            <div class="muted">テーマ・講師・共催で検索</div>
+          </div>
+
+          <div class="toolbar">
+            <div class="search-box">
+              <input id="searchInput" type="search" placeholder="例：倫理、山田、共催">
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>起案行No</th>
+                  <th>開催日</th>
+                  <th>テーマ</th>
+                  <th>講師</th>
+                  <th>共催</th>
+                  <th>Zoom</th>
+                  <th>HP</th>
+                  <th>状態</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="eventTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-head">
+            <h2>今日やること</h2>
+            <div class="muted">自動抽出</div>
+          </div>
+          <div class="todo-list" id="todoList"></div>
+        </div>
+      </section>
+
+      <section class="card" id="board">
+        <div class="section-head">
+          <h2>準備ボード</h2>
+          <div class="muted">工程別の見える化</div>
+        </div>
+        <div class="board" id="boardGrid"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="eventDialog">
+    <form class="modal" id="eventForm" novalidate>
+      <div class="modal-head">
+        <h3 id="dialogTitle">新規研修会登録</h3>
+        <button type="button" class="icon-btn" id="closeDialogButton" aria-label="閉じる">×</button>
+      </div>
+
+      <div class="hint">起案行No と テーマは必須です。編集時は同じ起案行Noの行を更新します。</div>
+
+      <div class="form-grid">
+        <label>起案行No<input name="id" required autocomplete="off"></label>
+        <label>年度<input name="year" autocomplete="off"></label>
+        <label>開催日<input name="date" type="date"></label>
+        <label>テーマ<input name="title" required autocomplete="off"></label>
+        <label>担当講師<input name="speaker" autocomplete="off"></label>
+        <label>共催<input name="cohost" autocomplete="off"></label>
+        <label class="full">対象<input name="subject" autocomplete="off"></label>
+        <label class="full">HP URL<input name="hpUrl" type="text" autocomplete="off"></label>
+        <label>Zoom ID<input name="zoomId" autocomplete="off"></label>
+        <label>Zoomパスコード<input name="passcode" autocomplete="off"></label>
+        <label>起案1<input name="kian1" type="date"></label>
+        <label>起案2<input name="kian2" type="date"></label>
+        <label>起案3<input name="kian3" type="date"></label>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn secondary" id="cancelButton">閉じる</button>
+        <button type="submit" class="btn primary" id="saveButton">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="dialog-fallback" id="dialogFallback" aria-hidden="true">
+    <div class="dialog-panel" id="dialogFallbackPanel"></div>
+  </div>
+
+  <script>
+    let events = [];
+    let filteredEvents = [];
+    let editingId = null;
+    let headers = [];
+    let missingFields = [];
+    let isBusy = false;
+
+    const DEMO_DATA = [
+      {
+        '起案行No': '101',
+        '年度_YEAR_1': '2026',
+        '開催日_DATE_1': '2026-06-12',
+        'テーマ(標題)_TITLE': '臨床研究の基礎と倫理審査',
+        '担当講師_SPEAKER': '山田 太郎',
+        '共催_COHOST_1': '教育研修部',
+        '対象_SUBJECT_1': '医師・CRC',
+        'HP_URL_url_1': '',
+        'Zoom_ID_WEBINER_ID': '',
+        'Zoom_パスコード_PASSCODE': '',
+        '起案1開催DATE_KIAN_1': '',
+        '起案2資料_DATE_KIAN_2': '',
+        '起案3受講証修了証_DATE_KIAN_3': ''
+      },
+      {
+        '起案行No': '102',
+        '年度_YEAR_1': '2026',
+        '開催日_DATE_1': '2026-05-29',
+        'テーマ(標題)_TITLE': '研究計画書作成の実務',
+        '担当講師_SPEAKER': '佐藤 花子',
+        '共催_COHOST_1': '臨床研究支援室',
+        '対象_SUBJECT_1': '院内研究者',
+        'HP_URL_url_1': 'https://example.com',
+        'Zoom_ID_WEBINER_ID': '123-456-789',
+        'Zoom_パスコード_PASSCODE': 'abcd',
+        '起案1開催DATE_KIAN_1': '2026-05-01',
+        '起案2資料_DATE_KIAN_2': '2026-05-15',
+        '起案3受講証修了証_DATE_KIAN_3': '2026-05-20'
+      }
+    ];
+
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    function valueOf(v) {
+      return v == null ? '' : String(v).trim();
+    }
+
+    function escapeHtml(str) {
+      return valueOf(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function pad2(v) {
+      return String(v).padStart(2, '0');
+    }
+
+    function isDateObject(v) {
+      return Object.prototype.toString.call(v) === '[object Date]' && !isNaN(v);
+    }
+
+    function parseToDate(v) {
+      if (!v) return null;
+      if (isDateObject(v)) return v;
+
+      const s = String(v).trim();
+      if (!s) return null;
+
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+        const [y, m, d] = s.split('-').map(Number);
+        return new Date(y, m - 1, d);
+      }
+
+      if (/^\d{4}\/\d{2}\/\d{2}$/.test(s)) {
+        const [y, m, d] = s.split('/').map(Number);
+        return new Date(y, m - 1, d);
+      }
+
+      const d = new Date(s);
+      if (!isNaN(d)) return d;
+      return null;
+    }
+
+    function formatDateForInput(d) {
+      return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+    }
+
+    function toInputDate(v) {
+      const d = parseToDate(v);
+      if (!d) return valueOf(v);
+      return formatDateForInput(d);
+    }
+
+    function formatDate(value) {
+      const d = parseToDate(value);
+      if (!d) return valueOf(value);
+      return `${d.getFullYear()}/${pad2(d.getMonth() + 1)}/${pad2(d.getDate())}`;
+    }
+
+    function normalizeItem(row) {
+      return {
+        id: valueOf(row['起案行No']),
+        year: valueOf(row['年度_YEAR_1']),
+        date: toInputDate(row['開催日_DATE_1']),
+        title: valueOf(row['テーマ(標題)_TITLE']),
+        speaker: valueOf(row['担当講師_SPEAKER']),
+        cohost: valueOf(row['共催_COHOST_1']),
+        subject: valueOf(row['対象_SUBJECT_1']),
+        hpUrl: valueOf(row['HP_URL_url_1']),
+        zoomId: valueOf(row['Zoom_ID_WEBINER_ID']),
+        passcode: valueOf(row['Zoom_パスコード_PASSCODE']),
+        kian1: toInputDate(row['起案1開催DATE_KIAN_1']),
+        kian2: toInputDate(row['起案2資料_DATE_KIAN_2']),
+        kian3: toInputDate(row['起案3受講証修了証_DATE_KIAN_3'])
+      };
+    }
+
+    function denormalizeItem(item) {
+      return {
+        '起案行No': valueOf(item.id),
+        '年度_YEAR_1': valueOf(item.year),
+        '開催日_DATE_1': valueOf(item.date),
+        'テーマ(標題)_TITLE': valueOf(item.title),
+        '担当講師_SPEAKER': valueOf(item.speaker),
+        '共催_COHOST_1': valueOf(item.cohost),
+        '対象_SUBJECT_1': valueOf(item.subject),
+        'HP_URL_url_1': valueOf(item.hpUrl),
+        'Zoom_ID_WEBINER_ID': valueOf(item.zoomId),
+        'Zoom_パスコード_PASSCODE': valueOf(item.passcode),
+        '起案1開催DATE_KIAN_1': valueOf(item.kian1),
+        '起案2資料_DATE_KIAN_2': valueOf(item.kian2),
+        '起案3受講証修了証_DATE_KIAN_3': valueOf(item.kian3)
+      };
+    }
+
+    function getStatusInfo(item) {
+      const hasZoom = !!valueOf(item.zoomId);
+      const hasHp = !!valueOf(item.hpUrl);
+      const hasKian1 = !!valueOf(item.kian1);
+      const hasKian2 = !!valueOf(item.kian2);
+      const hasKian3 = !!valueOf(item.kian3);
+      const completeCount = [hasZoom, hasHp, hasKian1, hasKian2, hasKian3].filter(Boolean).length;
+
+      if (completeCount === 5) {
+        return { label: '完了', className: 'b-done' };
+      }
+      if (completeCount >= 2) {
+        return { label: '進行中', className: 'b-open' };
+      }
+      return { label: '要対応', className: 'b-warn' };
+    }
+
+    function setBusy(flag) {
+      isBusy = flag;
+      $('loadingBar').classList.toggle('show', flag);
+      $('reloadButton').disabled = flag;
+      $('createButton').disabled = flag;
+      $('saveButton').disabled = flag;
+    }
+
+    function setStatus(message, type) {
+      const el = $('statusLine');
+      el.textContent = message || '';
+      el.className = 'status-line';
+      if (type) el.classList.add(type);
+    }
+
+    function renderKpis() {
+      const total = events.length;
+      const noZoom = events.filter(v => !valueOf(v.zoomId)).length;
+      const noHp = events.filter(v => !valueOf(v.hpUrl)).length;
+      const completed = events.filter(v => getStatusInfo(v).label === '完了').length;
+
+      $('kpiGrid').innerHTML = `
+        <div class="card kpi">
+          <div class="label">総研修会数</div>
+          <div class="value">${total}</div>
+          <div class="meta">登録済み案件数</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">Zoom未設定</div>
+          <div class="value">${noZoom}</div>
+          <div class="meta">ID未登録</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">HP未設定</div>
+          <div class="value">${noHp}</div>
+          <div class="meta">URL未登録</div>
+        </div>
+        <div class="card kpi">
+          <div class="label">準備完了</div>
+          <div class="value">${completed}</div>
+          <div class="meta">主要項目入力済み</div>
+        </div>
+      `;
+
+      $('sidebarAlertCount').textContent = events.filter(v => {
+        return !valueOf(v.zoomId) || !valueOf(v.hpUrl) || !valueOf(v.kian1) || !valueOf(v.kian2) || !valueOf(v.kian3);
+      }).length;
+    }
+
+    function renderTable() {
+      const body = $('eventTableBody');
+
+      if (!filteredEvents.length) {
+        body.innerHTML = `<tr><td colspan="9" class="empty">該当データがありません</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = filteredEvents.map(item => {
+        const status = getStatusInfo(item);
+        const zoom = valueOf(item.zoomId) ? '設定済み' : '未設定';
+        const hp = valueOf(item.hpUrl) ? '設定済み' : '未設定';
+
+        return `
+          <tr>
+            <td>${escapeHtml(item.id)}</td>
+            <td>${escapeHtml(formatDate(item.date))}</td>
+            <td>${escapeHtml(item.title)}</td>
+            <td>${escapeHtml(item.speaker)}</td>
+            <td>${escapeHtml(item.cohost)}</td>
+            <td>${escapeHtml(zoom)}</td>
+            <td>${escapeHtml(hp)}</td>
+            <td><span class="badge ${status.className}">${escapeHtml(status.label)}</span></td>
+            <td class="table-action">
+              <button type="button" class="text-button" data-edit="${escapeHtml(item.id)}">編集</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderTodos() {
+      const list = [];
+
+      events.forEach(item => {
+        if (!valueOf(item.zoomId)) {
+          list.push({ title: `${item.title}：Zoom設定`, note: `${formatDate(item.date)} / ${item.speaker}` });
+        }
+        if (!valueOf(item.hpUrl)) {
+          list.push({ title: `${item.title}：HP掲載準備`, note: `${formatDate(item.date)} / ${item.cohost}` });
+        }
+        if (!valueOf(item.kian1)) {
+          list.push({ title: `${item.title}：起案1未登録`, note: `${formatDate(item.date)} / 起案1開催DATE_KIAN_1` });
+        }
       });
-      return obj;
-    });
 
-  return { headers, items, missingFields };
-}
+      const target = $('todoList');
 
-function saveEvent(item) {
-  const sheet = getSheet_();
-  let headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(v => String(v || '').trim());
+      if (!list.length) {
+        target.innerHTML = `<div class="empty">本日の要対応はありません</div>`;
+        return;
+      }
 
-  REQUIRED_HEADERS.forEach(header => {
-    if (!headers.includes(header)) {
-      headers.push(header);
+      target.innerHTML = list.slice(0, 6).map(todo => `
+        <div class="todo">
+          <div>
+            <strong>${escapeHtml(todo.title)}</strong>
+            <small>${escapeHtml(todo.note)}</small>
+          </div>
+        </div>
+      `).join('');
     }
-  });
 
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    function renderBoard() {
+      const cols = [
+        { key: 'planning', title: '企画・基本情報' },
+        { key: 'publicity', title: 'HP・案内' },
+        { key: 'materials', title: '資料・進行' },
+        { key: 'done', title: '完了' }
+      ];
 
-  const idHeader = '起案行No';
-  const idIndex = headers.indexOf(idHeader);
+      const buckets = {
+        planning: [],
+        publicity: [],
+        materials: [],
+        done: []
+      };
 
-  if (idIndex < 0) {
-    throw new Error('起案行No 列が見つかりません。');
-  }
+      events.forEach(item => {
+        const doneCount = [
+          valueOf(item.zoomId),
+          valueOf(item.hpUrl),
+          valueOf(item.kian1),
+          valueOf(item.kian2),
+          valueOf(item.kian3)
+        ].filter(Boolean).length;
 
-  const lastRow = sheet.getLastRow();
-  const data = lastRow >= 2 ? sheet.getRange(2, 1, lastRow - 1, headers.length).getValues() : [];
-  const idValue = String(item[idHeader] || '').trim();
+        if (doneCount === 5) {
+          buckets.done.push(item);
+        } else if (!valueOf(item.kian1) || !valueOf(item.title)) {
+          buckets.planning.push(item);
+        } else if (!valueOf(item.hpUrl) || !valueOf(item.zoomId)) {
+          buckets.publicity.push(item);
+        } else {
+          buckets.materials.push(item);
+        }
+      });
 
-  if (!idValue) {
-    throw new Error('起案行No は必須です。');
-  }
-
-  const outputRow = headers.map(h => item[h] == null ? '' : item[h]);
-
-  let targetRow = -1;
-  for (let i = 0; i < data.length; i++) {
-    if (String(data[i][idIndex] || '').trim() === idValue) {
-      targetRow = i + 2;
-      break;
+      $('boardGrid').innerHTML = cols.map(col => `
+        <div class="board-col">
+          <h3>${escapeHtml(col.title)}</h3>
+          ${
+            buckets[col.key].length
+              ? buckets[col.key].map(item => `
+                <div class="task">
+                  <strong>${escapeHtml(item.title)}</strong>
+                  <span>${escapeHtml(formatDate(item.date))} / ${escapeHtml(item.speaker || '講師未設定')}</span>
+                </div>
+              `).join('')
+              : `<div class="empty">該当なし</div>`
+          }
+        </div>
+      `).join('');
     }
-  }
 
-  if (targetRow > -1) {
-    sheet.getRange(targetRow, 1, 1, headers.length).setValues([outputRow]);
-  } else {
-    sheet.getRange(sheet.getLastRow() + 1, 1, 1, headers.length).setValues([outputRow]);
-  }
+    function applyFilter() {
+      const q = valueOf($('searchInput').value).toLowerCase();
 
-  return getEvents();
-}
+      filteredEvents = events.filter(item => {
+        if (!q) return true;
+        const target = [
+          item.id,
+          item.title,
+          item.speaker,
+          item.cohost,
+          item.subject
+        ].join(' ').toLowerCase();
+        return target.includes(q);
+      });
+
+      renderTable();
+    }
+
+    function fillForm(item) {
+      const form = $('eventForm');
+      form.id.value = valueOf(item.id);
+      form.year.value = valueOf(item.year);
+      form.date.value = valueOf(item.date);
+      form.title.value = valueOf(item.title);
+      form.speaker.value = valueOf(item.speaker);
+      form.cohost.value = valueOf(item.cohost);
+      form.subject.value = valueOf(item.subject);
+      form.hpUrl.value = valueOf(item.hpUrl);
+      form.zoomId.value = valueOf(item.zoomId);
+      form.passcode.value = valueOf(item.passcode);
+      form.kian1.value = valueOf(item.kian1);
+      form.kian2.value = valueOf(item.kian2);
+      form.kian3.value = valueOf(item.kian3);
+    }
+
+    function resetForm() {
+      $('eventForm').reset();
+      editingId = null;
+      $('dialogTitle').textContent = '新規研修会登録';
+    }
+
+    function openDialog(item) {
+      resetForm();
+
+      if (item) {
+        editingId = item.id;
+        fillForm(item);
+        $('dialogTitle').textContent = '研修会を編集';
+      }
+
+      const dialog = $('eventDialog');
+      if (typeof dialog.showModal === 'function') {
+        dialog.showModal();
+      } else {
+        $('dialogFallbackPanel').appendChild(dialog);
+        $('dialogFallback').classList.add('show');
+        $('dialogFallback').setAttribute('aria-hidden', 'false');
+        dialog.setAttribute('open', 'open');
+      }
+    }
+
+    function closeDialog() {
+      const dialog = $('eventDialog');
+      if (typeof dialog.close === 'function' && dialog.open) {
+        dialog.close();
+      }
+      $('dialogFallback').classList.remove('show');
+      $('dialogFallback').setAttribute('aria-hidden', 'true');
+      document.body.appendChild(dialog);
+    }
+
+    function collectFormData() {
+      const form = $('eventForm');
+      return {
+        id: valueOf(form.id.value),
+        year: valueOf(form.year.value),
+        date: valueOf(form.date.value),
+        title: valueOf(form.title.value),
+        speaker: valueOf(form.speaker.value),
+        cohost: valueOf(form.cohost.value),
+        subject: valueOf(form.subject.value),
+        hpUrl: valueOf(form.hpUrl.value),
+        zoomId: valueOf(form.zoomId.value),
+        passcode: valueOf(form.passcode.value),
+        kian1: valueOf(form.kian1.value),
+        kian2: valueOf(form.kian2.value),
+        kian3: valueOf(form.kian3.value)
+      };
+    }
+
+    function validateItem(item) {
+      if (!item.id) return '起案行No は必須です。';
+      if (!item.title) return 'テーマは必須です。';
+      return '';
+    }
+
+    function syncScreen() {
+      renderKpis();
+      applyFilter();
+      renderTodos();
+      renderBoard();
+    }
+
+    function loadEvents() {
+      setBusy(true);
+      setStatus('データを読み込んでいます…');
+
+      if (typeof google === 'undefined' || !google.script || !google.script.run) {
+        headers = Object.keys(DEMO_DATA[0]);
+        events = DEMO_DATA.map(normalizeItem);
+        filteredEvents = [...events];
+        syncScreen();
+        setBusy(false);
+        setStatus('デモデータを表示しています。', 'success');
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+          headers = Array.isArray(result && result.headers) ? result.headers : [];
+          missingFields = Array.isArray(result && result.missingFields) ? result.missingFields : [];
+          const rows = Array.isArray(result && result.items) ? result.items : [];
+          events = rows.map(normalizeItem);
+          filteredEvents = [...events];
+          syncScreen();
+
+          if (missingFields.length) {
+            setStatus('一部の列が見つからないため、対応項目のみ表示しています。', 'error');
+          } else {
+            setStatus('データを読み込みました。', 'success');
+          }
+
+          setBusy(false);
+        })
+        .withFailureHandler(function(err) {
+          events = DEMO_DATA.map(normalizeItem);
+          filteredEvents = [...events];
+          syncScreen();
+          setBusy(false);
+          setStatus('読込エラーのためデモデータを表示しています: ' + (err && err.message ? err.message : err), 'error');
+        })
+        .getEvents();
+    }
+
+    function saveEventToServer(item) {
+      setBusy(true);
+      setStatus('保存しています…');
+
+      if (typeof google === 'undefined' || !google.script || !google.script.run) {
+        const idx = events.findIndex(v => v.id === item.id);
+        if (idx >= 0) {
+          events[idx] = item;
+        } else {
+          events.unshift(item);
+        }
+        filteredEvents = [...events];
+        syncScreen();
+        closeDialog();
+        setBusy(false);
+        setStatus('デモ保存が完了しました。', 'success');
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+          const rows = Array.isArray(result && result.items) ? result.items : [];
+          events = rows.map(normalizeItem);
+          filteredEvents = [...events];
+          syncScreen();
+          closeDialog();
+          setBusy(false);
+          setStatus('保存しました。', 'success');
+        })
+        .withFailureHandler(function(err) {
+          setBusy(false);
+          setStatus('保存に失敗しました: ' + (err && err.message ? err.message : err), 'error');
+        })
+        .saveEvent(denormalizeItem(item));
+    }
+
+    function handleTableClick(e) {
+      const btn = e.target.closest('[data-edit]');
+      if (!btn) return;
+      const id = btn.getAttribute('data-edit');
+      const item = events.find(v => v.id === id);
+      if (item) openDialog(item);
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      const item = collectFormData();
+      const error = validateItem(item);
+
+      if (error) {
+        setStatus(error, 'error');
+        return;
+      }
+
+      if (editingId && editingId !== item.id && events.some(v => v.id === item.id)) {
+        setStatus('変更後の起案行No は既存データと重複しています。', 'error');
+        return;
+      }
+
+      saveEventToServer(item);
+    }
+
+    function init() {
+      $('reloadButton').addEventListener('click', loadEvents);
+      $('createButton').addEventListener('click', function() { openDialog(null); });
+      $('searchInput').addEventListener('input', applyFilter);
+      $('eventTableBody').addEventListener('click', handleTableClick);
+      $('eventForm').addEventListener('submit', handleSubmit);
+      $('cancelButton').addEventListener('click', closeDialog);
+      $('closeDialogButton').addEventListener('click', closeDialog);
+      $('dialogFallback').addEventListener('click', function(e) {
+        if (e.target === $('dialogFallback')) closeDialog();
+      });
+
+      loadEvents();
+    }
+
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>
