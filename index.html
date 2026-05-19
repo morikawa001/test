@@ -32,9 +32,7 @@
       min-height: 100vh;
     }
 
-    button, input {
-      font: inherit;
-    }
+    button, input { font: inherit; }
 
     .app {
       display: grid;
@@ -82,7 +80,6 @@
       padding: 12px 14px;
       border-radius: 12px;
       margin-bottom: 8px;
-      background: transparent;
     }
 
     .nav a.active,
@@ -171,21 +168,13 @@
       border: 1px solid var(--line);
     }
 
-    .btn.danger {
-      background: #fff4f4;
-      color: var(--danger);
-      border: 1px solid #eccaca;
-    }
-
     .kpis {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
     }
 
-    .kpi {
-      padding: 18px;
-    }
+    .kpi { padding: 18px; }
 
     .kpi .label {
       font-size: 14px;
@@ -210,9 +199,7 @@
       gap: 20px;
     }
 
-    .card {
-      padding: 20px;
-    }
+    .card { padding: 20px; }
 
     .section-head {
       display: flex;
@@ -239,13 +226,8 @@
       font-size: 14px;
     }
 
-    .status-line.error {
-      color: var(--danger);
-    }
-
-    .status-line.success {
-      color: var(--success);
-    }
+    .status-line.error { color: var(--danger); }
+    .status-line.success { color: var(--success); }
 
     .toolbar {
       display: flex;
@@ -257,7 +239,6 @@
     input[type="search"],
     input[type="text"],
     input[type="date"],
-    input[type="time"],
     input:not([type]) {
       width: 100%;
       border: 1px solid var(--line);
@@ -273,9 +254,7 @@
       box-shadow: 0 0 0 3px rgba(13, 107, 115, 0.12);
     }
 
-    .search-box {
-      width: min(360px, 100%);
-    }
+    .search-box { width: min(360px, 100%); }
 
     .table-wrap {
       overflow: auto;
@@ -338,9 +317,7 @@
       margin-bottom: 4px;
     }
 
-    .todo small {
-      color: var(--muted);
-    }
+    .todo small { color: var(--muted); }
 
     .board {
       display: grid;
@@ -393,32 +370,7 @@
       background: rgba(20, 24, 23, 0.42);
     }
 
-    .dialog-fallback {
-      position: fixed;
-      inset: 0;
-      display: none;
-      background: rgba(20, 24, 23, 0.42);
-      padding: 12px;
-      overflow: auto;
-      z-index: 9999;
-    }
-
-    .dialog-fallback.show {
-      display: block;
-    }
-
-    .dialog-fallback .dialog-panel {
-      width: min(920px, calc(100vw - 24px));
-      margin: 24px auto;
-      background: var(--surface);
-      border-radius: 22px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
-      overflow: hidden;
-    }
-
-    .modal {
-      padding: 24px;
-    }
+    .modal { padding: 24px; }
 
     .modal-head {
       display: flex;
@@ -455,9 +407,7 @@
       color: var(--muted);
     }
 
-    .form-grid .full {
-      grid-column: 1 / -1;
-    }
+    .form-grid .full { grid-column: 1 / -1; }
 
     .modal-actions {
       display: flex;
@@ -480,9 +430,7 @@
       font-size: 14px;
     }
 
-    .loading-bar.show {
-      display: block;
-    }
+    .loading-bar.show { display: block; }
 
     .hint {
       padding: 10px 12px;
@@ -493,9 +441,7 @@
       margin-bottom: 14px;
     }
 
-    .table-action {
-      white-space: nowrap;
-    }
+    .table-action { white-space: nowrap; }
 
     .text-button {
       border: none;
@@ -516,9 +462,7 @@
       .app { grid-template-columns: 1fr; }
       .sidebar { display: none; }
       .hero { flex-direction: column; }
-      .board,
-      .form-grid,
-      .kpis { grid-template-columns: 1fr; }
+      .board, .form-grid, .kpis { grid-template-columns: 1fr; }
       .form-grid .full { grid-column: auto; }
     }
   </style>
@@ -647,10 +591,6 @@
     </form>
   </dialog>
 
-  <div class="dialog-fallback" id="dialogFallback" aria-hidden="true">
-    <div class="dialog-panel" id="dialogFallbackPanel"></div>
-  </div>
-
   <script>
     let events = [];
     let filteredEvents = [];
@@ -658,39 +598,6 @@
     let headers = [];
     let missingFields = [];
     let isBusy = false;
-
-    const DEMO_DATA = [
-      {
-        '起案行No': '101',
-        '年度_YEAR_1': '2026',
-        '開催日_DATE_1': '2026-06-12',
-        'テーマ(標題)_TITLE': '臨床研究の基礎と倫理審査',
-        '担当講師_SPEAKER': '山田 太郎',
-        '共催_COHOST_1': '教育研修部',
-        '対象_SUBJECT_1': '医師・CRC',
-        'HP_URL_url_1': '',
-        'Zoom_ID_WEBINER_ID': '',
-        'Zoom_パスコード_PASSCODE': '',
-        '起案1開催DATE_KIAN_1': '',
-        '起案2資料_DATE_KIAN_2': '',
-        '起案3受講証修了証_DATE_KIAN_3': ''
-      },
-      {
-        '起案行No': '102',
-        '年度_YEAR_1': '2026',
-        '開催日_DATE_1': '2026-05-29',
-        'テーマ(標題)_TITLE': '研究計画書作成の実務',
-        '担当講師_SPEAKER': '佐藤 花子',
-        '共催_COHOST_1': '臨床研究支援室',
-        '対象_SUBJECT_1': '院内研究者',
-        'HP_URL_url_1': 'https://example.com',
-        'Zoom_ID_WEBINER_ID': '123-456-789',
-        'Zoom_パスコード_PASSCODE': 'abcd',
-        '起案1開催DATE_KIAN_1': '2026-05-01',
-        '起案2資料_DATE_KIAN_2': '2026-05-15',
-        '起案3受講証修了証_DATE_KIAN_3': '2026-05-20'
-      }
-    ];
 
     function $(id) {
       return document.getElementById(id);
@@ -725,34 +632,31 @@
       if (!s) return null;
 
       if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-        const [y, m, d] = s.split('-').map(Number);
-        return new Date(y, m - 1, d);
+        const parts = s.split('-').map(Number);
+        return new Date(parts[0], parts[1] - 1, parts[2]);
       }
 
       if (/^\d{4}\/\d{2}\/\d{2}$/.test(s)) {
-        const [y, m, d] = s.split('/').map(Number);
-        return new Date(y, m - 1, d);
+        const parts = s.split('/').map(Number);
+        return new Date(parts[0], parts[1] - 1, parts[2]);
       }
 
       const d = new Date(s);
-      if (!isNaN(d)) return d;
-      return null;
+      return isNaN(d) ? null : d;
     }
 
     function formatDateForInput(d) {
-      return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+      return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
     }
 
     function toInputDate(v) {
       const d = parseToDate(v);
-      if (!d) return valueOf(v);
-      return formatDateForInput(d);
+      return d ? formatDateForInput(d) : valueOf(v);
     }
 
     function formatDate(value) {
       const d = parseToDate(value);
-      if (!d) return valueOf(value);
-      return `${d.getFullYear()}/${pad2(d.getMonth() + 1)}/${pad2(d.getDate())}`;
+      return d ? (d.getFullYear() + '/' + pad2(d.getMonth() + 1) + '/' + pad2(d.getDate())) : valueOf(value);
     }
 
     function normalizeItem(row) {
@@ -799,12 +703,8 @@
       const hasKian3 = !!valueOf(item.kian3);
       const completeCount = [hasZoom, hasHp, hasKian1, hasKian2, hasKian3].filter(Boolean).length;
 
-      if (completeCount === 5) {
-        return { label: '完了', className: 'b-done' };
-      }
-      if (completeCount >= 2) {
-        return { label: '進行中', className: 'b-open' };
-      }
+      if (completeCount === 5) return { label: '完了', className: 'b-done' };
+      if (completeCount >= 2) return { label: '進行中', className: 'b-open' };
       return { label: '要対応', className: 'b-warn' };
     }
 
@@ -852,16 +752,16 @@
         </div>
       `;
 
-      $('sidebarAlertCount').textContent = events.filter(v => {
-        return !valueOf(v.zoomId) || !valueOf(v.hpUrl) || !valueOf(v.kian1) || !valueOf(v.kian2) || !valueOf(v.kian3);
-      }).length;
+      $('sidebarAlertCount').textContent = events.filter(v =>
+        !valueOf(v.zoomId) || !valueOf(v.hpUrl) || !valueOf(v.kian1) || !valueOf(v.kian2) || !valueOf(v.kian3)
+      ).length;
     }
 
     function renderTable() {
       const body = $('eventTableBody');
 
       if (!filteredEvents.length) {
-        body.innerHTML = `<tr><td colspan="9" class="empty">該当データがありません</td></tr>`;
+        body.innerHTML = '<tr><td colspan="9" class="empty">該当データがありません</td></tr>';
         return;
       }
 
@@ -892,21 +792,15 @@
       const list = [];
 
       events.forEach(item => {
-        if (!valueOf(item.zoomId)) {
-          list.push({ title: `${item.title}：Zoom設定`, note: `${formatDate(item.date)} / ${item.speaker}` });
-        }
-        if (!valueOf(item.hpUrl)) {
-          list.push({ title: `${item.title}：HP掲載準備`, note: `${formatDate(item.date)} / ${item.cohost}` });
-        }
-        if (!valueOf(item.kian1)) {
-          list.push({ title: `${item.title}：起案1未登録`, note: `${formatDate(item.date)} / 起案1開催DATE_KIAN_1` });
-        }
+        if (!valueOf(item.zoomId)) list.push({ title: item.title + '：Zoom設定', note: formatDate(item.date) + ' / ' + item.speaker });
+        if (!valueOf(item.hpUrl)) list.push({ title: item.title + '：HP掲載準備', note: formatDate(item.date) + ' / ' + item.cohost });
+        if (!valueOf(item.kian1)) list.push({ title: item.title + '：起案1未登録', note: formatDate(item.date) + ' / 起案1開催DATE_KIAN_1' });
       });
 
       const target = $('todoList');
 
       if (!list.length) {
-        target.innerHTML = `<div class="empty">本日の要対応はありません</div>`;
+        target.innerHTML = '<div class="empty">本日の要対応はありません</div>';
         return;
       }
 
@@ -928,12 +822,7 @@
         { key: 'done', title: '完了' }
       ];
 
-      const buckets = {
-        planning: [],
-        publicity: [],
-        materials: [],
-        done: []
-      };
+      const buckets = { planning: [], publicity: [], materials: [], done: [] };
 
       events.forEach(item => {
         const doneCount = [
@@ -944,15 +833,10 @@
           valueOf(item.kian3)
         ].filter(Boolean).length;
 
-        if (doneCount === 5) {
-          buckets.done.push(item);
-        } else if (!valueOf(item.kian1) || !valueOf(item.title)) {
-          buckets.planning.push(item);
-        } else if (!valueOf(item.hpUrl) || !valueOf(item.zoomId)) {
-          buckets.publicity.push(item);
-        } else {
-          buckets.materials.push(item);
-        }
+        if (doneCount === 5) buckets.done.push(item);
+        else if (!valueOf(item.kian1) || !valueOf(item.title)) buckets.planning.push(item);
+        else if (!valueOf(item.hpUrl) || !valueOf(item.zoomId)) buckets.publicity.push(item);
+        else buckets.materials.push(item);
       });
 
       $('boardGrid').innerHTML = cols.map(col => `
@@ -966,7 +850,7 @@
                   <span>${escapeHtml(formatDate(item.date))} / ${escapeHtml(item.speaker || '講師未設定')}</span>
                 </div>
               `).join('')
-              : `<div class="empty">該当なし</div>`
+              : '<div class="empty">該当なし</div>'
           }
         </div>
       `).join('');
@@ -977,13 +861,7 @@
 
       filteredEvents = events.filter(item => {
         if (!q) return true;
-        const target = [
-          item.id,
-          item.title,
-          item.speaker,
-          item.cohost,
-          item.subject
-        ].join(' ').toLowerCase();
+        const target = [item.id, item.title, item.speaker, item.cohost, item.subject].join(' ').toLowerCase();
         return target.includes(q);
       });
 
@@ -1015,32 +893,17 @@
 
     function openDialog(item) {
       resetForm();
-
       if (item) {
         editingId = item.id;
         fillForm(item);
         $('dialogTitle').textContent = '研修会を編集';
       }
-
-      const dialog = $('eventDialog');
-      if (typeof dialog.showModal === 'function') {
-        dialog.showModal();
-      } else {
-        $('dialogFallbackPanel').appendChild(dialog);
-        $('dialogFallback').classList.add('show');
-        $('dialogFallback').setAttribute('aria-hidden', 'false');
-        dialog.setAttribute('open', 'open');
-      }
+      $('eventDialog').showModal();
     }
 
     function closeDialog() {
       const dialog = $('eventDialog');
-      if (typeof dialog.close === 'function' && dialog.open) {
-        dialog.close();
-      }
-      $('dialogFallback').classList.remove('show');
-      $('dialogFallback').setAttribute('aria-hidden', 'true');
-      document.body.appendChild(dialog);
+      if (dialog.open) dialog.close();
     }
 
     function collectFormData() {
@@ -1079,39 +942,20 @@
       setBusy(true);
       setStatus('データを読み込んでいます…');
 
-      if (typeof google === 'undefined' || !google.script || !google.script.run) {
-        headers = Object.keys(DEMO_DATA[0]);
-        events = DEMO_DATA.map(normalizeItem);
-        filteredEvents = [...events];
-        syncScreen();
-        setBusy(false);
-        setStatus('デモデータを表示しています。', 'success');
-        return;
-      }
-
       google.script.run
         .withSuccessHandler(function(result) {
           headers = Array.isArray(result && result.headers) ? result.headers : [];
           missingFields = Array.isArray(result && result.missingFields) ? result.missingFields : [];
           const rows = Array.isArray(result && result.items) ? result.items : [];
           events = rows.map(normalizeItem);
-          filteredEvents = [...events];
+          filteredEvents = events.slice();
           syncScreen();
-
-          if (missingFields.length) {
-            setStatus('一部の列が見つからないため、対応項目のみ表示しています。', 'error');
-          } else {
-            setStatus('データを読み込みました。', 'success');
-          }
-
           setBusy(false);
+          setStatus(missingFields.length ? '一部の列が見つからないため、対応項目のみ表示しています。' : 'データを読み込みました。', missingFields.length ? 'error' : 'success');
         })
         .withFailureHandler(function(err) {
-          events = DEMO_DATA.map(normalizeItem);
-          filteredEvents = [...events];
-          syncScreen();
           setBusy(false);
-          setStatus('読込エラーのためデモデータを表示しています: ' + (err && err.message ? err.message : err), 'error');
+          setStatus('読込に失敗しました: ' + (err && err.message ? err.message : err), 'error');
         })
         .getEvents();
     }
@@ -1120,26 +964,11 @@
       setBusy(true);
       setStatus('保存しています…');
 
-      if (typeof google === 'undefined' || !google.script || !google.script.run) {
-        const idx = events.findIndex(v => v.id === item.id);
-        if (idx >= 0) {
-          events[idx] = item;
-        } else {
-          events.unshift(item);
-        }
-        filteredEvents = [...events];
-        syncScreen();
-        closeDialog();
-        setBusy(false);
-        setStatus('デモ保存が完了しました。', 'success');
-        return;
-      }
-
       google.script.run
         .withSuccessHandler(function(result) {
           const rows = Array.isArray(result && result.items) ? result.items : [];
           events = rows.map(normalizeItem);
-          filteredEvents = [...events];
+          filteredEvents = events.slice();
           syncScreen();
           closeDialog();
           setBusy(false);
@@ -1186,10 +1015,6 @@
       $('eventForm').addEventListener('submit', handleSubmit);
       $('cancelButton').addEventListener('click', closeDialog);
       $('closeDialogButton').addEventListener('click', closeDialog);
-      $('dialogFallback').addEventListener('click', function(e) {
-        if (e.target === $('dialogFallback')) closeDialog();
-      });
-
       loadEvents();
     }
 
