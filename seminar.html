@@ -1,51 +1,464 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base target="_top">
-    <title>研修会準備プロジェクト管理デモ</title>
-    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
-    <?!= include('Styles'); ?>
-  </head>
-  <body>
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="brand">
-          <div class="brand-mark">研</div>
-          <div>
-            <strong>研修会PM</strong>
-            <small>Google Sheets Demo</small>
-          </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>研修会準備プロジェクト管理デモ</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f6f2;
+      --surface: #fbfbf9;
+      --surface-2: #f2eee8;
+      --text: #28251d;
+      --muted: #76736d;
+      --line: #d7d3cc;
+      --primary: #0d6b73;
+      --primary-soft: #dce9e8;
+      --warning: #a56a16;
+      --success: #486d3a;
+      --shadow: 0 10px 28px rgba(35, 28, 20, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Satoshi', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: #1f2423;
+      color: #eef2f1;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #69aaa5, #16666e);
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .brand small {
+      display: block;
+      color: #b8c5c1;
+      margin-top: 4px;
+    }
+
+    .nav a {
+      display: block;
+      color: #d8e1de;
+      text-decoration: none;
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      background: transparent;
+    }
+
+    .nav a.active,
+    .nav a:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .sidebar-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .sidebar-card .value {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+
+    .main {
+      padding: 28px;
+      display: grid;
+      gap: 20px;
+    }
+
+    .hero,
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      max-width: 68ch;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn.primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn.secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .kpi {
+      padding: 18px;
+    }
+
+    .kpi .label {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .kpi .value {
+      font-size: 32px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .kpi .meta {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap: 20px;
+    }
+
+    .card {
+      padding: 20px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    input[type="search"],
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    input:not([type]) {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: white;
+      color: var(--text);
+    }
+
+    .search-box {
+      width: min(360px, 100%);
+    }
+
+    .table-wrap {
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid #ebe7e0;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .b-open { background: #e3f0ef; color: #165d63; }
+    .b-warn { background: #f8eddc; color: #9a630f; }
+    .b-done { background: #e3eedf; color: #486d3a; }
+
+    .todo-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .todo {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--surface-2);
+    }
+
+    .todo strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .todo small {
+      color: var(--muted);
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .board-col {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      min-height: 220px;
+    }
+
+    .board-col h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .task {
+      background: white;
+      border: 1px solid #ebe7e0;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .task strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .task span {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    dialog {
+      border: none;
+      border-radius: 22px;
+      padding: 0;
+      width: min(920px, calc(100vw - 24px));
+      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+    }
+
+    .modal {
+      padding: 24px;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .icon-btn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .form-grid label {
+      display: grid;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 24px;
+    }
+
+    @media (max-width: 1100px) {
+      .kpis { grid-template-columns: 1fr 1fr; }
+      .layout { grid-template-columns: 1fr; }
+      .board { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 820px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .hero { flex-direction: column; }
+      .board,
+      .form-grid,
+      .kpis { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">研</div>
+        <div>
+          <div><strong>研修会PM</strong></div>
+          <small>Standalone Demo</small>
         </div>
-        <nav>
-          <a class="active" href="#">ダッシュボード</a>
-          <a href="#list">研修会一覧</a>
-          <a href="#new">新規登録</a>
-        </nav>
-      </aside>
+      </div>
 
-      <main class="main">
-        <header class="hero">
-          <div>
-            <h1>研修会準備プロジェクト管理デモ</h1>
-            <p>Google スプレッドシートと接続し、一覧取得・登録・更新を行う Web アプリの初版です。</p>
-          </div>
-          <div class="hero-actions">
-            <button class="btn secondary" onclick="app.reload()">再読込</button>
-            <button class="btn primary" onclick="app.openCreateModal()">新規研修会登録</button>
-          </div>
-        </header>
+      <nav class="nav">
+        <a href="#" class="active">ダッシュボード</a>
+        <a href="#events">研修会一覧</a>
+        <a href="#board">準備ボード</a>
+      </nav>
 
-        <section class="notice hidden" id="missingFieldsBox"></section>
+      <div class="sidebar-card">
+        <div style="font-size:13px;color:#bfd0cb;">本日の要確認</div>
+        <div class="value" id="sidebarAlertCount">0</div>
+        <div style="font-size:13px;color:#bfd0cb;">Zoom未設定・HP未設定・起案未完了の件数</div>
+      </div>
+    </aside>
 
-        <section class="kpis" id="kpis"></section>
+    <main class="main">
+      <section class="hero">
+        <div>
+          <h1>研修会準備プロジェクト管理デモ</h1>
+          <p>この standalone HTML 版は、ブラウザだけで一覧表示・検索・新規登録・編集を確認するためのデモです。保存先はブラウザ内メモリなので、ページ再読み込みで初期データに戻ります。</p>
+        </div>
+        <div class="actions">
+          <button class="btn secondary" onclick="resetDemo()">初期データに戻す</button>
+          <button class="btn primary" onclick="openCreateModal()">新規研修会登録</button>
+        </div>
+      </section>
 
-        <section class="panel">
-          <div class="panel-head">
+      <section class="kpis" id="kpiGrid"></section>
+
+      <section class="layout">
+        <div class="card" id="events">
+          <div class="section-head">
             <h2>研修会一覧</h2>
-            <input id="searchInput" type="search" placeholder="テーマ・講師で検索" oninput="app.filterList()">
+            <div class="muted">テーマ・講師・共催で検索</div>
           </div>
+
+          <div class="toolbar">
+            <div class="search-box">
+              <input id="searchInput" type="search" placeholder="例：倫理、山田、共催" oninput="filterEvents()">
+            </div>
+          </div>
+
           <div class="table-wrap">
             <table>
               <thead>
@@ -56,52 +469,390 @@
                   <th>講師</th>
                   <th>共催</th>
                   <th>Zoom</th>
+                  <th>HP</th>
+                  <th>状態</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody id="eventTableBody"></tbody>
             </table>
           </div>
-        </section>
-      </main>
-    </div>
+        </div>
 
-    <dialog id="eventModal">
-      <form method="dialog" class="modal-form" onsubmit="return false;">
-        <div class="modal-head">
-          <h3 id="modalTitle">新規研修会登録</h3>
-          <button class="icon-btn" onclick="app.closeModal()" type="button">×</button>
+        <div class="card">
+          <div class="section-head">
+            <h2>今日やること</h2>
+            <div class="muted">自動抽出</div>
+          </div>
+          <div class="todo-list" id="todoList"></div>
         </div>
-        <div class="form-grid">
-          <label>起案行No<input name="起案行No" required></label>
-          <label>年度<input name="年度_YEAR_1"></label>
-          <label>開催日<input name="開催日_DATE_1"></label>
-          <label>テーマ<input name="テーマ(標題)_TITLE" required></label>
-          <label>担当講師<input name="担当講師_SPEAKER"></label>
-          <label>共催<input name="共催_COHOST_1"></label>
-          <label>対象<input name="対象_SUBJECT_1"></label>
-          <label>HP URL<input name="HP_URL_url_1"></label>
-          <label>Zoom ID<input name="Zoom_ID_WEBINER_ID"></label>
-          <label>Zoomパスコード<input name="Zoom_パスコード_PASSCODE"></label>
-          <label>起案1<input name="起案1開催DATE_KIAN_1"></label>
-          <label>起案2<input name="起案2資料_DATE_KIAN_2"></label>
-          <label>起案3<input name="起案3受講証修了証_DATE_KIAN_3"></label>
-        </div>
-        <div class="modal-actions">
-          <button class="btn secondary" type="button" onclick="app.closeModal()">閉じる</button>
-          <button class="btn primary" type="button" onclick="app.submitForm()">保存</button>
-        </div>
-      </form>
-    </dialog>
+      </section>
 
-    <script>
-      const INITIAL_STATE = {
-        items: [],
-        filtered: [],
-        headers: [],
-        editing: false
+      <section class="card" id="board">
+        <div class="section-head">
+          <h2>準備ボード</h2>
+          <div class="muted">工程別の見える化</div>
+        </div>
+        <div class="board" id="boardGrid"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="eventDialog">
+    <form class="modal" method="dialog" onsubmit="return false;">
+      <div class="modal-head">
+        <h3 id="dialogTitle">新規研修会登録</h3>
+        <button type="button" class="icon-btn" onclick="closeDialog()">×</button>
+      </div>
+
+      <div class="form-grid">
+        <label>起案行No<input name="id" required></label>
+        <label>年度<input name="year"></label>
+        <label>開催日<input name="date" type="date"></label>
+        <label>テーマ<input name="title" required></label>
+        <label>担当講師<input name="speaker"></label>
+        <label>共催<input name="cohost"></label>
+        <label>対象<input name="subject"></label>
+        <label>HP URL<input name="hpUrl"></label>
+        <label>Zoom ID<input name="zoomId"></label>
+        <label>Zoomパスコード<input name="passcode"></label>
+        <label>起案1<input name="kian1" type="date"></label>
+        <label>起案2<input name="kian2" type="date"></label>
+        <label>起案3<input name="kian3" type="date"></label>
+        <label>状態
+          <input name="status" placeholder="起案中 / 公開中 / 準備完了 / 開催済">
+        </label>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn secondary" onclick="closeDialog()">閉じる</button>
+        <button type="button" class="btn primary" onclick="saveEvent()">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    const seedEvents = [
+      {
+        id: "101",
+        year: "2026",
+        date: "2026-05-24",
+        title: "臨床研究の基本と倫理審査",
+        speaker: "山田 太郎",
+        cohost: "院内共催",
+        subject: "全職員",
+        hpUrl: "",
+        zoomId: "",
+        passcode: "",
+        kian1: "2026-05-01",
+        kian2: "2026-05-15",
+        kian3: "2026-05-20",
+        status: "開催直前"
+      },
+      {
+        id: "102",
+        year: "2026",
+        date: "2026-05-28",
+        title: "研究計画書作成の要点",
+        speaker: "佐藤 花子",
+        cohost: "外部共催A",
+        subject: "研究者",
+        hpUrl: "https://example.org/event/102",
+        zoomId: "835-221-999",
+        passcode: "",
+        kian1: "2026-05-03",
+        kian2: "2026-05-18",
+        kian3: "",
+        status: "公開中"
+      },
+      {
+        id: "103",
+        year: "2026",
+        date: "2026-06-03",
+        title: "モニタリング対応の基礎",
+        speaker: "外部講師A",
+        cohost: "",
+        subject: "CRC・事務",
+        hpUrl: "",
+        zoomId: "",
+        passcode: "",
+        kian1: "",
+        kian2: "",
+        kian3: "",
+        status: "起案中"
+      },
+      {
+        id: "104",
+        year: "2026",
+        date: "2026-06-10",
+        title: "研究支援体制と役割分担",
+        speaker: "事務局",
+        cohost: "院内共催",
+        subject: "支援部門",
+        hpUrl: "https://example.org/event/104",
+        zoomId: "888-123-456",
+        passcode: "445566",
+        kian1: "2026-05-12",
+        kian2: "2026-05-22",
+        kian3: "2026-06-01",
+        status: "準備完了"
+      },
+      {
+        id: "105",
+        year: "2026",
+        date: "2026-05-20",
+        title: "倫理審査委員会の基本",
+        speaker: "鈴木 一郎",
+        cohost: "",
+        subject: "初学者",
+        hpUrl: "https://example.org/event/105",
+        zoomId: "812-000-321",
+        passcode: "123123",
+        kian1: "2026-04-22",
+        kian2: "2026-05-02",
+        kian3: "",
+        status: "開催済"
+      }
+    ];
+
+    let events = JSON.parse(JSON.stringify(seedEvents));
+    let filteredEvents = [...events];
+    let editingId = null;
+
+    function formatDate(value) {
+      if (!value) return "";
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return value;
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}/${m}/${day}`;
+    }
+
+    function badgeClass(status) {
+      if (status === "準備完了" || status === "開催済") return "b-done";
+      if (status === "開催直前" || status === "公開中") return "b-warn";
+      return "b-open";
+    }
+
+    function renderKpis() {
+      const total = events.length;
+      const zoomMissing = events.filter(e => !String(e.zoomId || "").trim()).length;
+      const hpMissing = events.filter(e => !String(e.hpUrl || "").trim()).length;
+      const completed = events.filter(e => e.status === "準備完了" || e.status === "開催済").length;
+
+      const data = [
+        { label: "登録件数", value: total, meta: "表示中の研修会データ総数" },
+        { label: "Zoom未設定", value: zoomMissing, meta: "Zoom ID が未入力の件数" },
+        { label: "HP未設定", value: hpMissing, meta: "HP URL が未入力の件数" },
+        { label: "完了・開催済", value: completed, meta: "準備完了または開催済の件数" }
+      ];
+
+      document.getElementById("kpiGrid").innerHTML = data.map(item => `
+        <article class="card kpi">
+          <div class="label">${item.label}</div>
+          <div class="value">${item.value}</div>
+          <div class="meta">${item.meta}</div>
+        </article>
+      `).join("");
+
+      document.getElementById("sidebarAlertCount").textContent = zoomMissing + hpMissing;
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById("eventTableBody");
+      if (!filteredEvents.length) {
+        tbody.innerHTML = `<tr><td colspan="9" class="empty">該当する研修会がありません。</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filteredEvents.map(item => `
+        <tr>
+          <td>${escapeHtml(item.id)}</td>
+          <td>${escapeHtml(formatDate(item.date))}</td>
+          <td>${escapeHtml(item.title)}</td>
+          <td>${escapeHtml(item.speaker)}</td>
+          <td>${escapeHtml(item.cohost || "-")}</td>
+          <td>${item.zoomId ? '<span class="badge b-done">設定済</span>' : '<span class="badge b-open">未設定</span>'}</td>
+          <td>${item.hpUrl ? '<span class="badge b-done">設定済</span>' : '<span class="badge b-open">未設定</span>'}</td>
+          <td><span class="badge ${badgeClass(item.status)}">${escapeHtml(item.status || "未設定")}</span></td>
+          <td><button class="btn secondary" onclick="openEditModal('${escapeAttr(item.id)}')">編集</button></td>
+        </tr>
+      `).join("");
+    }
+
+    function renderTodos() {
+      const todoList = document.getElementById("todoList");
+      const items = [];
+
+      events.forEach(e => {
+        if (!e.zoomId) items.push({ title: "Zoom URL/ID設定", sub: e.title, badge: "未設定", cls: "b-open" });
+        if (!e.hpUrl) items.push({ title: "HP掲載準備", sub: e.title, badge: "未設定", cls: "b-open" });
+        if (!e.kian1) items.push({ title: "起案1対応", sub: e.title, badge: "未着手", cls: "b-warn" });
+      });
+
+      const view = items.slice(0, 5);
+      if (!view.length) {
+        todoList.innerHTML = `<div class="empty">今日の要対応はありません。</div>`;
+        return;
+      }
+
+      todoList.innerHTML = view.map(item => `
+        <div class="todo">
+          <div>
+            <strong>${escapeHtml(item.title)}</strong>
+            <small>${escapeHtml(item.sub)}</small>
+          </div>
+          <span class="badge ${item.cls}">${escapeHtml(item.badge)}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderBoard() {
+      const stages = [
+        { title: "起案・依頼", match: e => e.status === "起案中" },
+        { title: "公開準備", match: e => e.status === "公開中" },
+        { title: "開催直前", match: e => e.status === "開催直前" },
+        { title: "完了・開催済", match: e => e.status === "準備完了" || e.status === "開催済" }
+      ];
+
+      const board = document.getElementById("boardGrid");
+      board.innerHTML = stages.map(stage => {
+        const list = events.filter(stage.match);
+        return `
+          <div class="board-col">
+            <h3>${stage.title}</h3>
+            ${
+              list.length
+                ? list.map(item => `
+                  <div class="task">
+                    <strong>${escapeHtml(item.title)}</strong>
+                    <span>${escapeHtml(formatDate(item.date))} / ${escapeHtml(item.speaker || "講師未設定")}</span>
+                  </div>
+                `).join("")
+                : `<div class="empty">該当なし</div>`
+            }
+          </div>
+        `;
+      }).join("");
+    }
+
+    function filterEvents() {
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      filteredEvents = events.filter(item => {
+        const text = [item.id, item.title, item.speaker, item.cohost, item.subject, item.status].join(" ").toLowerCase();
+        return text.includes(q);
+      });
+      renderTable();
+    }
+
+    function openCreateModal() {
+      editingId = null;
+      document.getElementById("dialogTitle").textContent = "新規研修会登録";
+      const form = document.querySelector("#eventDialog form");
+      form.reset();
+      document.getElementById("eventDialog").showModal();
+    }
+
+    function openEditModal(id) {
+      const item = events.find(e => e.id === id);
+      if (!item) return;
+
+      editingId = id;
+      document.getElementById("dialogTitle").textContent = "研修会編集";
+      const form = document.querySelector("#eventDialog form");
+
+      form.elements["id"].value = item.id || "";
+      form.elements["year"].value = item.year || "";
+      form.elements["date"].value = item.date || "";
+      form.elements["title"].value = item.title || "";
+      form.elements["speaker"].value = item.speaker || "";
+      form.elements["cohost"].value = item.cohost || "";
+      form.elements["subject"].value = item.subject || "";
+      form.elements["hpUrl"].value = item.hpUrl || "";
+      form.elements["zoomId"].value = item.zoomId || "";
+      form.elements["passcode"].value = item.passcode || "";
+      form.elements["kian1"].value = item.kian1 || "";
+      form.elements["kian2"].value = item.kian2 || "";
+      form.elements["kian3"].value = item.kian3 || "";
+      form.elements["status"].value = item.status || "";
+
+      document.getElementById("eventDialog").showModal();
+    }
+
+    function closeDialog() {
+      document.getElementById("eventDialog").close();
+    }
+
+    function saveEvent() {
+      const form = document.querySelector("#eventDialog form");
+      const data = {
+        id: form.elements["id"].value.trim(),
+        year: form.elements["year"].value.trim(),
+        date: form.elements["date"].value,
+        title: form.elements["title"].value.trim(),
+        speaker: form.elements["speaker"].value.trim(),
+        cohost: form.elements["cohost"].value.trim(),
+        subject: form.elements["subject"].value.trim(),
+        hpUrl: form.elements["hpUrl"].value.trim(),
+        zoomId: form.elements["zoomId"].value.trim(),
+        passcode: form.elements["passcode"].value.trim(),
+        kian1: form.elements["kian1"].value,
+        kian2: form.elements["kian2"].value,
+        kian3: form.elements["kian3"].value,
+        status: form.elements["status"].value.trim() || "起案中"
       };
-    </script>
-    <?!= include('Scripts'); ?>
-  </body>
+
+      if (!data.id || !data.title) {
+        alert("起案行No と テーマは必須です。");
+        return;
+      }
+
+      if (editingId) {
+        const idx = events.findIndex(e => e.id === editingId);
+        if (idx !== -1) events[idx] = data;
+      } else {
+        const exists = events.some(e => e.id === data.id);
+        if (exists) {
+          alert("同じ起案行Noが既にあります。");
+          return;
+        }
+        events.unshift(data);
+      }
+
+      filteredEvents = [...events];
+      closeDialog();
+      renderAll();
+    }
+
+    function resetDemo() {
+      events = JSON.parse(JSON.stringify(seedEvents));
+      filteredEvents = [...events];
+      document.getElementById("searchInput").value = "";
+      renderAll();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function escapeAttr(value) {
+      return String(value ?? "").replace(/'/g, "\\'");
+    }
+
+    function renderAll() {
+      renderKpis();
+      renderTable();
+      renderTodos();
+      renderBoard();
+    }
+
+    renderAll();
+  </script>
+</body>
 </html>
