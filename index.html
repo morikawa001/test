@@ -480,7 +480,7 @@
         <div class="brand-mark">研</div>
         <div>
           <div><strong>研修会PM</strong></div>
-          <small id="envLabel">Loading...</small>
+          <small>Google Sheets Connected</small>
         </div>
       </div>
 
@@ -603,49 +603,8 @@
     let events = [];
     let filteredEvents = [];
     let editingId = null;
-    let headers = [];
     let missingFields = [];
     let isBusy = false;
-
-    const DEMO_DATA = [
-      {
-        '起案行No': '101',
-        '年度_YEAR_1': '2026',
-        '開催日_DATE_1': '2026-06-12',
-        'テーマ(標題)_TITLE': '臨床研究の基礎と倫理審査',
-        '担当講師_SPEAKER': '山田 太郎',
-        '共催_COHOST_1': '教育研修部',
-        '対象_SUBJECT_1': '医師・CRC',
-        'HP_URL_url_1': '',
-        'Zoom_ID_WEBINER_ID': '',
-        'Zoom_パスコード_PASSCODE': '',
-        '起案1開催DATE_KIAN_1': '',
-        '起案2資料_DATE_KIAN_2': '',
-        '起案3受講証修了証_DATE_KIAN_3': ''
-      },
-      {
-        '起案行No': '102',
-        '年度_YEAR_1': '2026',
-        '開催日_DATE_1': '2026-05-29',
-        'テーマ(標題)_TITLE': '研究計画書作成の実務',
-        '担当講師_SPEAKER': '佐藤 花子',
-        '共催_COHOST_1': '臨床研究支援室',
-        '対象_SUBJECT_1': '院内研究者',
-        'HP_URL_url_1': 'https://example.com',
-        'Zoom_ID_WEBINER_ID': '123-456-789',
-        'Zoom_パスコード_PASSCODE': 'abcd',
-        '起案1開催DATE_KIAN_1': '2026-05-01',
-        '起案2資料_DATE_KIAN_2': '2026-05-15',
-        '起案3受講証修了証_DATE_KIAN_3': '2026-05-20'
-      }
-    ];
-
-    function hasGasApi() {
-      return typeof google !== 'undefined' &&
-             google &&
-             google.script &&
-             google.script.run;
-    }
 
     function $(id) {
       return document.getElementById(id);
@@ -725,7 +684,7 @@
       };
     }
 
-    function denormalizeItem(item) {
+    function toServerPayload(item) {
       return {
         '起案行No': valueOf(item.id),
         '年度_YEAR_1': valueOf(item.year),
@@ -916,22 +875,18 @@
 
     function openDialog(item) {
       resetForm();
-
       if (item) {
         editingId = item.id;
         fillForm(item);
         $('dialogTitle').textContent = '研修会を編集';
       }
-
-      const modal = $('eventDialog');
-      modal.style.display = 'flex';
-      modal.setAttribute('aria-hidden', 'false');
+      $('eventDialog').style.display = 'flex';
+      $('eventDialog').setAttribute('aria-hidden', 'false');
     }
 
     function closeDialog() {
-      const modal = $('eventDialog');
-      modal.style.display = 'none';
-      modal.setAttribute('aria-hidden', 'true');
+      $('eventDialog').style.display = 'none';
+      $('eventDialog').setAttribute('aria-hidden', 'true');
     }
 
     function collectFormData() {
@@ -966,79 +921,53 @@
       renderBoard();
     }
 
-    function loadDemoEvents() {
-      headers = Object.keys(DEMO_DATA[0]);
-      events = DEMO_DATA.map(normalizeItem);
-      filteredEvents = events.slice();
-      syncScreen();
-      $('envLabel').textContent = 'Demo Mode';
-      setStatus('デモモードで表示中です。Apps Script から開くとスプレッドシート連携になります。', 'error');
-    }
-
     function loadEvents() {
       setBusy(true);
       setStatus('データを読み込んでいます…');
 
-      if (!hasGasApi()) {
-        setBusy(false);
-        loadDemoEvents();
-        return;
-      }
-
       google.script.run
         .withSuccessHandler(function(result) {
-          headers = Array.isArray(result && result.headers) ? result.headers : [];
-          missingFields = Array.isArray(result && result.missingFields) ? result.missingFields : [];
           const rows = Array.isArray(result && result.items) ? result.items : [];
+          missingFields = Array.isArray(result && result.missingFields) ? result.missingFields : [];
           events = rows.map(normalizeItem);
           filteredEvents = events.slice();
           syncScreen();
-          $('envLabel').textContent = 'Google Sheets Connected';
           setBusy(false);
-          setStatus(
-            missingFields.length ? '一部の列が見つからないため、対応項目のみ表示しています。' : 'データを読み込みました。',
-            missingFields.length ? 'error' : 'success'
-          );
+
+          if (missingFields.length) {
+            setStatus('一部の必須列が見つかりません: ' + missingFields.join(', '), 'error');
+          } else {
+            setStatus('データを読み込みました。', 'success');
+          }
         })
         .withFailureHandler(function(err) {
           setBusy(false);
           setStatus('読込に失敗しました: ' + (err && err.message ? err.message : err), 'error');
         })
-        .getEvents();
+        .getInitialData();
     }
 
     function saveEventToServer(item) {
       setBusy(true);
       setStatus('保存しています…');
 
-      if (!hasGasApi()) {
-        const idx = events.findIndex(v => v.id === item.id);
-        if (idx >= 0) events[idx] = item;
-        else events.unshift(item);
-
-        filteredEvents = events.slice();
-        syncScreen();
-        closeDialog();
-        setBusy(false);
-        setStatus('デモモードのためブラウザ内だけで保存しました。', 'success');
-        return;
-      }
-
-      google.script.run
+      const payload = toServerPayload(item);
+      const runner = google.script.run
         .withSuccessHandler(function(result) {
-          const rows = Array.isArray(result && result.items) ? result.items : [];
-          events = rows.map(normalizeItem);
-          filteredEvents = events.slice();
-          syncScreen();
           closeDialog();
-          setBusy(false);
-          setStatus('保存しました。', 'success');
+          setStatus(result && result.message ? result.message : '保存しました。', 'success');
+          loadEvents();
         })
         .withFailureHandler(function(err) {
           setBusy(false);
           setStatus('保存に失敗しました: ' + (err && err.message ? err.message : err), 'error');
-        })
-        .saveEvent(denormalizeItem(item));
+        });
+
+      if (editingId) {
+        runner.updateEvent(payload);
+      } else {
+        runner.createEvent(payload);
+      }
     }
 
     function handleTableClick(e) {
@@ -1056,11 +985,6 @@
 
       if (error) {
         setStatus(error, 'error');
-        return;
-      }
-
-      if (editingId && editingId !== item.id && events.some(v => v.id === item.id)) {
-        setStatus('変更後の起案行No は既存データと重複しています。', 'error');
         return;
       }
 
