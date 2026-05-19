@@ -357,17 +357,28 @@
       color: var(--muted);
     }
 
-    dialog {
-      border: none;
-      border-radius: 22px;
-      padding: 0;
-      width: min(920px, calc(100vw - 24px));
-      max-width: 920px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 24, 23, 0.42);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 9999;
     }
 
-    dialog::backdrop {
-      background: rgba(20, 24, 23, 0.42);
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-panel {
+      width: min(920px, calc(100vw - 24px));
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+      background: var(--surface);
+      border-radius: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
     }
 
     .modal { padding: 24px; }
@@ -559,37 +570,39 @@
     </main>
   </div>
 
-  <dialog id="eventDialog">
-    <form class="modal" id="eventForm" novalidate>
-      <div class="modal-head">
-        <h3 id="dialogTitle">新規研修会登録</h3>
-        <button type="button" class="icon-btn" id="closeDialogButton" aria-label="閉じる">×</button>
-      </div>
+  <div id="eventDialog" class="modal-overlay" aria-hidden="true">
+    <div class="modal-panel">
+      <form class="modal" id="eventForm" novalidate>
+        <div class="modal-head">
+          <h3 id="dialogTitle">新規研修会登録</h3>
+          <button type="button" class="icon-btn" id="closeDialogButton" aria-label="閉じる">×</button>
+        </div>
 
-      <div class="hint">起案行No と テーマは必須です。編集時は同じ起案行Noの行を更新します。</div>
+        <div class="hint">起案行No と テーマは必須です。編集時は同じ起案行Noの行を更新します。</div>
 
-      <div class="form-grid">
-        <label>起案行No<input name="id" required autocomplete="off"></label>
-        <label>年度<input name="year" autocomplete="off"></label>
-        <label>開催日<input name="date" type="date"></label>
-        <label>テーマ<input name="title" required autocomplete="off"></label>
-        <label>担当講師<input name="speaker" autocomplete="off"></label>
-        <label>共催<input name="cohost" autocomplete="off"></label>
-        <label class="full">対象<input name="subject" autocomplete="off"></label>
-        <label class="full">HP URL<input name="hpUrl" type="text" autocomplete="off"></label>
-        <label>Zoom ID<input name="zoomId" autocomplete="off"></label>
-        <label>Zoomパスコード<input name="passcode" autocomplete="off"></label>
-        <label>起案1<input name="kian1" type="date"></label>
-        <label>起案2<input name="kian2" type="date"></label>
-        <label>起案3<input name="kian3" type="date"></label>
-      </div>
+        <div class="form-grid">
+          <label>起案行No<input name="id" required autocomplete="off"></label>
+          <label>年度<input name="year" autocomplete="off"></label>
+          <label>開催日<input name="date" type="date"></label>
+          <label>テーマ<input name="title" required autocomplete="off"></label>
+          <label>担当講師<input name="speaker" autocomplete="off"></label>
+          <label>共催<input name="cohost" autocomplete="off"></label>
+          <label class="full">対象<input name="subject" autocomplete="off"></label>
+          <label class="full">HP URL<input name="hpUrl" type="text" autocomplete="off"></label>
+          <label>Zoom ID<input name="zoomId" autocomplete="off"></label>
+          <label>Zoomパスコード<input name="passcode" autocomplete="off"></label>
+          <label>起案1<input name="kian1" type="date"></label>
+          <label>起案2<input name="kian2" type="date"></label>
+          <label>起案3<input name="kian3" type="date"></label>
+        </div>
 
-      <div class="modal-actions">
-        <button type="button" class="btn secondary" id="cancelButton">閉じる</button>
-        <button type="submit" class="btn primary" id="saveButton">保存</button>
-      </div>
-    </form>
-  </dialog>
+        <div class="modal-actions">
+          <button type="button" class="btn secondary" id="cancelButton">閉じる</button>
+          <button type="submit" class="btn primary" id="saveButton">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script>
     let events = [];
@@ -730,26 +743,10 @@
       const completed = events.filter(v => getStatusInfo(v).label === '完了').length;
 
       $('kpiGrid').innerHTML = `
-        <div class="card kpi">
-          <div class="label">総研修会数</div>
-          <div class="value">${total}</div>
-          <div class="meta">登録済み案件数</div>
-        </div>
-        <div class="card kpi">
-          <div class="label">Zoom未設定</div>
-          <div class="value">${noZoom}</div>
-          <div class="meta">ID未登録</div>
-        </div>
-        <div class="card kpi">
-          <div class="label">HP未設定</div>
-          <div class="value">${noHp}</div>
-          <div class="meta">URL未登録</div>
-        </div>
-        <div class="card kpi">
-          <div class="label">準備完了</div>
-          <div class="value">${completed}</div>
-          <div class="meta">主要項目入力済み</div>
-        </div>
+        <div class="card kpi"><div class="label">総研修会数</div><div class="value">${total}</div><div class="meta">登録済み案件数</div></div>
+        <div class="card kpi"><div class="label">Zoom未設定</div><div class="value">${noZoom}</div><div class="meta">ID未登録</div></div>
+        <div class="card kpi"><div class="label">HP未設定</div><div class="value">${noHp}</div><div class="meta">URL未登録</div></div>
+        <div class="card kpi"><div class="label">準備完了</div><div class="value">${completed}</div><div class="meta">主要項目入力済み</div></div>
       `;
 
       $('sidebarAlertCount').textContent = events.filter(v =>
@@ -759,7 +756,6 @@
 
     function renderTable() {
       const body = $('eventTableBody');
-
       if (!filteredEvents.length) {
         body.innerHTML = '<tr><td colspan="9" class="empty">該当データがありません</td></tr>';
         return;
@@ -769,7 +765,6 @@
         const status = getStatusInfo(item);
         const zoom = valueOf(item.zoomId) ? '設定済み' : '未設定';
         const hp = valueOf(item.hpUrl) ? '設定済み' : '未設定';
-
         return `
           <tr>
             <td>${escapeHtml(item.id)}</td>
@@ -780,9 +775,7 @@
             <td>${escapeHtml(zoom)}</td>
             <td>${escapeHtml(hp)}</td>
             <td><span class="badge ${status.className}">${escapeHtml(status.label)}</span></td>
-            <td class="table-action">
-              <button type="button" class="text-button" data-edit="${escapeHtml(item.id)}">編集</button>
-            </td>
+            <td class="table-action"><button type="button" class="text-button" data-edit="${escapeHtml(item.id)}">編集</button></td>
           </tr>
         `;
       }).join('');
@@ -790,7 +783,6 @@
 
     function renderTodos() {
       const list = [];
-
       events.forEach(item => {
         if (!valueOf(item.zoomId)) list.push({ title: item.title + '：Zoom設定', note: formatDate(item.date) + ' / ' + item.speaker });
         if (!valueOf(item.hpUrl)) list.push({ title: item.title + '：HP掲載準備', note: formatDate(item.date) + ' / ' + item.cohost });
@@ -798,7 +790,6 @@
       });
 
       const target = $('todoList');
-
       if (!list.length) {
         target.innerHTML = '<div class="empty">本日の要対応はありません</div>';
         return;
@@ -821,7 +812,6 @@
         { key: 'materials', title: '資料・進行' },
         { key: 'done', title: '完了' }
       ];
-
       const buckets = { planning: [], publicity: [], materials: [], done: [] };
 
       events.forEach(item => {
@@ -858,13 +848,11 @@
 
     function applyFilter() {
       const q = valueOf($('searchInput').value).toLowerCase();
-
       filteredEvents = events.filter(item => {
         if (!q) return true;
         const target = [item.id, item.title, item.speaker, item.cohost, item.subject].join(' ').toLowerCase();
         return target.includes(q);
       });
-
       renderTable();
     }
 
@@ -898,12 +886,13 @@
         fillForm(item);
         $('dialogTitle').textContent = '研修会を編集';
       }
-      $('eventDialog').showModal();
+      $('eventDialog').classList.add('show');
+      $('eventDialog').setAttribute('aria-hidden', 'false');
     }
 
     function closeDialog() {
-      const dialog = $('eventDialog');
-      if (dialog.open) dialog.close();
+      $('eventDialog').classList.remove('show');
+      $('eventDialog').setAttribute('aria-hidden', 'true');
     }
 
     function collectFormData() {
@@ -951,7 +940,10 @@
           filteredEvents = events.slice();
           syncScreen();
           setBusy(false);
-          setStatus(missingFields.length ? '一部の列が見つからないため、対応項目のみ表示しています。' : 'データを読み込みました。', missingFields.length ? 'error' : 'success');
+          setStatus(
+            missingFields.length ? '一部の列が見つからないため、対応項目のみ表示しています。' : 'データを読み込みました。',
+            missingFields.length ? 'error' : 'success'
+          );
         })
         .withFailureHandler(function(err) {
           setBusy(false);
@@ -1015,6 +1007,17 @@
       $('eventForm').addEventListener('submit', handleSubmit);
       $('cancelButton').addEventListener('click', closeDialog);
       $('closeDialogButton').addEventListener('click', closeDialog);
+
+      $('eventDialog').addEventListener('click', function(e) {
+        if (e.target === $('eventDialog')) closeDialog();
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && $('eventDialog').classList.contains('show')) {
+          closeDialog();
+        }
+      });
+
       loadEvents();
     }
 
