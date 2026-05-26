@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>研修会スケジュール Notion CSV 生成ツール</title>
+
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+
+      --color-bg: #f7f6f2;
+      --color-surface: #f9f8f5;
+      --color-surface-2: #fbfbf9;
+      --color-surface-offset: #f3f0ec;
+      --color-border: #d4d1ca;
+      --color-divider: #dcd9d5;
+      --color-text: #28251d;
+      --color-text-muted: #67655f;
+      --color-text-faint: #9f9d97;
+      --color-text-inverse: #f9f8f4;
+      --color-primary: #01696f;
+      --color-primary-hover: #0c4e54;
+      --color-primary-highlight: #dbe8e4;
+      --color-success: #437a22;
+      --color-warning: #964219;
+      --color-error: #a12c7b;
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --shadow-sm: 0 1px 2px oklch(0.2 0.01 80 / 0.06);
+      --shadow-md: 0 4px 12px oklch(0.2 0.01 80 / 0.08);
+      --font-body: 'Satoshi', 'Inter', sans-serif;
+      --font-display: 'Satoshi', 'Inter', sans-serif;
+      --transition-interactive: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="dark"] {
+      --color-bg: #171614;
+      --color-surface: #1c1b19;
+      --color-surface-2: #201f1d;
+      --color-surface-offset: #22211f;
+      --color-border: #393836;
+      --color-divider: #262523;
+      --color-text: #e0dfdc;
+      --color-text-muted: #a09e99;
+      --color-text-faint: #716f6a;
+      --color-text-inverse: #1c1b19;
+      --color-primary: #4f98a3;
+      --color-primary-hover: #227f8b;
+      --color-primary-highlight: #2b3434;
+      --color-success: #6daa45;
+      --color-warning: #bb653b;
+      --color-error: #d163a7;
+      --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.2);
+      --shadow-md: 0 4px 12px oklch(0 0 0 / 0.3);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      -moz-text-size-adjust: none;
+      -webkit-text-size-adjust: none;
+      text-size-adjust: none;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100dvh;
+      line-height: 1.6;
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      color: var(--color-text);
+      background: var(--color-bg);
+    }
+
+    button, input, select { font: inherit; color: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+
+    a, button, input, select {
+      transition:
+        color var(--transition-interactive),
+        background var(--transition-interactive),
+        border-color var(--transition-interactive),
+        box-shadow var(--transition-interactive),
+        transform var(--transition-interactive);
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 3px;
+      border-radius: var(--radius-sm);
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    .skip-link:focus {
+      left: var(--space-4);
+      top: var(--space-4);
+      width: auto;
+      height: auto;
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+      z-index: 1000;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      min-height: 100dvh;
+    }
+
+    .sidebar {
+      background: var(--color-surface);
+      border-right: 1px solid color-mix(in oklab, var(--color-text) 12%, transparent);
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+      overflow-y: auto;
+    }
+
+    .main {
+      min-width: 0;
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--color-primary-highlight);
+      color: var(--color-primary);
+      display: grid;
+      place-items: center;
+      flex: none;
+    }
+
+    .brand-copy h1 {
+      font-size: var(--text-lg);
+      line-height: 1.2;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-copy p {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .panel {
+      background: var(--color-surface);
+      border: 1px solid color-mix(in oklab, var(--color-text) 12%, transparent);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .panel-body { padding: var(--space-5); }
+
+    .section-title {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      margin-bottom: var(--space-3);
+      color: var(--color-text);
+    }
+
+    .help {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .field {
+      display: grid;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .field label {
+      font-size: var(--text-sm);
+      font-weight: 600;
+    }
+
+    .field input[type="date"],
+    .field input[type="file"],
+    .field input[type="text"],
+    .field select {
+      width: 100%;
+      min-height: 46px;
+      border-radius: var(--radius-md);
+      border: 1px solid color-mix(in oklab, var(--color-text) 14%, transparent);
+      background: var(--color-surface-2);
+      padding: 0 var(--space-4);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+    }
+
+    .btn {
+      min-height: 46px;
+      padding: 0 var(--space-4);
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      font-size: var(--text-sm);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+    }
+
+    .btn:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+    }
+
+    .btn-primary:hover { background: var(--color-primary-hover); }
+
+    .btn-secondary {
+      background: var(--color-surface-2);
+      border-color: color-mix(in oklab, var(--color-text) 14%, transparent);
+      color: var(--color-text);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: color-mix(in oklab, var(--color-text) 14%, transparent);
+      color: var(--color-text-muted);
+    }
+
+    .header-card {
+      padding: var(--space-6);
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      width: fit-content;
+      border-radius: 999px;
+      padding: 0.35rem 0.75rem;
+      background: var(--color-primary-highlight);
+      color: var(--color-primary);
+      font-size: var(--text-xs);
+      font-weight: 700;
+    }
+
+    .page-title {
+      font-size: var(--text-xl);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+
+    .lead {
+      color: var(--color-text-muted);
+      max-width: 70ch;
+    }
+
+    .theme-toggle {
+      min-width: 46px;
+      min-height: 46px;
+      border-radius: var(--radius-md);
+      border: 1px solid color-mix(in oklab, var(--color-text) 14%, transparent);
+      background: var(--color-surface);
+      color: var(--color-text);
+      display: grid;
+      place-items: center;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: var(--space-4);
+    }
+
+    .metric-card {
+      padding: var(--space-5);
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .metric-label {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .metric-value {
+      font-size: var(--text-lg);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums lining-nums;
+      letter-spacing: -0.02em;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.9fr);
+      gap: var(--space-4);
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .card-head {
+      padding: var(--space-5);
+      border-bottom: 1px solid var(--color-divider);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .card-head h2 {
+      font-size: var(--text-lg);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .card-head p {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .table-wrap {
+      overflow: auto;
+      max-height: 62dvh;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--text-sm);
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--color-surface);
+      text-align: left;
+      font-size: var(--text-xs);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--color-divider);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid color-mix(in oklab, var(--color-text) 8%, transparent);
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    tbody tr:hover {
+      background: color-mix(in oklab, var(--color-primary) 4%, var(--color-surface));
+    }
+
+    .mono {
+      font-variant-numeric: tabular-nums lining-nums;
+      font-feature-settings: "tnum" 1, "lnum" 1;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border-radius: 999px;
+      padding: 0.35rem 0.75rem;
+      font-size: var(--text-xs);
+      font-weight: 700;
+      width: fit-content;
+    }
+
+    .badge-neutral {
+      background: var(--color-surface-offset);
+      color: var(--color-text-muted);
+    }
+
+    .badge-success {
+      background: color-mix(in oklab, var(--color-success) 14%, var(--color-surface));
+      color: var(--color-success);
+    }
+
+    .badge-warn {
+      background: color-mix(in oklab, var(--color-warning) 14%, var(--color-surface));
+      color: var(--color-warning);
+    }
+
+    .notice {
+      padding: var(--space-4);
+      border-radius: var(--radius-lg);
+      background: var(--color-surface-offset);
+      border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent);
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+    }
+
+    .status-list {
+      display: grid;
+      gap: var(--space-4);
+      padding: var(--space-5);
+    }
+
+    .status-item {
+      display: grid;
+      gap: var(--space-1);
+      padding: var(--space-4);
+      border-radius: var(--radius-lg);
+      background: var(--color-surface-2);
+      border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent);
+    }
+
+    .status-item strong { font-size: var(--text-sm); }
+    .status-item span {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .utility-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .success-message,
+    .error-message {
+      padding: var(--space-4);
+      border-radius: var(--radius-lg);
+      font-size: var(--text-sm);
+      border: 1px solid transparent;
+      display: none;
+    }
+
+    .success-message {
+      background: color-mix(in oklab, var(--color-success) 12%, var(--color-surface));
+      color: var(--color-success);
+      border-color: color-mix(in oklab, var(--color-success) 24%, transparent);
+    }
+
+    .error-message {
+      background: color-mix(in oklab, var(--color-error) 10%, var(--color-surface));
+      color: var(--color-error);
+      border-color: color-mix(in oklab, var(--color-error) 22%, transparent);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: var(--color-surface-offset);
+      color: var(--color-text-muted);
+      font-size: var(--text-xs);
+      font-weight: 700;
+    }
+
+    @media (max-width: 1180px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid color-mix(in oklab, var(--color-text) 12%, transparent);
+      }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .content-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .sidebar, .main { padding: var(--space-4); }
+      .metrics { grid-template-columns: 1fr; }
+      .page-title { font-size: 1.65rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">本文へ移動</a>
+
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="設定パネル">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-label="Schedule logo">
+            <rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8"></rect>
+            <path d="M7 9h10M7 13h6M7 17h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="brand-copy">
+          <h1>研修会 Notion CSV</h1>
+          <p>開催日から前後日程を自動展開</p>
+        </div>
+      </div>
+
+      <section class="panel">
+        <div class="panel-body">
+          <h2 class="section-title">入力</h2>
+
+          <div class="field">
+            <label for="eventDate">研修会開催日</label>
+            <input id="eventDate" type="date" />
+            <p class="help">`day` 列を基準に、開催日前後の日付を自動計算します。</p>
+          </div>
+
+          <div class="field">
+            <label for="csvFile">テンプレートCSV</label>
+            <input id="csvFile" type="file" accept=".csv,text/csv" />
+            <p class="help">この添付CSVを読み込んで使います。</p>
+          </div>
+
+          <div class="field">
+            <label for="titlePrefix">イベント名</label>
+            <input id="titlePrefix" type="text" value="研修会タスク" />
+            <p class="help">Notion上のタイトル補助として利用します。</p>
+          </div>
+
+          <div class="field">
+            <label for="statusDefault">初期ステータス</label>
+            <select id="statusDefault">
+              <option value="未着手">未着手</option>
+              <option value="進行中">進行中</option>
+              <option value="確認待ち">確認待ち</option>
+            </select>
+          </div>
+
+          <div class="button-row">
+            <button class="btn btn-primary" id="generateBtn" type="button">Notion CSVを生成</button>
+            <button class="btn btn-secondary" id="downloadBtn" type="button" disabled>CSVを保存</button>
+            <button class="btn btn-ghost" id="sampleBtn" type="button">サンプル読込</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-body">
+          <h2 class="section-title">出力仕様</h2>
+          <div class="status-list">
+            <div class="status-item">
+              <strong>相対日数を実日付化</strong>
+              <span>`day=-56` のような値を開催日から計算して日付化します。</span>
+            </div>
+            <div class="status-item">
+              <strong>曜日を自動付与</strong>
+              <span>JavaScriptの日付処理で日本語曜日を自動生成します。</span>
+            </div>
+            <div class="status-item">
+              <strong>Notion向け列を追加</strong>
+              <span>`名前` と `日付` を含む、貼り付けしやすい列構成で出力します。</span>
+            </div>
+            <div class="status-item">
+              <strong>日付形式</strong>
+              <span>Notionで扱いやすい `yyyy-MM-dd` 形式で保存します。</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-body">
+          <div id="successBox" class="success-message" role="status" aria-live="polite"></div>
+          <div id="errorBox" class="error-message" role="alert"></div>
+        </div>
+      </section>
+    </aside>
+
+    <main class="main" id="main-content">
+      <section class="panel">
+        <div class="header-card">
+          <div class="topbar">
+            <div class="eyebrow">開催日を入れるだけで Notion 用CSVを完成</div>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="テーマ切替"></button>
+          </div>
+          <div>
+            <h2 class="page-title">添付CSV専用の研修会スケジュール自動展開ツール</h2>
+          </div>
+          <p class="lead">
+            開催日を入力すると、添付CSVの `day` 列をもとに前後スケジュールを実日付へ変換し、Notionデータベースに取り込みやすいCSVとして出力します。
+          </p>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="集計情報">
+        <article class="panel metric-card">
+          <div class="metric-label">読込行数</div>
+          <div class="metric-value mono" id="metricRows">0</div>
+        </article>
+        <article class="panel metric-card">
+          <div class="metric-label">有効タスク数</div>
+          <div class="metric-value mono" id="metricTasks">0</div>
+        </article>
+        <article class="panel metric-card">
+          <div class="metric-label">開催日</div>
+          <div class="metric-value mono" id="metricEventDate">-</div>
+        </article>
+        <article class="panel metric-card">
+          <div class="metric-label">最初の日程</div>
+          <div class="metric-value mono" id="metricFirstDate">-</div>
+        </article>
+        <article class="panel metric-card">
+          <div class="metric-label">最後の日程</div>
+          <div class="metric-value mono" id="metricLastDate">-</div>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <div class="stack">
+          <article class="panel">
+            <div class="card-head">
+              <div>
+                <h2>Notion出力プレビュー</h2>
+                <p>先頭20件を表示します。</p>
+              </div>
+              <div class="badge badge-neutral" id="previewBadge">未生成</div>
+            </div>
+            <div class="table-wrap">
+              <table aria-label="Notion CSV プレビュー">
+                <thead id="previewHead"></thead>
+                <tbody id="previewBody"></tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+
+        <aside class="panel">
+          <div class="card-head">
+            <div>
+              <h2>状態</h2>
+              <p>操作ガイド</p>
+            </div>
+          </div>
+          <div class="status-list">
+            <div class="notice">
+              操作順は、開催日入力 → CSV読込 → Notion CSV生成 → CSV保存 です。
+            </div>
+            <div>
+              <div class="badge badge-success" id="modeBadge">テンプレート待機中</div>
+            </div>
+            <div class="utility-row">
+              <span class="help">相対基準列</span>
+              <strong class="mono">day</strong>
+            </div>
+            <div class="utility-row">
+              <span class="help">Notion日付列</span>
+              <strong class="mono">日付</strong>
+            </div>
+            <div class="utility-row">
+              <span class="help">保存文字コード</span>
+              <strong class="mono">UTF-8 BOM</strong>
+            </div>
+            <div class="utility-row">
+              <span class="help">曜日表記</span>
+              <strong class="mono">月 / 火 / 水 ...</strong>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (() => {
+      const html = document.documentElement;
+      const themeBtn = document.querySelector('[data-theme-toggle]');
+      let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      html.setAttribute('data-theme', theme);
+
+      const setThemeIcon = () => {
+        themeBtn.setAttribute('aria-label', theme === 'dark' ? 'ライトモードに切替' : 'ダークモードに切替');
+        themeBtn.innerHTML = theme === 'dark'
+          ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 1.5V4M12 20V22.5M4.22 4.22L5.9 5.9M18.1 18.1L19.78 19.78M1.5 12H4M20 12H22.5M4.22 19.78L5.9 18.1M18.1 5.9L19.78 4.22"></path></svg>'
+          : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79Z"></path></svg>';
+      };
+      setThemeIcon();
+
+      themeBtn.addEventListener('click', () => {
+        theme = theme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', theme);
+        setThemeIcon();
+      });
+
+      const els = {
+        eventDate: document.getElementById('eventDate'),
+        csvFile: document.getElementById('csvFile'),
+        titlePrefix: document.getElementById('titlePrefix'),
+        statusDefault: document.getElementById('statusDefault'),
+        generateBtn: document.getElementById('generateBtn'),
+        downloadBtn: document.getElementById('downloadBtn'),
+        sampleBtn: document.getElementById('sampleBtn'),
+        previewHead: document.getElementById('previewHead'),
+        previewBody: document.getElementById('previewBody'),
+        metricRows: document.getElementById('metricRows'),
+        metricTasks: document.getElementById('metricTasks'),
+        metricEventDate: document.getElementById('metricEventDate'),
+        metricFirstDate: document.getElementById('metricFirstDate'),
+        metricLastDate: document.getElementById('metricLastDate'),
+        successBox: document.getElementById('successBox'),
+        errorBox: document.getElementById('errorBox'),
+        previewBadge: document.getElementById('previewBadge'),
+        modeBadge: document.getElementById('modeBadge')
+      };
+
+      const SAMPLE_CSV = `,day,タスク,月日,曜日,タスク,項目,備考
+○○先生_,-56,○○先生_研修会演題と目的案を作成,,,研修会演題と目的案を作成,"ご略歴確認
+事前打ち合わせの日程調整
+Zoomウェビナーでの講演経験
+講義資料締め切り日程"
+○○先生_,-49,○○先生_講師にメールで確認,,,講師にメールで確認,"1.謝金書類送付先
+2.依頼状書式確認
+3.Zoomウェビナー講義経験確認"
+○○先生_,-39,○○先生_起案1_開催,,,起案1_開催,"チラシ案:Word
+HP案:WordPress
+Zoom申込画面案:Zoom"
+○○先生_,-29,○○先生_HP公開・受付開始,,,HP公開・受付開始,"公開開始の連絡
+関係者へ案内"
+○○先生_,-8,○○先生_事前受付終了・Web受講希望者リストの書き出し,,,事前受付終了・Web受講希望者リストの書き出し,"Zoom事前申込を手動設定へ切替"
+○○先生_,0,○○先生_研修会本番,,,研修会本番,"会場準備:Zoom
+質疑応答対応"
+○○先生_,3,○○先生_Zoomレポートダウンロード,,,Zoomレポートダウンロード,"受講者ログDL
+アンケート結果DL"
+○○先生_,21,○○先生_DVD受け取り,,,DVD受け取り,`;
+
+      let rawCsvText = '';
+      let generatedHeaders = [];
+      let generatedRows = [];
+      let generatedCsvText = '';
+
+      const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
+
+      const showSuccess = (message) => {
+        els.successBox.textContent = message;
+        els.successBox.style.display = 'block';
+        els.errorBox.style.display = 'none';
+      };
+
+      const showError = (message) => {
+        els.errorBox.textContent = message;
+        els.errorBox.style.display = 'block';
+        els.successBox.style.display = 'none';
+      };
+
+      const clearMessages = () => {
+        els.successBox.style.display = 'none';
+        els.errorBox.style.display = 'none';
+      };
+
+      const escapeHtml = (value) => String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+
+      const parseCsvLine = (line) => {
+        const cells = [];
+        let current = '';
+        let inQuotes = false;
+
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i];
+          const next = line[i + 1];
+
+          if (ch === '"') {
+            if (inQuotes && next === '"') {
+              current += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (ch === ',' && !inQuotes) {
+            cells.push(current);
+            current = '';
+          } else {
+            current += ch;
+          }
+        }
+        cells.push(current);
+        return cells;
+      };
+
+      const parseCsv = (text) => {
+        const normalized = text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const lines = normalized.split('\n').filter(line => line.trim() !== '');
+        if (!lines.length) return { headers: [], rows: [] };
+
+        const headers = parseCsvLine(lines[0]);
+        const rows = lines.slice(1).map(line => {
+          const cells = parseCsvLine(line);
+          const obj = {};
+          headers.forEach((header, idx) => {
+            obj[header] = cells[idx] ?? '';
+          });
+          return obj;
+        });
+        return { headers, rows };
+      };
+
+      const csvEscape = (value) => {
+        const str = String(value ?? '');
+        if (/[",\n]/.test(str)) return `"${str.replace(/"/g, '""')}"`;
+        return str;
+      };
+
+      const toCsv = (headers, rows) => {
+        const head = headers.map(csvEscape).join(',');
+        const body = rows.map(row => headers.map(h => csvEscape(row[h])).join(',')).join('\r\n');
+        return '\uFEFF' + [head, body].filter(Boolean).join('\r\n');
+      };
+
+      const parseISODate = (value) => {
+        if (!value) return null;
+        const m = String(value).trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!m) return null;
+        const y = Number(m[1]);
+        const mo = Number(m[2]) - 1;
+        const d = Number(m[3]);
+        const dt = new Date(y, mo, d);
+        if (dt.getFullYear() !== y || dt.getMonth() !== mo || dt.getDate() !== d) return null;
+        dt.setHours(0, 0, 0, 0);
+        return dt;
+      };
+
+      const addDays = (date, days) => {
+        const d = new Date(date);
+        d.setDate(d.getDate() + days);
+        d.setHours(0, 0, 0, 0);
+        return d;
+      };
+
+      const formatISO = (date) => {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      };
+
+      const formatJPmd = (date) => `${date.getMonth() + 1}/${date.getDate()}`;
+
+      const weekdayJa = (date) => WEEKDAYS[date.getDay()];
+
+      const safeTrim = (value) => String(value ?? '').trim();
+
+      const parseDayOffset = (value) => {
+        const cleaned = safeTrim(value).replace(/\s+/g, '');
+        if (cleaned === '') return null;
+        const n = Number(cleaned);
+        return Number.isFinite(n) ? n : null;
+      };
+
+      const buildNotionRows = (rows, eventDate, titlePrefix, statusDefault) => {
+        return rows
+          .map((row, idx) => {
+            const offset = parseDayOffset(row['day']);
+            const taskText = safeTrim(row['タスク']) || safeTrim(row['項目']);
+            const itemText = safeTrim(row['項目']);
+            const noteText = safeTrim(row['備考']);
+            const ownerText = safeTrim(row['']);
+            const sourceMd = safeTrim(row['月日']);
+            const sourceWeekday = safeTrim(row['曜日']);
+
+            if (!taskText && !itemText && !noteText) return null;
+
+            const actualDate = offset === null ? null : addDays(eventDate, offset);
+            const notionTitle = taskText || `${titlePrefix}_${idx + 1}`;
+
+            return {
+              '名前': notionTitle,
+              '日付': actualDate ? formatISO(actualDate) : '',
+              '曜日': actualDate ? weekdayJa(actualDate) : sourceWeekday,
+              '相対日数(day)': offset === null ? '' : String(offset),
+              'タスク': taskText,
+              '項目': itemText,
+              '備考': noteText,
+              '担当': ownerText,
+              'イベント名': titlePrefix,
+              'ステータス': statusDefault,
+              '元の月日': sourceMd,
+              '元の曜日': sourceWeekday
+            };
+          })
+          .filter(Boolean)
+          .sort((a, b) => {
+            const ad = a['日付'] || '9999-99-99';
+            const bd = b['日付'] || '9999-99-99';
+            if (ad !== bd) return ad.localeCompare(bd);
+            return Number(a['相対日数(day)'] || 999999) - Number(b['相対日数(day)'] || 999999);
+          });
+      };
+
+      const renderPreview = (headers, rows) => {
+        els.previewHead.innerHTML = '';
+        els.previewBody.innerHTML = '';
+
+        if (!headers.length || !rows.length) {
+          els.previewHead.innerHTML = '<tr><th>データなし</th></tr>';
+          els.previewBody.innerHTML = '<tr><td>まだCSVは生成されていません。</td></tr>';
+          return;
+        }
+
+        const previewHeaders = headers.slice(0, 8);
+        els.previewHead.innerHTML = `<tr>${previewHeaders.map(h => `<th>${escapeHtml(h)}</th>`).join('')}</tr>`;
+
+        rows.slice(0, 20).forEach(row => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = previewHeaders.map(h => `<td>${escapeHtml(row[h] ?? '')}</td>`).join('');
+          els.previewBody.appendChild(tr);
+        });
+      };
+
+      const updateMetrics = (rows, eventDate) => {
+        const validDates = rows.map(r => r['日付']).filter(Boolean).sort();
+        els.metricRows.textContent = String(rows.length);
+        els.metricTasks.textContent = String(rows.filter(r => safeTrim(r['名前']) !== '').length);
+        els.metricEventDate.textContent = eventDate ? formatISO(eventDate) : '-';
+        els.metricFirstDate.textContent = validDates[0] || '-';
+        els.metricLastDate.textContent = validDates[validDates.length - 1] || '-';
+      };
+
+      const generate = () => {
+        clearMessages();
+
+        if (!rawCsvText) {
+          showError('先にテンプレートCSVを読み込んでください。');
+          return;
+        }
+
+        const eventDate = parseISODate(els.eventDate.value);
+        if (!eventDate) {
+          showError('研修会開催日を入力してください。');
+          return;
+        }
+
+        const parsed = parseCsv(rawCsvText);
+        if (!parsed.rows.length) {
+          showError('CSVの解析に失敗しました。');
+          return;
+        }
+
+        const titlePrefix = safeTrim(els.titlePrefix.value) || '研修会タスク';
+        const statusDefault = els.statusDefault.value;
+
+        const notionRows = buildNotionRows(parsed.rows, eventDate, titlePrefix, statusDefault);
+        if (!notionRows.length) {
+          showError('有効なタスクを抽出できませんでした。');
+          return;
+        }
+
+        generatedHeaders = [
+          '名前',
+          '日付',
+          '曜日',
+          '相対日数(day)',
+          'タスク',
+          '項目',
+          '備考',
+          '担当',
+          'イベント名',
+          'ステータス',
+          '元の月日',
+          '元の曜日'
+        ];
+        generatedRows = notionRows;
+        generatedCsvText = toCsv(generatedHeaders, generatedRows);
+
+        renderPreview(generatedHeaders, generatedRows);
+        updateMetrics(generatedRows, eventDate);
+
+        els.downloadBtn.disabled = false;
+        els.previewBadge.textContent = '生成済み';
+        els.previewBadge.className = 'badge badge-success';
+        els.modeBadge.textContent = 'Notion CSV生成完了';
+        els.modeBadge.className = 'badge badge-success';
+
+        showSuccess(`Notion向けCSVを生成しました。${generatedRows.length}件のタスクを出力できます。`);
+      };
+
+      const downloadCsv = () => {
+        if (!generatedCsvText) {
+          showError('先にNotion CSVを生成してください。');
+          return;
+        }
+
+        const eventDate = els.eventDate.value || 'event';
+        const fileName = `kenshukai_notion_${eventDate}.csv`;
+
+        const blob = new Blob([generatedCsvText], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+        showSuccess(`CSVを保存しました。ファイル名: ${fileName}`);
+      };
+
+      const loadSelectedFile = async (file) => {
+        clearMessages();
+        if (!file) return;
+        rawCsvText = await file.text();
+        els.modeBadge.textContent = 'テンプレート読込済み';
+        els.modeBadge.className = 'badge badge-warn';
+        showSuccess(`テンプレートCSVを読み込みました。ファイル名: ${file.name}`);
+      };
+
+      const loadSample = () => {
+        rawCsvText = SAMPLE_CSV;
+        els.modeBadge.textContent = 'サンプル読込中';
+        els.modeBadge.className = 'badge badge-warn';
+        showSuccess('内蔵サンプルCSVを読み込みました。');
+      };
+
+      els.csvFile.addEventListener('change', async (event) => {
+        const file = event.target.files?.[0];
+        await loadSelectedFile(file);
+      });
+
+      els.generateBtn.addEventListener('click', generate);
+      els.downloadBtn.addEventListener('click', downloadCsv);
+      els.sampleBtn.addEventListener('click', loadSample);
+
+      const initEmpty = () => {
+        els.previewHead.innerHTML = '<tr><th>データなし</th></tr>';
+        els.previewBody.innerHTML = '<tr><td>まだCSVは生成されていません。</td></tr>';
+        updateMetrics([], null);
+      };
+
+      initEmpty();
+    })();
+  </script>
+</body>
+</html>
