@@ -63,7 +63,7 @@
 
   <section class="screen">
     <div class="card">
-      <div class="section-head"><div><h3>入力エリア</h3><p>開催日_DATE_1 は XX月XX日、DATE_2 は X/XX 形式で自動保存します。</p></div></div>
+      <div class="section-head"><div><h3>入力エリア</h3><p>開催日_DATE_1 は XX月XX日、DATE_2 は X/XX 形式で自動保存します。</p></div><button class="btn" id="loadSelectedBtn" disabled>選択Noを入力欄に表示</button></div>
       <div class="master-grid">
         <div class="field"><label>No（編集可）</label><input id="fNo"></div>
         <div class="field"><label>年度_YEAR_1</label><input id="fYear" value="2026年"></div>
@@ -94,12 +94,12 @@
       <div style="height:14px"></div>
       <div class="field"><label>目的_PURPOSE</label><textarea id="fPurpose">本研修会では、臨床研究に必要な実務の基本をわかりやすく学びます。</textarea></div>
       <div style="height:14px"></div>
-      <div class="field"><label>進行表導入_INTRO_1</label><textarea id="fIntro1">本日は臨床研究研修会にご参加いただきありがとうございます。</textarea></div>
+      <div class="field"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;"><label>進行表導入_INTRO_1</label><button type="button" class="btn small" id="brushIntro1">AIブラッシュアップ</button></div><textarea id="fIntro1">本日は臨床研究研修会にご参加いただきありがとうございます。</textarea></div>
       <div style="height:14px"></div>
-      <div class="field"><label>進行表研修会趣旨説明_INTRO_2</label><textarea id="fIntro2">本研修会では、臨床研究を進めるうえで必要となる基本事項と実務上のポイントを共有します。</textarea></div>
+      <div class="field"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;"><label>進行表研修会趣旨説明_INTRO_2</label><button type="button" class="btn small" id="brushIntro2">AIブラッシュアップ</button></div><textarea id="fIntro2">本研修会では、臨床研究を進めるうえで必要となる基本事項と実務上のポイントを共有します。</textarea></div>
       <div style="height:14px"></div>
-      <div class="field"><label>進行表講師紹介_INTRO_3</label><textarea id="fIntro3">本日の講師は、臨床研究支援に関する実務経験を有する専門家です。</textarea></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><button class="btn primary" id="appendBtn" disabled>保存する</button><button class="btn" id="prefillBtn" disabled>直近行を複製</button><button class="btn" id="loadSelectedBtn" disabled>選択Noを入力欄に表示</button></div>
+      <div class="field"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;"><label>進行表講師紹介_INTRO_3</label><button type="button" class="btn small" id="brushIntro3">AIブラッシュアップ</button></div><textarea id="fIntro3">本日の講師は、臨床研究支援に関する実務経験を有する専門家です。</textarea></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><button class="btn primary" id="appendBtn" disabled>保存する</button><button class="btn" id="prefillBtn" disabled>直近行を複製</button></div>
       <div style="margin-top:14px" class="status-box" id="statusBox">CSVを読み込むか、新規データベースを作成すると入力を開始できます。</div>
     </div>
 
@@ -178,6 +178,28 @@ function renderConfirm(warns){if(!currentHeaders.length){els.confirmCount.textCo
 function renderResult(done=false){if(!currentHeaders.length){els.resultDone.textContent='0件';els.resultHold.textContent='0件';els.resultZip.textContent='0式';els.folderView.innerHTML='<div class="folder-item"><div><strong>更新CSV</strong><p>CSVを読み込むか、新規データベースを作成すると出力できます。</p></div><div class="status s3">待機</div></div>';return}els.resultDone.textContent=done?'1件':'0件';els.resultHold.textContent=done?'0件':String(validateDraft().length);els.resultZip.textContent='1式';const name=`${fields.date.value||'clinical-master'}_${safeName(fields.title.value||'updated')}.csv`;els.folderView.innerHTML=`<div class="folder-item"><div><strong>${esc(name)}</strong><p>${done?(lastSaveMode==='update'?'同じNoの元行を上書きしたCSVです。':'新規追加したCSVです。'):'現在のマスターCSVをダウンロードできます。'}</p></div><button class="btn small primary" id="inlineDownloadBtn">ダウンロード</button></div>`;const inlineBtn=document.getElementById('inlineDownloadBtn');if(inlineBtn)inlineBtn.addEventListener('click',downloadCsv)}
 function downloadCsv(){if(!currentHeaders.length){setStatus('ダウンロード対象のマスターがありません。');return}const csv=Papa.unparse({fields:currentHeaders,data:rawRows.map(row=>currentHeaders.map(h=>row[h]??''))});const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download=`${fields.date.value||'clinical-master'}_${safeName(fields.title.value||'updated')}.csv`;a.click();URL.revokeObjectURL(url)}
 function setStatus(msg){els.statusBox.textContent=msg} function weekdayJa(iso){return iso?['日','月','火','水','木','金','土'][new Date(iso+'T00:00:00').getDay()]:''} function addDays(d,days){const x=new Date(d);x.setDate(x.getDate()+days);return x} function fmtDate(d){return d?`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`:'-'} function fmtMonthDay(d){return d?`${d.getMonth()+1}/${d.getDate()}`:''} function formatMonthDayWeek(d){if(!d)return'';const w=['日','月','火','水','木','金','土'][d.getDay()];return `${d.getMonth()+1}月${d.getDate()}日（${w}）`} function parseShortJapaneseDate(v,yearText){const m=String(v||'').match(/(\d{1,2})月\s*(\d{1,2})日/);const y=String(yearText||'').match(/(\d{4})/);return m&&y?new Date(`${y[1]}-${String(m[1]).padStart(2,'0')}-${String(m[2]).padStart(2,'0')}T00:00:00`):null} function toIsoDateFromShortDate(v,yearText){const d=parseShortJapaneseDate(v,yearText);return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:''} function diffMin(a,b){const [ah,am]=a.split(':').map(Number),[bh,bm]=b.split(':').map(Number);return (bh*60+bm)-(ah*60+am)} function shiftTime(hhmm,diff){const mins=timeToMinutes(hhmm);if(mins==null)return'';const shifted=mins+diff;const normalized=((shifted%1440)+1440)%1440;return minutesToTime(normalized)} function timeToMinutes(hhmm){const m=String(hhmm||'').match(/^(\d{2}):(\d{2})$/);return m?Number(m[1])*60+Number(m[2]):null} function minutesToTime(mins){const h=Math.floor(mins/60),m=mins%60;return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`} function formatDeadline1(isoDate){const base=new Date(isoDate+'T00:00:00');base.setDate(base.getDate()-8);const week=['日','月','火','水','木','金','土'][base.getDay()];return `${base.getMonth()+1}月${base.getDate()}日（${week}）12:00`} function normTime(v){const m=String(v||'').match(/(\d{1,2}):(\d{2})/);return m?`${m[1].padStart(2,'0')}:${m[2]}`:''} function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))} function safeName(s){return String(s).replace(/[\\/:*?"<>|\s]+/g,'-')}
+
+function brushUpText(text, type){
+  const value = String(text || '').trim();
+  if(!value) return '';
+  if(type === 'intro1') return '本日はご多用のところ、臨床研究研修会にご参加いただき、誠にありがとうございます。';
+  if(type === 'intro2') return '本研修会では、臨床研究を適切に進めるために必要となる基本事項と、実務上の重要なポイントについて理解を深めていただくことを目的としております。';
+  if(type === 'intro3') return 'それでは本日の講師をご紹介いたします。臨床研究支援に関する豊富な実務経験を有する専門家の先生です。';
+  return value;
+}
+
+document.getElementById('brushIntro1')?.addEventListener('click', () => {
+  fields.intro1.value = brushUpText(fields.intro1.value, 'intro1');
+});
+
+document.getElementById('brushIntro2')?.addEventListener('click', () => {
+  fields.intro2.value = brushUpText(fields.intro2.value, 'intro2');
+});
+
+document.getElementById('brushIntro3')?.addEventListener('click', () => {
+  fields.intro3.value = brushUpText(fields.intro3.value, 'intro3');
+});
+
 recalcDraft();
 </script>
 </body>
