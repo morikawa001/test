@@ -151,7 +151,7 @@ button,input,select,textarea{font:inherit;color:inherit} button{cursor:pointer;b
   </section>
 
   <section class="card">
-    <div class="section-head"><div><h3>テンプレート差し込み</h3><p>出力結果の下に移動し、pptx / xlsx / docx を複数同時に読み込み、一括差し込み出力できるように整えています。</p></div></div>
+    <div class="section-head"><div><h3>テンプレート差し込み</h3><p>出力結果の下に配置し、pptx / xlsx / docx を複数同時に読み込み、一括差し込み出力できます。</p></div></div>
     <div class="master-grid">
       <div class="field full"><label>テンプレートファイル（.pptx / .xlsx / .docx 複数選択可）</label><input id="templateFiles" type="file" multiple accept=".docx,.pptx,.xlsx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></div>
       <div class="field"><label>差し込み対象No</label><select id="mergeRecordSelect" disabled><option value="">Noを選択して差し込み</option></select></div>
@@ -166,27 +166,49 @@ button,input,select,textarea{font:inherit;color:inherit} button{cursor:pointer;b
 </div>
 
 <script>
-const root=document.documentElement;document.getElementById('themeBtn').addEventListener('click',()=>{root.setAttribute('data-theme',root.getAttribute('data-theme')==='dark'?'light':'dark')});
+const root=document.documentElement;
+document.getElementById('themeBtn').addEventListener('click',()=>{root.setAttribute('data-theme',root.getAttribute('data-theme')==='dark'?'light':'dark')});
+
 const DEFAULT_HEADERS=['起案行No','年度_YEAR_1','開催日_DATE_1','曜日 _DAY','研修会開始_START_1','研修会終了_END_1','研修会入室開始時間_TIME_1','時間（分）_TIME_2','〆切院外_DEADLINE_1','〆切時間院内_DEADLINE_2','配布資料DL〆切_DEADLINE_3','テーマ(標題)_TITLE','担当講師_SPEAKER','対象_SUBJECT_1','対象詳細_SUBJECT_2','講演場所_SITE','共催_COHOST_1','共催3(選択）_COHOST_3','起案1開催DATE_KIAN_1','起案2資料_DATE_KIAN_2','起案3受講証修了証_DATE_KIAN_3','HP案内開始チラシ配布','謝金_COST','目的_PURPOSE','メール用研修会開催日付_DATE_2','名前_NAME','Zoom_ID_WEBINER_ID','zoom_url_zoom_url','HP_URL_url_1','Zoom_パスコード_PASSCODE','進行表導入_INTRO_1','進行表研修会趣旨説明_INTRO_2','進行表講師紹介_INTRO_3','講義資料提供の締切_DATA_deadline'];
+
 const fullKeys={no:'起案行No',year:'年度_YEAR_1',date:'開催日_DATE_1',day:'曜日 _DAY',start:'研修会開始_START_1',end:'研修会終了_END_1',roomOpen:'研修会入室開始時間_TIME_1',duration:'時間（分）_TIME_2',deadline1:'〆切院外_DEADLINE_1',deadline2:'〆切時間院内_DEADLINE_2',deadline3:'配布資料DL〆切_DEADLINE_3',title:'テーマ(標題)_TITLE',speaker:'担当講師_SPEAKER',subject:'対象_SUBJECT_1',subject2:'対象詳細_SUBJECT_2',site:'講演場所_SITE',cohost:'共催_COHOST_1',cohost3:'共催3(選択）_COHOST_3',k1:'起案1開催DATE_KIAN_1',k2:'起案2資料_DATE_KIAN_2',k3:'起案3受講証修了証_DATE_KIAN_3',hp:'HP案内開始チラシ配布',cost:'謝金_COST',purpose:'目的_PURPOSE',date2:'メール用研修会開催日付_DATE_2',name:'名前_NAME',zoomId:'Zoom_ID_WEBINER_ID',zoomUrl:'zoom_url_zoom_url',hpUrl:'HP_URL_url_1',passcode:'Zoom_パスコード_PASSCODE',intro1:'進行表導入_INTRO_1',intro2:'進行表研修会趣旨説明_INTRO_2',intro3:'進行表講師紹介_INTRO_3',dataDeadline:'講義資料提供の締切_DATA_deadline'};
+
 const els={csvFile:document.getElementById('csvFile'),newDbBtn:document.getElementById('newDbBtn'),recordSelect:document.getElementById('recordSelect'),openConfirmBtn:document.getElementById('openConfirmBtn'),appendBtn:document.getElementById('appendBtn'),prefillBtn:document.getElementById('prefillBtn'),loadSelectedBtn:document.getElementById('loadSelectedBtn'),confirmAppendBtn:document.getElementById('confirmAppendBtn'),downloadBtn:document.getElementById('downloadBtn'),backBtn:document.getElementById('backBtn'),tableList:document.getElementById('tableList'),statusBox:document.getElementById('statusBox'),miniNext:document.getElementById('miniNext'),miniYearCount:document.getElementById('miniYearCount'),miniDbState:document.getElementById('miniDbState'),miniDbText:document.getElementById('miniDbText'),miniDbBadge:document.getElementById('miniDbBadge'),sumAll:document.getElementById('sumAll'),sumYear:document.getElementById('sumYear'),sumNext:document.getElementById('sumNext'),sumSoon:document.getElementById('sumSoon'),sumDone:document.getElementById('sumDone'),sumDraft:document.getElementById('sumDraft'),sumSubject:document.getElementById('sumSubject'),roadmapLabel:document.getElementById('roadmapLabel'),roadmapBar:document.getElementById('roadmapBar'),dK1:document.getElementById('dK1'),dK2:document.getElementById('dK2'),dHp:document.getElementById('dHp'),dK3:document.getElementById('dK3'),dRoomOpen:document.getElementById('dRoomOpen'),dDuration:document.getElementById('dDuration'),dDeadline1:document.getElementById('dDeadline1'),dDeadline2:document.getElementById('dDeadline2'),dDeadline3:document.getElementById('dDeadline3'),dDataDeadline:document.getElementById('dDataDeadline'),dDate2:document.getElementById('dDate2'),dSubject2:document.getElementById('dSubject2'),checkList:document.getElementById('checkList'),confirmCount:document.getElementById('confirmCount'),confirmWarn:document.getElementById('confirmWarn'),confirmState:document.getElementById('confirmState'),folderView:document.getElementById('folderView'),resultDone:document.getElementById('resultDone'),resultHold:document.getElementById('resultHold'),resultZip:document.getElementById('resultZip'),alertList:document.getElementById('alertList'),templateFiles:document.getElementById('templateFiles'),mergeRecordSelect:document.getElementById('mergeRecordSelect'),templateState:document.getElementById('templateState'),mergeAllBtn:document.getElementById('mergeAllBtn'),mergeStatusBox:document.getElementById('mergeStatusBox'),templateList:document.getElementById('templateList')};
+
 const fields={no:document.getElementById('fNo'),year:document.getElementById('fYear'),date:document.getElementById('fDate'),day:document.getElementById('fDay'),date2:document.getElementById('fDate2'),name:document.getElementById('fName'),title:document.getElementById('fTitle'),speaker:document.getElementById('fSpeaker'),start:document.getElementById('fStart'),end:document.getElementById('fEnd'),roomOpen:document.getElementById('fRoomOpen'),duration:document.getElementById('fDuration'),deadline1:document.getElementById('fDeadline1'),deadline2:document.getElementById('fDeadline2'),deadline3:document.getElementById('fDeadline3'),dataDeadline:document.getElementById('fDataDeadline'),cost:document.getElementById('fCost'),subject:document.getElementById('fSubject'),subject2:document.getElementById('fSubject2'),site:document.getElementById('fSite'),cohost:document.getElementById('fCohost'),cohost3:document.getElementById('fCohost3'),zoomId:document.getElementById('fZoomId'),passcode:document.getElementById('fPasscode'),zoomUrl:document.getElementById('fZoomUrl'),hpUrl:document.getElementById('fHpUrl'),purpose:document.getElementById('fPurpose'),intro1:document.getElementById('fIntro1'),intro2:document.getElementById('fIntro2'),intro3:document.getElementById('fIntro3')};
+
 let currentHeaders=[],rawRows=[],dataRows=[],selectedRow=null,stagedRow=null,lastSaveMode='',selectedTemplates=[];
 
-els.csvFile.addEventListener('change',loadCsv);els.templateFiles.addEventListener('change',handleTemplateFiles);els.mergeRecordSelect.addEventListener('change',()=>setMergeState());els.mergeAllBtn.addEventListener('click',mergeAllTemplates);els.newDbBtn.addEventListener('click',createNewDatabase);els.recordSelect.addEventListener('change',handleSelectRecord);els.loadSelectedBtn.addEventListener('click',loadSelectedIntoForm);els.prefillBtn.addEventListener('click',prefillFromLast);els.appendBtn.addEventListener('click',stageDraft);els.openConfirmBtn.addEventListener('click',stageDraft);els.confirmAppendBtn.addEventListener('click',commitDraft);els.downloadBtn.addEventListener('click',downloadCsv);els.backBtn.addEventListener('click',()=>setStatus('入力内容を調整できます。必要なら項目を修正してください。'));
+els.csvFile.addEventListener('change',loadCsv);
+els.templateFiles.addEventListener('change',handleTemplateFiles);
+els.mergeRecordSelect.addEventListener('change',()=>setMergeState());
+els.mergeAllBtn.addEventListener('click',mergeAllTemplates);
+els.newDbBtn.addEventListener('click',createNewDatabase);
+els.recordSelect.addEventListener('change',handleSelectRecord);
+els.loadSelectedBtn.addEventListener('click',loadSelectedIntoForm);
+els.prefillBtn.addEventListener('click',prefillFromLast);
+els.appendBtn.addEventListener('click',stageDraft);
+els.openConfirmBtn.addEventListener('click',stageDraft);
+els.confirmAppendBtn.addEventListener('click',commitDraft);
+els.downloadBtn.addEventListener('click',downloadCsv);
+els.backBtn.addEventListener('click',()=>setStatus('入力内容を調整できます。必要なら項目を修正してください。'));
 [fields.no,fields.date,fields.name,fields.start,fields.end,fields.title,fields.speaker,fields.cost,fields.subject,fields.site,fields.cohost,fields.cohost3,fields.zoomId,fields.passcode,fields.zoomUrl,fields.hpUrl,fields.purpose,fields.intro1,fields.intro2,fields.intro3].forEach(el=>el.addEventListener('input',recalcDraft));
 
 function setMergeStatus(msg){if(els.mergeStatusBox)els.mergeStatusBox.textContent=msg}
 function setMergeState(){const hasTemplates=selectedTemplates.length>0;const hasNo=!!String(els.mergeRecordSelect?.value||'').trim();if(els.templateState)els.templateState.value=`${selectedTemplates.length}件`;if(els.mergeAllBtn)els.mergeAllBtn.disabled=!(hasTemplates&&hasNo)}
 function renderMergeOptions(){if(!els.mergeRecordSelect)return;const options=['<option value="">Noを選択して差し込み</option>'].concat(dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`));els.mergeRecordSelect.innerHTML=options.join('');els.mergeRecordSelect.disabled=!dataRows.length;setMergeState()}
-function renderTemplateList(){if(!els.templateList)return; if(!selectedTemplates.length){els.templateList.innerHTML='<div class="template-row"><div class="template-meta"><strong>テンプレート未選択</strong><p>pptx / xlsx / docx を複数まとめて選択できます。</p></div><div><span class="status s3">待機</span></div><div class="mono">-</div><div class="mono">-</div></div>';return} els.templateList.innerHTML=selectedTemplates.map((file)=>`<div class="template-row"><div class="template-meta"><strong>${esc(file.name)}</strong><p>${esc(file.type||'application/octet-stream')}</p></div><div><span class="status s2">読込済み</span></div><div class="mono">${esc(templateKind(file.name))}</div><div class="mono">${Math.round((file.size||0)/1024)} KB</div></div>`).join('')}
+function renderTemplateList(){if(!els.templateList)return; if(!selectedTemplates.length){els.templateList.innerHTML='<div class="template-row"><div class="template-meta"><strong>テンプレート未選択</strong><p>pptx / xlsx / docx を複数まとめて選択できます。</p></div><div><span class="status s3">待機</span></div><div class="mono">-</div><div class="mono">-</div></div>';return} els.templateList.innerHTML=selectedTemplates.map(file=>`<div class="template-row"><div class="template-meta"><strong>${esc(file.name)}</strong><p>${esc(file.type||'application/octet-stream')}</p></div><div><span class="status s2">読込済み</span></div><div class="mono">${esc(templateKind(file.name))}</div><div class="mono">${Math.round((file.size||0)/1024)} KB</div></div>`).join('')}
 function handleTemplateFiles(e){selectedTemplates=Array.from(e.target.files||[]).filter(f=>/\.(docx|pptx|xlsx)$/i.test(f.name));renderTemplateList();setMergeState();setMergeStatus(selectedTemplates.length?`${selectedTemplates.length}件のテンプレートを読み込みました。差し込み対象Noを選ぶと一括出力できます。`:'テンプレートファイルが未選択です。')}
 function getRowByNo(no){return dataRows.find(r=>String(r[fullKeys.no]||'').trim()===String(no||'').trim())||null}
+
 function buildTemplateData(row){
   const map={};
   currentHeaders.forEach(h=>map[h]=String(row?.[h]??''));
   map['DATE_1']=String(row?.[fullKeys.date]??'');
   map['DATE_2']=String(row?.[fullKeys.date2]??'');
+  map['DEADLINE_1']=String(row?.[fullKeys.deadline1]??'');
+  map['DEADLINE_2']=String(row?.[fullKeys.deadline2]??'');
+  map['DEADLINE_3']=String(row?.[fullKeys.deadline3]??'');
   map['COHOST_1']=String(row?.[fullKeys.cohost]??'');
   map['COHOST_2']=String(row?.[fullKeys.site]??'');
   map['COHOST_3']=String(row?.[fullKeys.cohost3]??'');
@@ -194,6 +216,8 @@ function buildTemplateData(row){
   map['DAY']=String(row?.[fullKeys.day]??'');
   map['START_1']=String(row?.[fullKeys.start]??'');
   map['END_1']=String(row?.[fullKeys.end]??'');
+  map['TIME_1']=String(row?.[fullKeys.roomOpen]??'');
+  map['TIME_2']=String(row?.[fullKeys.duration]??'');
   map['TITLE']=String(row?.[fullKeys.title]??'');
   map['SPEAKER']=String(row?.[fullKeys.speaker]??'');
   map['SUBJECT_1']=String(row?.[fullKeys.subject]??'');
@@ -206,11 +230,58 @@ function buildTemplateData(row){
   map['NO']=String(row?.[fullKeys.no]??'');
   return map;
 }
+
 function xmlEscape(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function replacePlaceholdersInXml(xml,data){let out=String(xml||'');Object.entries(data).sort((a,b)=>b[0].length-a[0].length).forEach(([key,val])=>{out=out.split(String(key)).join(xmlEscape(val))});return out}
+
+function replaceAcrossTextRuns(xml,key,value){
+  const escapedValue=xmlEscape(value);
+  const chars=String(key).split('').map(ch=>ch.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('(?:<[^>]+>)*');
+  const re=new RegExp(chars,'g');
+  return xml.replace(re, escapedValue);
+}
+
+function replacePlaceholdersInXml(xml,data){
+  let out=String(xml||'');
+  const entries=Object.entries(data).sort((a,b)=>b[0].length-a[0].length);
+
+  entries.forEach(([key,val])=>{
+    out=out.split(String(key)).join(xmlEscape(val));
+  });
+
+  entries.forEach(([key,val])=>{
+    out=replaceAcrossTextRuns(out,key,val);
+  });
+
+  return out;
+}
+
 function templateKind(name){const ext=(String(name).split('.').pop()||'').toLowerCase();return ext.toUpperCase()}
 function targetXmlPathsForTemplate(zip,fileName){const ext=(String(fileName).split('.').pop()||'').toLowerCase();const names=Object.keys(zip.files||{}); if(ext==='docx') return names.filter(n=>/^word\/.+\.xml$/i.test(n)); if(ext==='pptx') return names.filter(n=>/^ppt\/(slides|slideMasters|slideLayouts|notesSlides|comments|handoutMasters)\/.+\.xml$/i.test(n)); if(ext==='xlsx') return names.filter(n=>/^(xl\/worksheets\/.*\.xml|xl\/sharedStrings\.xml|xl\/workbook\.xml|xl\/comments.*\.xml|xl\/drawings\/.*\.xml)$/i.test(n)); return [] }
-async function mergeSingleTemplate(file,row){const arrayBuffer=await file.arrayBuffer();const zip=new PizZip(arrayBuffer);const data=buildTemplateData(row);const targets=targetXmlPathsForTemplate(zip,file.name); if(!targets.length) throw new Error('差し込み対象XMLが見つかりません'); targets.forEach(path=>{if(zip.file(path)){const xml=zip.file(path).asText();zip.file(path,replacePlaceholdersInXml(xml,data))}}); const mimeMap={docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}; const ext=(String(file.name).split('.').pop()||'').toLowerCase(); const out=zip.generate({type:'blob',mimeType:mimeMap[ext]||'application/octet-stream'}); const a=document.createElement('a'); const url=URL.createObjectURL(out); a.href=url; a.download=`No${safeName(row?.[fullKeys.no]||'')}_${safeName(row?.[fullKeys.title]||'template')}_${safeName(file.name)}`; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); return {name:file.name,type:templateKind(file.name)} }
+
+async function mergeSingleTemplate(file,row){
+  const arrayBuffer=await file.arrayBuffer();
+  const zip=new PizZip(arrayBuffer);
+  const data=buildTemplateData(row);
+  const targets=targetXmlPathsForTemplate(zip,file.name);
+  if(!targets.length) throw new Error('差し込み対象XMLが見つかりません');
+  targets.forEach(path=>{
+    if(zip.file(path)){
+      const xml=zip.file(path).asText();
+      zip.file(path,replacePlaceholdersInXml(xml,data));
+    }
+  });
+  const mimeMap={docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'};
+  const ext=(String(file.name).split('.').pop()||'').toLowerCase();
+  const out=zip.generate({type:'blob',mimeType:mimeMap[ext]||'application/octet-stream'});
+  const a=document.createElement('a');
+  const url=URL.createObjectURL(out);
+  a.href=url;
+  a.download=`No${safeName(row?.[fullKeys.no]||'')}_${safeName(row?.[fullKeys.title]||'template')}_${safeName(file.name)}`;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  return {name:file.name,type:templateKind(file.name)};
+}
+
 async function mergeAllTemplates(){if(!selectedTemplates.length){setMergeStatus('先にテンプレートファイルを選択してください。');return}const no=els.mergeRecordSelect.value;const row=getRowByNo(no);if(!row){setMergeStatus('差し込み対象Noを選択してください。');return}try{let ok=0;const logs=[];for(const file of selectedTemplates){try{const result=await mergeSingleTemplate(file,row);ok++;logs.push(`${result.type}: ${result.name}`)}catch(err){console.error(err);logs.push(`失敗: ${file.name}`)}}setMergeStatus(`No.${no} のデータで ${ok}/${selectedTemplates.length} 件を出力しました。 ${logs.join(' / ')}`)}catch(err){console.error(err);setMergeStatus(`一括差し込みに失敗しました: ${err?.message||'テンプレート形式を確認してください。'}`)}}
 
 function createNewDatabase(){currentHeaders=[...DEFAULT_HEADERS];rawRows=[];dataRows=[];selectedRow=null;stagedRow=null;lastSaveMode='';fields.no.value='1';els.recordSelect.innerHTML='<option value="">Noを選択して表示</option>';els.recordSelect.disabled=true;els.prefillBtn.disabled=true;els.loadSelectedBtn.disabled=true;els.appendBtn.disabled=false;els.openConfirmBtn.disabled=false;els.confirmAppendBtn.disabled=false;els.downloadBtn.disabled=false;els.miniDbState.textContent='新規データベース作成済み';els.miniDbText.textContent='空のヘッダー付きマスターを初期化しました。1件目から登録できます。';els.miniDbBadge.textContent='新規';els.miniDbBadge.className='status s2';renderTable();setNextNo();renderStats();recalcDraft();renderAlerts();renderMergeOptions();setStatus('空のマスターCSVを新規作成しました。')}
@@ -244,11 +315,28 @@ function daysBetween(a,b){const x=new Date(a.getFullYear(),a.getMonth(),a.getDat
 function collectDeadlineAlerts(){const today=new Date();const baseToday=new Date(today.getFullYear(),today.getMonth(),today.getDate());const items=[];dataRows.forEach(r=>{const year=r[fullKeys.year]||fields.year.value||'';const title=r[fullKeys.title]||'無題';const no=r[fullKeys.no]||'-';const pushItem=(label,dateObj,raw)=>{if(!dateObj)return;const diff=daysBetween(baseToday,dateObj);if(diff<0||diff>7)return;items.push({no,title,label,raw:raw||fmtDate(dateObj),diff})};pushItem('起案1',parseMonthDayText(r[fullKeys.k1],year),r[fullKeys.k1]);pushItem('起案2',parseMonthDayText(r[fullKeys.k2],year),r[fullKeys.k2]);pushItem('起案3',parseMonthDayText(r[fullKeys.k3],year),r[fullKeys.k3]);pushItem('院外締切',parseShortJapaneseDate(String(r[fullKeys.deadline1]||'').replace(/（.*?）/,'').replace('月','/').replace('日',''),year),r[fullKeys.deadline1]);pushItem('資料締切',parseMonthDayText(r[fullKeys.dataDeadline],year),r[fullKeys.dataDeadline]);pushItem('配布資料DL締切',parseMonthDayText(r[fullKeys.deadline3],year),r[fullKeys.deadline3])});items.sort((a,b)=>a.diff-b.diff||Number(a.no)-Number(b.no));return items}
 function renderAlerts(){if(!els.alertList)return; if(!currentHeaders.length){els.alertList.innerHTML='<div class="alert-empty">CSVを読み込むと、期限が7日以内に迫っているタスクをここに表示します。</div>';return} const alerts=collectDeadlineAlerts(); if(!alerts.length){els.alertList.innerHTML='<div class="alert-empty">現在、7日以内に期限が迫っているタスクはありません。</div>';return} els.alertList.innerHTML=alerts.map(a=>`<div class="alert-item"><div><span class="alert-tag">${a.diff===0?'本日':a.diff===1?'明日':`あと${a.diff}日`}</span></div><div><strong>No.${esc(a.no)} / ${esc(a.title)}</strong><p>${esc(a.label)} : ${esc(a.raw||'-')}</p></div><div class="small muted">タスク管理アラート</div></div>`).join('')}
 function renderStats(){const total=dataRows.length;const years=dataRows.map(r=>String(r[fullKeys.year]||'').trim()).filter(Boolean).sort();const latestYear=years.slice(-1)[0]||String(fields.year.value||'').trim();const yearCount=latestYear?dataRows.filter(r=>String(r[fullKeys.year]||'').trim()===latestYear).length:0;const today=new Date();const today0=new Date(today.getFullYear(),today.getMonth(),today.getDate());const soon=dataRows.filter(r=>{const d=parseShortJapaneseDate(r[fullKeys.date],r[fullKeys.year]);if(!d)return false;const diff=(d-today0)/86400000;return diff>=0&&diff<=30}).length;const done=dataRows.filter(r=>{const d=parseShortJapaneseDate(r[fullKeys.date],r[fullKeys.year]);return d&&d<today0}).length;const next=dataRows.reduce((m,r)=>Math.max(m,Number(r[fullKeys.no]||0)),0)+1;els.sumAll.textContent=total;els.sumYear.textContent=yearCount;els.sumSoon.textContent=`${soon}件`;els.sumDone.textContent=`${done}件`;els.sumDraft.textContent=stagedRow?'1件':'0件';els.sumSubject.textContent=fields.subject.value||'-';els.miniYearCount.textContent=`${yearCount}件`;els.miniNext.textContent=`No.${next}`;els.sumNext.textContent=next;const ratio=total?Math.round((done/total)*100):0;els.roadmapLabel.textContent=`${done}件完了 / ${total}件予定`;els.roadmapBar.style.width=`${ratio}%`}
-function renderConfirm(warns){if(!currentHeaders.length){els.confirmCount.textContent='0件';els.confirmWarn.textContent='0';els.confirmState.textContent='待機';els.checkList.innerHTML='<div class="check-item"><div><strong>次回研修会</strong><p>CSVを読み込むか、新規データベースを作成すると確認内容が表示されます。</p></div><div class="status s3">待機</div></div>';return}const row=stagedRow||buildRow();const saveMode=getRawRowIndexByNo(row[fullKeys.no])>=0?'update':'insert';els.confirmCount.textContent='1件';els.confirmWarn.textContent=warns.length;els.confirmState.textContent=warns.length?'要確認':(saveMode==='update'?'上書き保存':'新規追加');els.checkList.innerHTML=`<div class="check-item"><div><strong>${saveMode==='update'?'マスターCSVを上書き保存':'マスターCSVへ追加'}</strong><p>No.${esc(row[fullKeys.no])} / ${esc(row[fullKeys.date]||'-')} / ${esc(row[fullKeys.title]||'-')} / ${esc(row[fullKeys.name]||'-')}</p></div><div class="status ${warns.length?'s3':'s2'}">${warns.length?'確認':(saveMode==='update'?'上書き':'追加')}</div></div><div class="check-item"><div><strong>追加自動計算</strong><p>DATE_1 ${esc(row[fullKeys.date]||'-')} / DATE_2 ${esc(row[fullKeys.date2]||'-')} / NAME ${esc(row[fullKeys.name]||'-')}</p></div><div class="status s2">反映済み</div></div>${warns.map(w=>`<div class="check-item"><div><strong>確認事項</strong><p>${esc(w)}</p></div><div class="status s4">保留</div></div>`).join('')}`}
+function renderConfirm(warns){if(!currentHeaders.length){els.confirmCount.textContent='0件';els.confirmWarn.textContent='0';els.confirmState.textContent='待機';els.checkList.innerHTML='<div class="check-item"><div><strong>次回研修会</strong><p>CSVを読み込むか、新規データベースを作成すると確認内容が表示されます。</p></div><div class="status s3">待機</div></div>';return}const row=stagedRow||buildRow();const saveMode=getRawRowIndexByNo(row[fullKeys.no])>=0?'update':'insert';els.confirmCount.textContent='1件';els.confirmWarn.textContent=warns.length;els.confirmState.textContent=warns.length?'要確認':(saveMode==='update'?'上書き保存':'新規追加');els.checkList.innerHTML=`<div class="check-item"><div><strong>${saveMode==='update'?'マスターCSVを上書き保存':'マスターCSVへ追加'}</strong><p>No.${esc(row[fullKeys.no])} / ${esc(row[fullKeys.date]||'-')} / ${esc(row[fullKeys.title]||'-')} / ${esc(row[fullKeys.name]||'-')}</p></div><div class="status ${warns.length?'s3':'s2'}">${warns.length?'確認':(saveMode==='update'?'上書き':'追加')}</div></div><div class="check-item"><div><strong>追加自動計算</strong><p>DATE_1 ${esc(row[fullKeys.date]||'-')} / DATE_2 ${esc(row[fullKeys.date2]||'-')} / DEADLINE_1 ${esc(row[fullKeys.deadline1]||'-')}</p></div><div class="status s2">反映済み</div></div>${warns.map(w=>`<div class="check-item"><div><strong>確認事項</strong><p>${esc(w)}</p></div><div class="status s4">保留</div></div>`).join('')}`}
 function renderResult(done=false){if(!currentHeaders.length){els.resultDone.textContent='0件';els.resultHold.textContent='0件';els.resultZip.textContent='0式';els.folderView.innerHTML='<div class="folder-item"><div><strong>更新CSV</strong><p>CSVを読み込むか、新規データベースを作成すると出力できます。</p></div><div class="status s3">待機</div></div>';return}els.resultDone.textContent=done?'1件':'0件';els.resultHold.textContent=done?'0件':String(validateDraft().length);els.resultZip.textContent='1式';const name=`${fields.date.value||'clinical-master'}_${safeName(fields.title.value||'updated')}.csv`;els.folderView.innerHTML=`<div class="folder-item"><div><strong>${esc(name)}</strong><p>${done?(lastSaveMode==='update'?'同じNoの元行を上書きしたCSVです。':'新規追加したCSVです。'):'現在のマスターCSVをダウンロードできます。'}</p></div><button class="btn small primary" id="inlineDownloadBtn">ダウンロード</button></div>`;const inlineBtn=document.getElementById('inlineDownloadBtn');if(inlineBtn)inlineBtn.addEventListener('click',downloadCsv)}
 function downloadCsv(){if(!currentHeaders.length){setStatus('ダウンロード対象のマスターがありません。');return}rawRows=compactRawRows(rawRows);const csv=Papa.unparse({fields:currentHeaders,data:rawRows.map(row=>currentHeaders.map(h=>row[h]??''))});const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download=`${fields.date.value||'clinical-master'}_${safeName(fields.title.value||'updated')}.csv`;a.click();URL.revokeObjectURL(url)}
-function setStatus(msg){els.statusBox.textContent=msg} function weekdayJa(iso){return iso?['日','月','火','水','木','金','土'][new Date(iso+'T00:00:00').getDay()]:''} function addDays(d,days){const x=new Date(d);x.setDate(x.getDate()+days);return x} function fmtDate(d){return d?`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`:'-'} function fmtMonthDay(d){return d?`${d.getMonth()+1}/${d.getDate()}`:''} function formatMonthDayWeek(d){if(!d)return'';const w=['日','月','火','水','木','金','土'][d.getDay()];return `${d.getMonth()+1}月${d.getDate()}日（${w}）`} function parseShortJapaneseDate(v,yearText){const m=String(v||'').match(/(\d{1,2})月\s*(\d{1,2})日|^(\d{1,2})\/(\d{1,2})$/);const y=String(yearText||'').match(/(\d{4})/);if(!m||!y)return null;const mm=m[1]||m[3],dd=m[2]||m[4];return new Date(`${y[1]}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}T00:00:00`)} function toIsoDateFromShortDate(v,yearText){const d=parseShortJapaneseDate(v,yearText);return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:''} function diffMin(a,b){const [ah,am]=a.split(':').map(Number),[bh,bm]=b.split(':').map(Number);return (bh*60+bm)-(ah*60+am)} function shiftTime(hhmm,diff){const mins=timeToMinutes(hhmm);if(mins==null)return'';const shifted=mins+diff;const normalized=((shifted%1440)+1440)%1440;return minutesToTime(normalized)} function timeToMinutes(hhmm){const m=String(hhmm||'').match(/^(\d{2}):(\d{2})$/);return m?Number(m[1])*60+Number(m[2]):null} function minutesToTime(mins){const h=Math.floor(mins/60),m=mins%60;return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`} function formatDeadline1(isoDate){const base=new Date(isoDate+'T00:00:00');base.setDate(base.getDate()-8);const week=['日','月','火','水','木','金','土'][base.getDay()];return `${base.getMonth()+1}月${base.getDate()}日（${week}）12:00`} function normTime(v){const m=String(v||'').match(/(\d{1,2}):(\d{2})/);return m?`${m[1].padStart(2,'0')}:${m[2]}`:''} function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))} function safeName(s){return String(s).replace(/[\\/:*?"<>|\s]+/g,'-')}
-recalcDraft();renderTemplateList();
+function setStatus(msg){els.statusBox.textContent=msg}
+function weekdayJa(iso){return iso?['日','月','火','水','木','金','土'][new Date(iso+'T00:00:00').getDay()]:''}
+function addDays(d,days){const x=new Date(d);x.setDate(x.getDate()+days);return x}
+function fmtDate(d){return d?`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`:'-'}
+function fmtMonthDay(d){return d?`${d.getMonth()+1}/${d.getDate()}`:''}
+function formatMonthDayWeek(d){if(!d)return'';const w=['日','月','火','水','木','金','土'][d.getDay()];return `${d.getMonth()+1}月${d.getDate()}日（${w}）`}
+function parseShortJapaneseDate(v,yearText){const m=String(v||'').match(/(\d{1,2})月\s*(\d{1,2})日|^(\d{1,2})\/(\d{1,2})$/);const y=String(yearText||'').match(/(\d{4})/);if(!m||!y)return null;const mm=m[1]||m[3],dd=m[2]||m[4];return new Date(`${y[1]}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}T00:00:00`)}
+function toIsoDateFromShortDate(v,yearText){const d=parseShortJapaneseDate(v,yearText);return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:''}
+function diffMin(a,b){const [ah,am]=a.split(':').map(Number),[bh,bm]=b.split(':').map(Number);return (bh*60+bm)-(ah*60+am)}
+function shiftTime(hhmm,diff){const mins=timeToMinutes(hhmm);if(mins==null)return'';const shifted=mins+diff;const normalized=((shifted%1440)+1440)%1440;return minutesToTime(normalized)}
+function timeToMinutes(hhmm){const m=String(hhmm||'').match(/^(\d{2}):(\d{2})$/);return m?Number(m[1])*60+Number(m[2]):null}
+function minutesToTime(mins){const h=Math.floor(mins/60),m=mins%60;return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`}
+function formatDeadline1(isoDate){const base=new Date(isoDate+'T00:00:00');base.setDate(base.getDate()-8);const week=['日','月','火','水','木','金','土'][base.getDay()];return `${base.getMonth()+1}月${base.getDate()}日（${week}）12:00`}
+function normTime(v){const m=String(v||'').match(/(\d{1,2}):(\d{2})/);return m?`${m[1].padStart(2,'0')}:${m[2]}`:''}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function safeName(s){return String(s).replace(/[\\/:*?"<>|\s]+/g,'-')}
+
+recalcDraft();
+renderTemplateList();
 </script>
 </body>
 </html>
