@@ -166,6 +166,10 @@ a{text-decoration:none;color:inherit}
   background:var(--bg);
 }
 .field textarea{min-height:94px}
+.field input[readonly], .field textarea[readonly]{
+  background:var(--surface2);
+  color:var(--text);
+}
 
 .auto-box{
   padding:16px;border-radius:16px;background:var(--surface2);
@@ -174,11 +178,6 @@ a{text-decoration:none;color:inherit}
 .dates{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .date-chip{padding:12px 14px}
 .date-chip b{display:block;font-size:.82rem;color:var(--muted);margin-bottom:3px}
-
-.templates,.check-list,.result-list,.folder-view,.table-list{display:grid;gap:12px}
-.template,.check-item,.result-item,.folder-item{
-  display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:16px
-}
 
 .hint{
   padding:16px;border-radius:16px;background:var(--surface2);
@@ -196,7 +195,6 @@ a{text-decoration:none;color:inherit}
 .sum b{display:block;font-size:1.25rem}
 
 .footer-bar{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:14px}
-.hidden{display:none!important}
 .small{font-size:.82rem}
 .muted{color:var(--muted)}
 
@@ -232,9 +230,9 @@ a{text-decoration:none;color:inherit}
 <div class="wrap">
   <div class="top">
     <div class="title">
-      <div class="pill">CSV読込を修正版に更新</div>
+      <div class="pill">自動計算項目を追加</div>
       <h1>臨床研究研修会 かんたんハブ</h1>
-      <p>マスターCSVを読み込み、次の研修会を追加し、確認してから更新CSVを出力できる試作アプリです。</p>
+      <p>開始・終了・開催日から必要時間と締切を自動計算して、更新CSVへ反映します。</p>
     </div>
     <div class="actions">
       <button class="btn" id="themeBtn">🌗 表示切替</button>
@@ -297,8 +295,15 @@ a{text-decoration:none;color:inherit}
         <div class="field"><label>曜日_DAY</label><input id="fDay" readonly placeholder="自動計算"></div>
         <div class="field"><label>研修会タイトル_TITLE</label><input id="fTitle" value="臨床研究データ管理実務"></div>
         <div class="field"><label>講師名_SPEAKER</label><input id="fSpeaker" value="サンプル 講師"></div>
-        <div class="field"><label>開始_START_1</label><input id="fStart" type="time" value="17:30"></div>
-        <div class="field"><label>終了_END_1</label><input id="fEnd" type="time" value="19:00"></div>
+        <div class="field"><label>研修会開始_START_1</label><input id="fStart" type="time" value="17:30"></div>
+        <div class="field"><label>研修会終了_END_1</label><input id="fEnd" type="time" value="19:00"></div>
+
+        <div class="field"><label>研修会入室開始時間_TIME_1</label><input id="fRoomOpen" readonly placeholder="開始5分前を自動計算"></div>
+        <div class="field"><label>時間（分）_TIME_2</label><input id="fDuration" readonly placeholder="開始〜終了の差を自動計算"></div>
+
+        <div class="field"><label>〆切院外_DEADLINE_1</label><input id="fDeadline1" readonly placeholder="開催日の8日前 12:00 を自動計算"></div>
+        <div class="field"><label>〆切時間院内_DEADLINE_2</label><input id="fDeadline2" readonly placeholder="開始1時間前を自動計算"></div>
+
         <div class="field"><label>対象_SUBJECT_1</label>
           <select id="fSubject">
             <option>研究者</option>
@@ -364,7 +369,7 @@ a{text-decoration:none;color:inherit}
       <div class="section-head">
         <div>
           <h3>自動で出る準備日程</h3>
-          <p>開催日から逆算した主要日程をカードで見せます。</p>
+          <p>開催日と開始時刻から逆算した主要日程をカードで見せます。</p>
         </div>
       </div>
       <div class="auto-box">
@@ -373,9 +378,13 @@ a{text-decoration:none;color:inherit}
           <div class="date-chip"><b>HP公開開始（4週間前）</b><span id="dHp">-</span></div>
           <div class="date-chip"><b>起案2（1週間前）</b><span id="dK2">-</span></div>
           <div class="date-chip"><b>起案3（翌営業日ルール）</b><span id="dK3">-</span></div>
+          <div class="date-chip"><b>入室開始_TIME_1</b><span id="dRoomOpen">-</span></div>
+          <div class="date-chip"><b>時間（分）_TIME_2</b><span id="dDuration">-</span></div>
+          <div class="date-chip"><b>〆切院外_DEADLINE_1</b><span id="dDeadline1">-</span></div>
+          <div class="date-chip"><b>〆切時間院内_DEADLINE_2</b><span id="dDeadline2">-</span></div>
         </div>
         <div class="hint">
-          読み込んだCSVは、1行目がヘッダー、2行目が説明行、3行目以降が実データです。そのため No=0 行は自動除外し、No=1以降を既存研修会として表示します。
+          time 入力欄は内部的に HH:mm 形式、date 入力欄は yyyy-mm-dd 形式で値を持つため、その形式のまま差分計算を行っています。
         </div>
       </div>
     </div>
@@ -438,7 +447,7 @@ a{text-decoration:none;color:inherit}
         <div class="sum"><span class="small">要確認</span><b id="confirmWarn">0件</b></div>
         <div class="sum"><span class="small">状態</span><b id="confirmState">待機</b></div>
       </div>
-      <div class="check-list" id="checkList">
+      <div id="checkList">
         <div class="check-item"><div><strong>次回研修会</strong><p>CSVを読み込んだ後に入力内容が表示されます。</p></div><div class="status s3">待機</div></div>
       </div>
       <div class="footer-bar">
@@ -457,7 +466,7 @@ a{text-decoration:none;color:inherit}
         <div class="sum"><span class="small">保留</span><b id="resultHold">0件</b></div>
         <div class="sum"><span class="small">CSV</span><b id="resultZip">0式</b></div>
       </div>
-      <div class="folder-view" id="folderView">
+      <div id="folderView">
         <div class="folder-item"><div><strong>更新CSV</strong><p>まだ作成していません。</p></div><div class="status s3">待機</div></div>
       </div>
       <div class="footer-bar">
@@ -485,8 +494,6 @@ const els = {
   backBtn: document.getElementById('backBtn'),
   tableList: document.getElementById('tableList'),
   statusBox: document.getElementById('statusBox'),
-  checkList: document.getElementById('checkList'),
-  folderView: document.getElementById('folderView'),
   miniNext: document.getElementById('miniNext'),
   miniYearCount: document.getElementById('miniYearCount'),
   sumAll: document.getElementById('sumAll'),
@@ -502,9 +509,15 @@ const els = {
   dK2: document.getElementById('dK2'),
   dHp: document.getElementById('dHp'),
   dK3: document.getElementById('dK3'),
+  dRoomOpen: document.getElementById('dRoomOpen'),
+  dDuration: document.getElementById('dDuration'),
+  dDeadline1: document.getElementById('dDeadline1'),
+  dDeadline2: document.getElementById('dDeadline2'),
+  checkList: document.getElementById('checkList'),
   confirmCount: document.getElementById('confirmCount'),
   confirmWarn: document.getElementById('confirmWarn'),
   confirmState: document.getElementById('confirmState'),
+  folderView: document.getElementById('folderView'),
   resultDone: document.getElementById('resultDone'),
   resultHold: document.getElementById('resultHold'),
   resultZip: document.getElementById('resultZip')
@@ -519,6 +532,10 @@ const fields = {
   speaker: document.getElementById('fSpeaker'),
   start: document.getElementById('fStart'),
   end: document.getElementById('fEnd'),
+  roomOpen: document.getElementById('fRoomOpen'),
+  duration: document.getElementById('fDuration'),
+  deadline1: document.getElementById('fDeadline1'),
+  deadline2: document.getElementById('fDeadline2'),
   subject: document.getElementById('fSubject'),
   site: document.getElementById('fSite'),
   cohost: document.getElementById('fCohost'),
@@ -546,6 +563,10 @@ const fullKeys = {
   day:'曜日 _DAY',
   start:'研修会開始_START_1',
   end:'研修会終了_END_1',
+  roomOpen:'研修会入室開始時間_TIME_1',
+  duration:'時間（分）_TIME_2',
+  deadline1:'〆切院外_DEADLINE_1',
+  deadline2:'〆切時間院内_DEADLINE_2',
   title:'テーマ(標題)_TITLE',
   speaker:'担当講師_SPEAKER',
   subject:'対象_SUBJECT_1',
@@ -576,28 +597,13 @@ els.downloadBtn.addEventListener('click', downloadCsv);
 els.backBtn.addEventListener('click', () => setStatus('入力内容を調整できます。必要なら項目を修正してください。'));
 
 [
-  fields.date,
-  fields.start,
-  fields.end,
-  fields.title,
-  fields.speaker,
-  fields.subject,
-  fields.site,
-  fields.cohost,
-  fields.zoomId,
-  fields.passcode,
-  fields.zoomUrl,
-  fields.hpUrl,
-  fields.purpose,
-  fields.intro1,
-  fields.intro2,
-  fields.intro3
+  fields.date, fields.start, fields.end, fields.title, fields.speaker,
+  fields.subject, fields.site, fields.cohost, fields.zoomId, fields.passcode,
+  fields.zoomUrl, fields.hpUrl, fields.purpose, fields.intro1, fields.intro2, fields.intro3
 ].forEach(el => el.addEventListener('input', recalcDraft));
 
 function loadCsv(e){
-  const input = e.target;
-  const file = input && input.files ? input.files[0] : null;
-
+  const file = e.target.files?.[0];
   if(!file){
     setStatus('CSVファイルが選択されていません。');
     return;
@@ -610,65 +616,51 @@ function loadCsv(e){
     skipEmptyLines: false,
     encoding: 'UTF-8',
     complete: ({ data, meta, errors }) => {
-      try {
-        currentHeaders = meta && meta.fields ? meta.fields : [];
-        rawRows = Array.isArray(data) ? data : [];
+      currentHeaders = meta?.fields || [];
+      rawRows = Array.isArray(data) ? data : [];
+      if(errors?.length) console.warn(errors);
 
-        if(errors && errors.length){
-          console.warn('PapaParse errors:', errors);
-        }
-
-        if(!currentHeaders.length || !rawRows.length){
-          setStatus('CSVを読み込めませんでした。ヘッダー行またはデータ行を確認してください。');
-          resetFileInput(input);
-          return;
-        }
-
-        dataRows = rawRows.filter(row => {
-          const no = String(row[fullKeys.no] || '').trim();
-          const title = String(row[fullKeys.title] || '').trim();
-          if(no === '0') return false;
-          return /^\d+$/.test(no) && title;
-        }).sort((a, b) => Number(a[fullKeys.no] || 0) - Number(b[fullKeys.no] || 0));
-
-        if(!dataRows.length){
-          setStatus('CSVは開けましたが、取込対象の行がありませんでした。No=1以降とタイトル列を確認してください。');
-          resetFileInput(input);
-          return;
-        }
-
-        setNextNo();
-        prefillFromLast();
-        renderTable();
-        renderStats();
-        renderRecordOptions();
-
-        els.prefillBtn.disabled = false;
-        els.loadSelectedBtn.disabled = false;
-        els.recordSelect.disabled = false;
-        els.appendBtn.disabled = false;
-        els.openConfirmBtn.disabled = false;
-        els.confirmAppendBtn.disabled = false;
-
-        setStatus(`CSVを読み込みました。既存の計画済み研修会は ${dataRows.length} 件です。No=0 の説明行は除外しています。`);
-        recalcDraft();
-        resetFileInput(input);
-      } catch(err) {
-        console.error(err);
-        setStatus(`CSV読込中にエラーが発生しました: ${err.message}`);
-        resetFileInput(input);
+      if(!currentHeaders.length || !rawRows.length){
+        setStatus('CSVを読み込めませんでした。ヘッダー行またはデータ行を確認してください。');
+        e.target.value = '';
+        return;
       }
+
+      dataRows = rawRows.filter(row => {
+        const no = String(row[fullKeys.no] || '').trim();
+        const title = String(row[fullKeys.title] || '').trim();
+        if(no === '0') return false;
+        return /^\d+$/.test(no) && title;
+      }).sort((a, b) => Number(a[fullKeys.no] || 0) - Number(b[fullKeys.no] || 0));
+
+      if(!dataRows.length){
+        setStatus('CSVは開けましたが、取込対象の行がありませんでした。');
+        e.target.value = '';
+        return;
+      }
+
+      setNextNo();
+      prefillFromLast();
+      renderTable();
+      renderStats();
+      renderRecordOptions();
+
+      els.prefillBtn.disabled = false;
+      els.loadSelectedBtn.disabled = false;
+      els.recordSelect.disabled = false;
+      els.appendBtn.disabled = false;
+      els.openConfirmBtn.disabled = false;
+      els.confirmAppendBtn.disabled = false;
+
+      setStatus(`CSVを読み込みました。既存の計画済み研修会は ${dataRows.length} 件です。`);
+      recalcDraft();
+      e.target.value = '';
     },
     error: (err) => {
-      console.error(err);
-      setStatus(`CSVの読込に失敗しました: ${err && err.message ? err.message : '不明なエラー'}`);
-      resetFileInput(input);
+      setStatus(`CSVの読込に失敗しました: ${err?.message || '不明なエラー'}`);
+      e.target.value = '';
     }
   });
-}
-
-function resetFileInput(input){
-  if(input) input.value = '';
 }
 
 function setNextNo(){
@@ -719,8 +711,31 @@ function calcAutoDates(base){
   };
 }
 
+function calcDerivedFields(){
+  const start = fields.start.value;
+  const end = fields.end.value;
+  const date = fields.date.value;
+
+  const roomOpen = start ? shiftTime(start, -5) : '';
+  const duration = (start && end) ? String(diffMin(start, end)) : '';
+  const deadline2 = start ? shiftTime(start, -60) : '';
+  const deadline1 = date ? formatDeadline1(date) : '';
+
+  fields.roomOpen.value = roomOpen;
+  fields.duration.value = duration && Number(duration) >= 0 ? duration : '';
+  fields.deadline1.value = deadline1;
+  fields.deadline2.value = deadline2;
+
+  els.dRoomOpen.textContent = roomOpen || '-';
+  els.dDuration.textContent = duration && Number(duration) >= 0 ? `${duration}分` : '-';
+  els.dDeadline1.textContent = deadline1 || '-';
+  els.dDeadline2.textContent = deadline2 || '-';
+}
+
 function recalcDraft(){
   fields.day.value = weekdayJa(fields.date.value);
+  calcDerivedFields();
+
   const base = fields.date.value ? new Date(fields.date.value + 'T00:00:00') : null;
   const auto = calcAutoDates(base);
 
@@ -762,7 +777,6 @@ function buildRow(){
   const base = fields.date.value ? new Date(fields.date.value + 'T00:00:00') : null;
   const auto = calcAutoDates(base);
   const row = {};
-
   currentHeaders.forEach(h => row[h] = '');
 
   row[fullKeys.no] = String(fields.no.value || '');
@@ -771,6 +785,10 @@ function buildRow(){
   row[fullKeys.day] = fields.day.value;
   row[fullKeys.start] = fields.start.value;
   row[fullKeys.end] = fields.end.value;
+  row[fullKeys.roomOpen] = fields.roomOpen.value;
+  row[fullKeys.duration] = fields.duration.value;
+  row[fullKeys.deadline1] = fields.deadline1.value;
+  row[fullKeys.deadline2] = fields.deadline2.value;
   row[fullKeys.title] = fields.title.value;
   row[fullKeys.speaker] = fields.speaker.value;
   row[fullKeys.subject] = fields.subject.value;
@@ -806,7 +824,6 @@ function commitDraft(){
   lastExportRows = rawRows.filter(r => Object.values(r).some(v => String(v || '').trim() !== ''));
 
   stagedRow = null;
-
   setNextNo();
   renderTable();
   renderStats();
@@ -825,6 +842,10 @@ function clearDraftForNext(){
   fields.speaker.value = '';
   fields.passcode.value = '';
   fields.hpUrl.value = '';
+  fields.roomOpen.value = '';
+  fields.duration.value = '';
+  fields.deadline1.value = '';
+  fields.deadline2.value = '';
   fields.purpose.value = '本研修会では、臨床研究に必要な実務の基本をわかりやすく学びます。';
   fields.intro1.value = '本日は臨床研究研修会にご参加いただきありがとうございます。';
   fields.intro2.value = '本研修会では、臨床研究を進めるうえで必要となる基本事項と実務上のポイントを共有します。';
@@ -833,21 +854,18 @@ function clearDraftForNext(){
 }
 
 function renderRecordOptions(){
-  const options = ['<option value="">Noを選択して表示</option>']
-    .concat(
-      dataRows.map(r =>
-        `<option value="${esc(r[fullKeys.no] || '')}">No.${esc(r[fullKeys.no] || '')} / ${esc(r[fullKeys.date] || '-')} / ${esc(r[fullKeys.title] || '-')}</option>`
-      )
-    );
+  const options = ['<option value="">Noを選択して表示</option>'].concat(
+    dataRows.map(r =>
+      `<option value="${esc(r[fullKeys.no] || '')}">No.${esc(r[fullKeys.no] || '')} / ${esc(r[fullKeys.date] || '-')} / ${esc(r[fullKeys.title] || '-')}</option>`
+    )
+  );
   els.recordSelect.innerHTML = options.join('');
 }
 
 function handleSelectRecord(){
   const no = els.recordSelect.value;
   selectedRow = dataRows.find(r => String(r[fullKeys.no] || '') === String(no)) || null;
-  if(selectedRow){
-    setStatus(`No.${selectedRow[fullKeys.no]} を選択しました。入力欄へ表示できます。`);
-  }
+  if(selectedRow) setStatus(`No.${selectedRow[fullKeys.no]} を選択しました。入力欄へ表示できます。`);
 }
 
 function loadSelectedIntoForm(){
@@ -864,6 +882,10 @@ function loadSelectedIntoForm(){
   fields.speaker.value = selectedRow[fullKeys.speaker] || '';
   fields.start.value = normTime(selectedRow[fullKeys.start]) || '';
   fields.end.value = normTime(selectedRow[fullKeys.end]) || '';
+  fields.roomOpen.value = normTime(selectedRow[fullKeys.roomOpen]) || '';
+  fields.duration.value = selectedRow[fullKeys.duration] || '';
+  fields.deadline1.value = selectedRow[fullKeys.deadline1] || '';
+  fields.deadline2.value = normTime(selectedRow[fullKeys.deadline2]) || (selectedRow[fullKeys.deadline2] || '');
   fields.subject.value = selectedRow[fullKeys.subject] || '研究者';
   fields.site.value = selectedRow[fullKeys.site] || 'Web会議室';
   fields.cohost.value = selectedRow[fullKeys.cohost] || '-';
@@ -877,37 +899,28 @@ function loadSelectedIntoForm(){
   fields.intro3.value = selectedRow[fullKeys.intro3] || '';
 
   recalcDraft();
-  setStatus(`No.${selectedRow[fullKeys.no]} の入力エリア情報を表示しました。内容確認や編集のたたき台として使えます。`);
+  setStatus(`No.${selectedRow[fullKeys.no]} の情報を入力欄へ反映しました。`);
 }
 
 function renderTable(){
   const header = '<div class="table-row table-head"><div>No</div><div>開催日</div><div>タイトル</div><div>講師</div><div>対象</div><div>起案1</div></div>';
-
-  const rows = dataRows.length
-    ? dataRows.map(r => `
-      <div class="table-row">
-        <div><span class="badge">${esc(r[fullKeys.no] || '')}</span></div>
-        <div>${esc(r[fullKeys.date] || '-')}</div>
-        <div><strong>${esc(r[fullKeys.title] || '-')}</strong></div>
-        <div><p>${esc(r[fullKeys.speaker] || '-')}</p></div>
-        <div>${esc(r[fullKeys.subject] || '-')}</div>
-        <div>${esc(r[fullKeys.k1] || '-')}</div>
-      </div>`).join('')
-    : '<div class="table-row"><div>-</div><div>-</div><div>CSVを読み込むとここに表示されます。</div><div>-</div><div>-</div><div>-</div></div>';
-
+  const rows = dataRows.length ? dataRows.map(r => `
+    <div class="table-row">
+      <div><span class="badge">${esc(r[fullKeys.no] || '')}</span></div>
+      <div>${esc(r[fullKeys.date] || '-')}</div>
+      <div><strong>${esc(r[fullKeys.title] || '-')}</strong></div>
+      <div><p>${esc(r[fullKeys.speaker] || '-')}</p></div>
+      <div>${esc(r[fullKeys.subject] || '-')}</div>
+      <div>${esc(r[fullKeys.k1] || '-')}</div>
+    </div>`).join('') : '<div class="table-row"><div>-</div><div>-</div><div>CSVを読み込むとここに表示されます。</div><div>-</div><div>-</div><div>-</div></div>';
   els.tableList.innerHTML = header + rows;
 }
 
 function renderStats(){
   const total = dataRows.length;
-  const years = dataRows
-    .map(r => String(r[fullKeys.year] || '').trim())
-    .filter(Boolean)
-    .sort();
+  const years = dataRows.map(r => String(r[fullKeys.year] || '').trim()).filter(Boolean).sort();
   const latestYear = years.slice(-1)[0] || '';
-  const yearCount = latestYear
-    ? dataRows.filter(r => String(r[fullKeys.year] || '').trim() === latestYear).length
-    : 0;
+  const yearCount = latestYear ? dataRows.filter(r => String(r[fullKeys.year] || '').trim() === latestYear).length : 0;
 
   const today = new Date();
   const today0 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -953,22 +966,15 @@ function renderConfirm(warns){
     </div>
     <div class="check-item">
       <div>
-        <strong>Zoom / HP 情報</strong>
-        <p>Zoom ID ${esc(row[fullKeys.zoomId] || '-')} / PASSCODE ${esc(row[fullKeys.passcode] || '-')} / HP URL ${esc(row[fullKeys.hpUrl] || '-')}</p>
+        <strong>時間自動計算</strong>
+        <p>入室開始 ${esc(row[fullKeys.roomOpen] || '-')} / 所要時間 ${esc(row[fullKeys.duration] || '-')}分 / 院内〆切 ${esc(row[fullKeys.deadline2] || '-')}</p>
       </div>
-      <div class="status s2">反映対象</div>
+      <div class="status s2">算出済み</div>
     </div>
     <div class="check-item">
       <div>
-        <strong>進行表イントロ</strong>
-        <p>INTRO_1、INTRO_2、INTRO_3 をCSV出力対象に含めます。</p>
-      </div>
-      <div class="status s2">反映対象</div>
-    </div>
-    <div class="check-item">
-      <div>
-        <strong>自動設定日程</strong>
-        <p>起案1 ${esc(row[fullKeys.k1] || '-')}、HP公開 ${esc(row[fullKeys.hp] || '-')}、起案2 ${esc(row[fullKeys.k2] || '-')}、起案3 ${esc(row[fullKeys.k3] || '-')}</p>
+        <strong>日付自動計算</strong>
+        <p>院外〆切 ${esc(row[fullKeys.deadline1] || '-')} / 起案1 ${esc(row[fullKeys.k1] || '-')} / 起案2 ${esc(row[fullKeys.k2] || '-')}</p>
       </div>
       <div class="status s2">算出済み</div>
     </div>
@@ -999,10 +1005,6 @@ function renderResult(done = false){
         <div><strong>${esc(name)}</strong><p>次回研修会を末尾に追加したマスターCSVです。</p></div>
         <button class="btn small primary" id="inlineDownloadBtn">ダウンロード</button>
       </div>
-      <div class="folder-item">
-        <div><strong>既存研修会の読込</strong><p>No=0 の説明行を除外し、No=1以降の計画済み研修会を一覧表示しました。</p></div>
-        <div class="status s2">完了</div>
-      </div>
     `
     : `
       <div class="folder-item">
@@ -1016,14 +1018,8 @@ function renderResult(done = false){
 }
 
 function downloadCsv(){
-  const rows = lastExportRows.length
-    ? lastExportRows
-    : rawRows.filter(r => Object.values(r).some(v => String(v || '').trim() !== ''));
-
-  const csv = Papa.unparse(rows, {
-    columns: currentHeaders.length ? currentHeaders : undefined
-  });
-
+  const rows = lastExportRows.length ? lastExportRows : rawRows.filter(r => Object.values(r).some(v => String(v || '').trim() !== ''));
+  const csv = Papa.unparse(rows, { columns: currentHeaders.length ? currentHeaders : undefined });
   const blob = new Blob(['\uFEFF' + csv], { type:'text/csv;charset=utf-8;' });
   const a = document.createElement('a');
   const url = URL.createObjectURL(blob);
@@ -1077,7 +1073,35 @@ function toIsoDate(v){
 function diffMin(a, b){
   const [ah, am] = a.split(':').map(Number);
   const [bh, bm] = b.split(':').map(Number);
-  return bh * 60 + bm - (ah * 60 + am);
+  return (bh * 60 + bm) - (ah * 60 + am);
+}
+
+function shiftTime(hhmm, diff){
+  const mins = timeToMinutes(hhmm);
+  if(mins == null) return '';
+  const shifted = mins + diff;
+  const normalized = ((shifted % 1440) + 1440) % 1440;
+  return minutesToTime(normalized);
+}
+
+function timeToMinutes(hhmm){
+  const m = String(hhmm || '').match(/^(\d{2}):(\d{2})$/);
+  if(!m) return null;
+  return Number(m[1]) * 60 + Number(m[2]);
+}
+
+function minutesToTime(mins){
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+
+function formatDeadline1(isoDate){
+  if(!isoDate) return '';
+  const base = new Date(isoDate + 'T00:00:00');
+  base.setDate(base.getDate() - 8);
+  const week = ['日','月','火','水','木','金','土'][base.getDay()];
+  return `${base.getMonth()+1}月${base.getDate()}日（${week}）12:00`;
 }
 
 function normTime(v){
