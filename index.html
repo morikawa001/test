@@ -316,7 +316,9 @@ a{text-decoration:none;color:inherit}
         </div>
         <div class="field"><label>共催_COHOST_1</label><input id="fCohost" value="-"></div>
         <div class="field"><label>Zoom ID</label><input id="fZoomId" value=""></div>
+        <div class="field"><label>Zoom パスコード_PASSCODE</label><input id="fPasscode" value=""></div>
         <div class="field full"><label>Zoom URL</label><input id="fZoomUrl" value="https://zoom.us/"></div>
+        <div class="field full"><label>HP_URL_url_1</label><input id="fHpUrl" value=""></div>
       </div>
 
       <div style="height:14px"></div>
@@ -500,7 +502,9 @@ const fields = {
   site: document.getElementById('fSite'),
   cohost: document.getElementById('fCohost'),
   zoomId: document.getElementById('fZoomId'),
+  passcode: document.getElementById('fPasscode'),
   zoomUrl: document.getElementById('fZoomUrl'),
+  hpUrl: document.getElementById('fHpUrl'),
   purpose: document.getElementById('fPurpose')
 };
 
@@ -529,7 +533,9 @@ const fullKeys = {
   hp:'HP案内開始チラシ配布',
   purpose:'目的_PURPOSE',
   zoomId:'Zoom_ID_WEBINER_ID',
-  zoomUrl:'zoom_url_zoom_url'
+  zoomUrl:'zoom_url_zoom_url',
+  hpUrl:'HP_URL_url_1',
+  passcode:'Zoom_パスコード_PASSCODE'
 };
 
 els.csvFile.addEventListener('change', loadCsv);
@@ -552,7 +558,9 @@ els.backBtn.addEventListener('click', () => setStatus('入力内容を調整で�
   fields.site,
   fields.cohost,
   fields.zoomId,
+  fields.passcode,
   fields.zoomUrl,
+  fields.hpUrl,
   fields.purpose
 ].forEach(el => el.addEventListener('input', recalcDraft));
 
@@ -653,7 +661,9 @@ function prefillFromLast(){
   fields.site.value = last[fullKeys.site] || 'Web会議室';
   fields.cohost.value = last[fullKeys.cohost] || '-';
   fields.zoomId.value = last[fullKeys.zoomId] || '';
+  fields.passcode.value = last[fullKeys.passcode] || '';
   fields.zoomUrl.value = last[fullKeys.zoomUrl] || 'https://zoom.us/';
+  fields.hpUrl.value = last[fullKeys.hpUrl] || '';
   recalcDraft();
 }
 
@@ -699,6 +709,7 @@ function validateDraft(){
   if(!fields.start.value || !fields.end.value) warns.push('開始/終了時間が未入力です');
   if(fields.start.value && fields.end.value && diffMin(fields.start.value, fields.end.value) <= 0) warns.push('終了時間は開始時間より後にしてください');
   if(fields.zoomUrl.value && !/^https?:\/\//.test(fields.zoomUrl.value)) warns.push('Zoom URL は http/https で始めてください');
+  if(fields.hpUrl.value && !/^https?:\/\//.test(fields.hpUrl.value)) warns.push('HP_URL_url_1 は http/https で始めてください');
   return warns;
 }
 
@@ -737,7 +748,9 @@ function buildRow(){
   row[fullKeys.k3] = fmtMonthDay(auto.k3);
   row[fullKeys.purpose] = fields.purpose.value;
   row[fullKeys.zoomId] = fields.zoomId.value;
+  row[fullKeys.passcode] = fields.passcode.value;
   row[fullKeys.zoomUrl] = fields.zoomUrl.value;
+  row[fullKeys.hpUrl] = fields.hpUrl.value;
 
   return row;
 }
@@ -773,6 +786,8 @@ function clearDraftForNext(){
   fields.day.value = '';
   fields.title.value = '';
   fields.speaker.value = '';
+  fields.passcode.value = '';
+  fields.hpUrl.value = '';
   fields.purpose.value = '本研修会では、臨床研究に必要な実務の基本をわかりやすく学びます。';
   recalcDraft();
 }
@@ -813,7 +828,9 @@ function loadSelectedIntoForm(){
   fields.site.value = selectedRow[fullKeys.site] || 'Web会議室';
   fields.cohost.value = selectedRow[fullKeys.cohost] || '-';
   fields.zoomId.value = selectedRow[fullKeys.zoomId] || '';
+  fields.passcode.value = selectedRow[fullKeys.passcode] || '';
   fields.zoomUrl.value = selectedRow[fullKeys.zoomUrl] || '';
+  fields.hpUrl.value = selectedRow[fullKeys.hpUrl] || '';
   fields.purpose.value = selectedRow[fullKeys.purpose] || '';
 
   recalcDraft();
@@ -890,6 +907,13 @@ function renderConfirm(warns){
         <p>No.${esc(row[fullKeys.no])} / ${esc(row[fullKeys.date] || '-')} / ${esc(row[fullKeys.title] || '-')} / ${esc(row[fullKeys.speaker] || '-')}</p>
       </div>
       <div class="status ${warns.length ? 's3' : 's2'}">${warns.length ? '確認' : '作成可'}</div>
+    </div>
+    <div class="check-item">
+      <div>
+        <strong>Zoom / HP 情報</strong>
+        <p>Zoom ID ${esc(row[fullKeys.zoomId] || '-')} / PASSCODE ${esc(row[fullKeys.passcode] || '-')} / HP URL ${esc(row[fullKeys.hpUrl] || '-')}</p>
+      </div>
+      <div class="status s2">反映対象</div>
     </div>
     <div class="check-item">
       <div>
