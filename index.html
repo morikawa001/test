@@ -47,6 +47,7 @@
   --core-bg:rgba(4,12,9,.94);
   --scanline-opacity:.07;
 }
+
 [data-theme="light"]{
   --bg:#ffffff;
   --bg2:#f7f6f3;
@@ -86,6 +87,7 @@
   --core-bg:#ffffff;
   --scanline-opacity:0;
 }
+
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{
   min-height:100%;
@@ -104,6 +106,7 @@ html,body{
 body{line-height:1.55}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer;border:none;background:none}
+
 input,select,textarea{
   width:100%;
   background:var(--input-bg);
@@ -126,6 +129,7 @@ input[readonly],textarea[readonly]{
   background:var(--readonly-bg);
   color:var(--text-strong);
 }
+
 .wrap{
   max-width:1580px;
   margin:0 auto;
@@ -133,6 +137,7 @@ input[readonly],textarea[readonly]{
   display:grid;
   gap:18px;
 }
+
 .panel,.hero-panel{
   position:relative;
   overflow:hidden;
@@ -144,10 +149,12 @@ input[readonly],textarea[readonly]{
   border-radius:var(--radius);
   box-shadow:var(--shadow),var(--glow);
 }
+
 [data-theme="light"] .panel,
 [data-theme="light"] .hero-panel{
   background:var(--panel);
 }
+
 .panel::before,.hero-panel::before{
   content:"";
   position:absolute;
@@ -158,11 +165,13 @@ input[readonly],textarea[readonly]{
     linear-gradient(90deg, transparent, color-mix(in srgb, var(--green) 3%, transparent), transparent);
   opacity:.8;
 }
+
 [data-theme="light"] .panel::before,
 [data-theme="light"] .hero-panel::before{
   background:none;
   opacity:0;
 }
+
 .hero-grid{
   display:grid;
   grid-template-columns:1.35fr .95fr;
@@ -209,6 +218,7 @@ input[readonly],textarea[readonly]{
   gap:10px;
   min-width:390px;
 }
+
 .stat-box,.mini-box,.summary-box,.date-card,.status-box,.hint-box,.table-row,.template-row,.alert-item,.list-row,.param-side,.schedule-card{
   background:var(--panel2);
   border:1px solid var(--line);
@@ -230,6 +240,7 @@ input[readonly],textarea[readonly]{
   color:var(--text-strong);
   text-shadow:none;
 }
+
 .command-panel{
   padding:18px;
   display:grid;
@@ -269,6 +280,7 @@ input[readonly],textarea[readonly]{
   letter-spacing:.18em;
   text-transform:uppercase;
 }
+
 .btn{
   min-height:46px;
   padding:0 16px;
@@ -280,16 +292,21 @@ input[readonly],textarea[readonly]{
   letter-spacing:.03em;
   transition:background 150ms ease,color 150ms ease,border-color 150ms ease,box-shadow 150ms ease;
 }
-.btn:hover{background:var(--panel3)}
+.btn:hover{
+  background:var(--panel3);
+}
 .btn.primary{
   background:var(--button-primary-bg);
   border-color:var(--button-primary-bg);
   color:#ffffff;
   box-shadow:none;
 }
-.btn.primary:hover{background:color-mix(in srgb, var(--button-primary-bg) 92%, white)}
+.btn.primary:hover{
+  background:color-mix(in srgb, var(--button-primary-bg) 92%, white);
+}
 .btn.small{min-height:38px;padding:0 12px;font-size:.84rem}
 .btn:disabled{opacity:.42;cursor:not-allowed}
+
 .file-pick{display:grid;gap:6px}
 .file-pick input[type=file]{padding:9px 11px}
 .file-pick input[type=file]::file-selector-button{
@@ -302,6 +319,7 @@ input[readonly],textarea[readonly]{
   font-weight:800;
   cursor:pointer;
 }
+
 .action-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -366,6 +384,7 @@ input[readonly],textarea[readonly]{
   background:var(--progress-grad);
   box-shadow:none;
 }
+
 .parameter-wrap{
   display:grid;
   grid-template-columns:360px 1fr;
@@ -437,6 +456,7 @@ input[readonly],textarea[readonly]{
   color:var(--muted);
   font-size:.92rem;
 }
+
 .alert-wrap,.template-list,.table-list,.confirm-list,.folder-list,.schedule-list{display:grid;gap:10px}
 .alert-item{
   padding:13px 14px;
@@ -465,10 +485,12 @@ input[readonly],textarea[readonly]{
 .status.s3{background:#eef5fb;color:var(--green);border:1px solid #d7e8f7}
 .status.s1{background:#fff8e7;color:var(--warn);border:1px solid #f2e3b4}
 .status.s4{background:#fff0ef;color:var(--danger);border:1px solid #f4d9d7}
+
 [data-theme="dark"] .status.s2{background:rgba(114,255,179,.08);color:var(--success);border:1px solid rgba(114,255,179,.16)}
 [data-theme="dark"] .status.s3{background:rgba(116,233,214,.08);color:var(--cyan);border:1px solid rgba(116,233,214,.15)}
 [data-theme="dark"] .status.s1{background:rgba(255,230,128,.08);color:var(--warn);border:1px solid rgba(255,230,128,.16)}
 [data-theme="dark"] .status.s4{background:rgba(255,143,177,.08);color:var(--danger);border:1px solid rgba(255,143,177,.15)}
+
 .table-head,.table-row{
   display:grid;
   grid-template-columns:90px 140px 1.2fr 1fr 140px 110px;
@@ -554,6 +576,7 @@ input[readonly],textarea[readonly]{
   color:var(--muted);
   font-size:.86rem;
 }
+
 @media (max-width:1240px){
   .hero-grid,.main-grid,.dual-grid,.parameter-wrap{grid-template-columns:1fr}
 }
@@ -896,8 +919,8 @@ input[readonly],textarea[readonly]{
       </div>
     </div>
     <div class="master-grid">
-      <div class="field full">
-        <label>テンプレートファイル</label>
+      <div class="field full file-pick">
+        <label for="templateFiles">テンプレートファイル</label>
         <input id="templateFiles" type="file" multiple accept=".docx,.pptx,.xlsx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       </div>
       <div class="field">
@@ -941,12 +964,6 @@ const DEFAULT_HEADERS=[
   '研修会終了_END_1',
   '研修会入室開始時間_TIME_1',
   '時間（分）_TIME_2',
-  '講義開始_START_TIME',
-  '質疑応答締切_QA_DADLINE',
-  '質疑応答_QA_TIME',
-  '事前打合せ開始時間_PRE_MEETING',
-  '研修会開催開始時間_BASE_DATE_INFO_START',
-  '研修会開催終了時間_BASE_DATE_INFO_END',
   '〆切院外_DEADLINE_1',
   '〆切時間院内_DEADLINE_2',
   '配布資料DL〆切_DEADLINE_3',
@@ -990,12 +1007,6 @@ const fullKeys={
   end:'研修会終了_END_1',
   roomOpen:'研修会入室開始時間_TIME_1',
   duration:'時間（分）_TIME_2',
-  lectureStart:'講義開始_START_TIME',
-  qaDeadline:'質疑応答締切_QA_DADLINE',
-  qaTime:'質疑応答_QA_TIME',
-  preMeeting:'事前打合せ開始時間_PRE_MEETING',
-  baseDateInfoStart:'研修会開催開始時間_BASE_DATE_INFO_START',
-  baseDateInfoEnd:'研修会開催終了時間_BASE_DATE_INFO_END',
   deadline1:'〆切院外_DEADLINE_1',
   deadline2:'〆切時間院内_DEADLINE_2',
   deadline3:'配布資料DL〆切_DEADLINE_3',
@@ -1182,33 +1193,10 @@ function syncCohostFields(){
   fields.cohost3.value=isTeam?COHOST3_TEXT_TEAM:'';
 }
 function setMergeStatus(msg){els.mergeStatusBox.textContent=msg}
-function setMergeState(){
-  const hasTemplates=selectedTemplates.length>0;
-  const hasNo=!!String(els.mergeRecordSelect.value||'').trim();
-  els.templateState.value=`${selectedTemplates.length}件`;
-  els.mergeAllBtn.disabled=!(hasTemplates&&hasNo);
-}
-function renderMergeOptions(){
-  const options=['<option value="">Noを選択して差し込み</option>'].concat(
-    dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`)
-  );
-  els.mergeRecordSelect.innerHTML=options.join('');
-  els.mergeRecordSelect.disabled=!dataRows.length;
-  setMergeState();
-}
-function renderTemplateList(){
-  if(!selectedTemplates.length){
-    els.templateList.innerHTML='<div class="template-row"><div><strong>テンプレート未選択</strong><p>pptx / xlsx / docx を複数まとめて選択できます。</p></div><div><span class="status s3">待機</span></div><div class="mono">-</div><div class="mono">-</div></div>';
-    return;
-  }
-  els.templateList.innerHTML=selectedTemplates.map(file=>`<div class="template-row"><div><strong>${esc(file.name)}</strong><p>${esc(file.type||'application/octet-stream')}</p></div><div><span class="status s2">読込済み</span></div><div class="mono">${esc(templateKind(file.name))}</div><div class="mono">${Math.round((file.size||0)/1024)} KB</div></div>`).join('');
-}
-function handleTemplateFiles(e){
-  selectedTemplates=Array.from(e.target.files||[]).filter(f=>/\.(docx|pptx|xlsx)$/i.test(f.name));
-  renderTemplateList();
-  setMergeState();
-  setMergeStatus(selectedTemplates.length?`${selectedTemplates.length}件のテンプレートを読み込みました。差し込み対象Noを選ぶと一括出力できます。`:'テンプレートファイルが未選択です。');
-}
+function setMergeState(){const hasTemplates=selectedTemplates.length>0;const hasNo=!!String(els.mergeRecordSelect.value||'').trim();els.templateState.value=`${selectedTemplates.length}件`;els.mergeAllBtn.disabled=!(hasTemplates&&hasNo)}
+function renderMergeOptions(){const options=['<option value="">Noを選択して差し込み</option>'].concat(dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`));els.mergeRecordSelect.innerHTML=options.join('');els.mergeRecordSelect.disabled=!dataRows.length;setMergeState()}
+function renderTemplateList(){if(!selectedTemplates.length){els.templateList.innerHTML='<div class="template-row"><div><strong>テンプレート未選択</strong><p>pptx / xlsx / docx を複数まとめて選択できます。</p></div><div><span class="status s3">待機</span></div><div class="mono">-</div><div class="mono">-</div></div>';return}els.templateList.innerHTML=selectedTemplates.map(file=>`<div class="template-row"><div><strong>${esc(file.name)}</strong><p>${esc(file.type||'application/octet-stream')}</p></div><div><span class="status s2">読込済み</span></div><div class="mono">${esc(templateKind(file.name))}</div><div class="mono">${Math.round((file.size||0)/1024)} KB</div></div>`).join('')}
+function handleTemplateFiles(e){selectedTemplates=Array.from(e.target.files||[]).filter(f=>/\.(docx|pptx|xlsx)$/i.test(f.name));renderTemplateList();setMergeState();setMergeStatus(selectedTemplates.length?`${selectedTemplates.length}件のテンプレートを読み込みました。差し込み対象Noを選ぶと一括出力できます。`:'テンプレートファイルが未選択です。')}
 function getRowByNo(no){return dataRows.find(r=>String(r[fullKeys.no]||'').trim()===String(no||'').trim())||null}
 
 function buildTemplateData(row){
@@ -1218,22 +1206,16 @@ function buildTemplateData(row){
   const aliasEntries = {
     DATE_1: row?.[fullKeys.date] ?? '',
     DATE_2: row?.[fullKeys.date2] ?? '',
+    DEADLINE_1: row?.[fullKeys.deadline1] ?? '',
+    DEADLINE_2: row?.[fullKeys.deadline2] ?? '',
+    DEADLINE_3: row?.[fullKeys.deadline3] ?? '',
+    DATA_deadline: row?.[fullKeys.dataDeadline] ?? '',
     YEAR_1: row?.[fullKeys.year] ?? '',
     DAY: row?.[fullKeys.day] ?? '',
     START_1: row?.[fullKeys.start] ?? '',
     END_1: row?.[fullKeys.end] ?? '',
     TIME_1: row?.[fullKeys.roomOpen] ?? '',
     TIME_2: row?.[fullKeys.duration] ?? '',
-    START_TIME: row?.[fullKeys.lectureStart] ?? '',
-    QA_DADLINE: row?.[fullKeys.qaDeadline] ?? '',
-    QA_TIME: row?.[fullKeys.qaTime] ?? '',
-    PRE_MEETING: row?.[fullKeys.preMeeting] ?? '',
-    BASE_DATE_INFO_START: row?.[fullKeys.baseDateInfoStart] ?? '',
-    BASE_DATE_INFO_END: row?.[fullKeys.baseDateInfoEnd] ?? '',
-    DEADLINE_1: row?.[fullKeys.deadline1] ?? '',
-    DEADLINE_2: row?.[fullKeys.deadline2] ?? '',
-    DEADLINE_3: row?.[fullKeys.deadline3] ?? '',
-    DATA_deadline: row?.[fullKeys.dataDeadline] ?? '',
     TITLE: row?.[fullKeys.title] ?? '',
     SPEAKER: row?.[fullKeys.speaker] ?? '',
     SUBJECT_1: row?.[fullKeys.subject] ?? '',
@@ -1289,24 +1271,6 @@ function buildTemplateData(row){
 
   map[fullKeys.closing1] = String(row?.[fullKeys.closing1] ?? '');
   map['進行表クロージング（選択）_CLOSING_1'] = String(row?.[fullKeys.closing1] ?? '');
-
-  map[fullKeys.lectureStart] = String(row?.[fullKeys.lectureStart] ?? '');
-  map['講義開始_START_TIME'] = String(row?.[fullKeys.lectureStart] ?? '');
-
-  map[fullKeys.qaDeadline] = String(row?.[fullKeys.qaDeadline] ?? '');
-  map['質疑応答締切_QA_DADLINE'] = String(row?.[fullKeys.qaDeadline] ?? '');
-
-  map[fullKeys.qaTime] = String(row?.[fullKeys.qaTime] ?? '');
-  map['質疑応答_QA_TIME'] = String(row?.[fullKeys.qaTime] ?? '');
-
-  map[fullKeys.preMeeting] = String(row?.[fullKeys.preMeeting] ?? '');
-  map['事前打合せ開始時間_PRE_MEETING'] = String(row?.[fullKeys.preMeeting] ?? '');
-
-  map[fullKeys.baseDateInfoStart] = String(row?.[fullKeys.baseDateInfoStart] ?? '');
-  map['研修会開催開始時間_BASE_DATE_INFO_START'] = String(row?.[fullKeys.baseDateInfoStart] ?? '');
-
-  map[fullKeys.baseDateInfoEnd] = String(row?.[fullKeys.baseDateInfoEnd] ?? '');
-  map['研修会開催終了時間_BASE_DATE_INFO_END'] = String(row?.[fullKeys.baseDateInfoEnd] ?? '');
 
   return map;
 }
@@ -1422,7 +1386,6 @@ function loadCsv(e){
       currentHeaders=(meta?.fields?.length?meta.fields:[...DEFAULT_HEADERS]);
       ensureAdditionalHeaders();
       rawRows=Array.isArray(data)?compactRawRows(data.map(r=>normalizeRowShape(r))):[];
-      rawRows=rawRows.map(fillDerivedFieldsInRow);
       dataRows=buildDisplayRowsFromRaw(rawRows);
       els.appendBtn.disabled=false;
       els.openConfirmBtn.disabled=false;
@@ -1460,7 +1423,6 @@ function ensureCheckHeaders(){[fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK
 function ensureAdditionalHeaders(){
   ensureCheckHeaders();
   [
-    fullKeys.lectureStart,fullKeys.qaDeadline,fullKeys.qaTime,fullKeys.preMeeting,fullKeys.baseDateInfoStart,fullKeys.baseDateInfoEnd,
     fullKeys.deadline3,fullKeys.cost,fullKeys.dataDeadline,fullKeys.date2,fullKeys.subject2,
     fullKeys.name,fullKeys.cohost3,fullKeys.head1,fullKeys.closing1,
     fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK2,fullKeys.checkK3
@@ -1630,11 +1592,6 @@ function isJapaneseHoliday(date){
 }
 function formatDate2(iso){const [y,m,d]=iso.split('-');return `${Number(m)}/${Number(d)}`}
 function formatDate1Short(iso){const [y,m,d]=iso.split('-');return `${Number(m)}月${Number(d)}日`}
-function formatDateTimeInfo(iso,time){
-  if(!iso||!time)return '';
-  const [y,m,d]=iso.split('-');
-  return `${y}/${m}/${d} ${time}`;
-}
 function subjectDetail(v){if(v==='研究者')return '（医師・歯科医師等）';if(v==='研究支援者')return '（薬剤師・看護師等）';return ''}
 function validateDraft(){
   const warns=[];
@@ -1660,13 +1617,6 @@ function stageDraft(){
 function buildRow(){
   const base=fields.date.value?new Date(fields.date.value+'T00:00:00'):null;
   const auto=calcAutoDates(base);
-  const lectureStart=fields.start.value?shiftTime(fields.start.value,2):'';
-  const qaDeadline=fields.end.value?shiftTime(fields.end.value,-20):'';
-  const qaTime=fields.end.value?shiftTime(fields.end.value,-10):'';
-  const preMeeting=fields.start.value?shiftTime(fields.start.value,-30):'';
-  const baseDateInfoStart=formatDateTimeInfo(fields.date.value, fields.start.value);
-  const baseDateInfoEnd=formatDateTimeInfo(fields.date.value, fields.end.value);
-
   const row={};
   currentHeaders.forEach(h=>row[h]='');
   row[fullKeys.no]=String(fields.no.value||'').trim();
@@ -1679,12 +1629,6 @@ function buildRow(){
   row[fullKeys.end]=fields.end.value;
   row[fullKeys.roomOpen]=fields.roomOpen.value;
   row[fullKeys.duration]=fields.duration.value;
-  row[fullKeys.lectureStart]=lectureStart;
-  row[fullKeys.qaDeadline]=qaDeadline;
-  row[fullKeys.qaTime]=qaTime;
-  row[fullKeys.preMeeting]=preMeeting;
-  row[fullKeys.baseDateInfoStart]=baseDateInfoStart;
-  row[fullKeys.baseDateInfoEnd]=baseDateInfoEnd;
   row[fullKeys.deadline1]=fields.deadline1.value;
   row[fullKeys.deadline2]=fields.deadline2.value;
   row[fullKeys.deadline3]=fields.deadline3.value;
@@ -1717,21 +1661,6 @@ function buildRow(){
   row[fullKeys.checkK3]=boolToCsv(els.ckK3.checked);
   return row;
 }
-function fillDerivedFieldsInRow(row){
-  const out={...row};
-  const dateIso=toIsoDateFromShortDate(out[fullKeys.date], out[fullKeys.year]);
-  const start=normTime(out[fullKeys.start]||'');
-  const end=normTime(out[fullKeys.end]||'');
-
-  if(!String(out[fullKeys.lectureStart]||'').trim() && start) out[fullKeys.lectureStart]=shiftTime(start,2);
-  if(!String(out[fullKeys.qaDeadline]||'').trim() && end) out[fullKeys.qaDeadline]=shiftTime(end,-20);
-  if(!String(out[fullKeys.qaTime]||'').trim() && end) out[fullKeys.qaTime]=shiftTime(end,-10);
-  if(!String(out[fullKeys.preMeeting]||'').trim() && start) out[fullKeys.preMeeting]=shiftTime(start,-30);
-  if(!String(out[fullKeys.baseDateInfoStart]||'').trim() && dateIso && start) out[fullKeys.baseDateInfoStart]=formatDateTimeInfo(dateIso,start);
-  if(!String(out[fullKeys.baseDateInfoEnd]||'').trim() && dateIso && end) out[fullKeys.baseDateInfoEnd]=formatDateTimeInfo(dateIso,end);
-
-  return normalizeRowShape(out);
-}
 function commitDraft(){
   if(!currentHeaders.length){setStatus('先にCSVを読み込むか、新規データベースを作成してください。');return}
   const warns=validateDraft();
@@ -1741,7 +1670,7 @@ function commitDraft(){
   const rawIndex=getRawRowIndexByNo(no);
   if(rawIndex>=0){rawRows[rawIndex]=normalizeRowShape(stagedRow);lastSaveMode='update'}
   else{rawRows=compactRawRows(rawRows);rawRows.push(normalizeRowShape(stagedRow));lastSaveMode='insert'}
-  rawRows=compactRawRows(rawRows).map(fillDerivedFieldsInRow);
+  rawRows=compactRawRows(rawRows);
   dataRows=buildDisplayRowsFromRaw(rawRows);
   selectedRow=dataRows.find(r=>String(r[fullKeys.no]||'').trim()===no)||null;
   renderRecordOptions();
@@ -1895,7 +1824,7 @@ function renderConfirm(warns){
   els.confirmCount.textContent='1件';
   els.confirmWarn.textContent=warns.length;
   els.confirmState.textContent=warns.length?'要確認':(saveMode==='update'?'上書き保存':'新規追加');
-  els.checkList.innerHTML=`<div class="list-row"><div><strong>${saveMode==='update'?'既存行を上書き保存':'新規行を追加保存'}</strong><p>No.${esc(row[fullKeys.no])} / ${esc(row[fullKeys.date]||'-')} / ${esc(row[fullKeys.title]||'-')} / ${esc(row[fullKeys.name]||'-')}</p></div><div><span class="status ${warns.length?'s3':'s2'}">${warns.length?'確認':(saveMode==='update'?'上書き':'追加')}</span></div></div><div class="list-row"><div><strong>自動計算項目</strong><p>DATE_1 ${esc(row[fullKeys.date]||'-')} / START_TIME ${esc(row[fullKeys.lectureStart]||'-')} / QA_DADLINE ${esc(row[fullKeys.qaDeadline]||'-')}</p></div><div><span class="status s2">反映済み</span></div></div><div class="list-row"><div><strong>起案チェック状態</strong><p>${esc(checks||'未チェック')}</p></div><div><span class="status s2">保持対象</span></div></div>${warns.map(w=>`<div class="list-row"><div><strong>確認事項</strong><p>${esc(w)}</p></div><div><span class="status s4">保留</span></div></div>`).join('')}`;
+  els.checkList.innerHTML=`<div class="list-row"><div><strong>${saveMode==='update'?'既存行を上書き保存':'新規行を追加保存'}</strong><p>No.${esc(row[fullKeys.no])} / ${esc(row[fullKeys.date]||'-')} / ${esc(row[fullKeys.title]||'-')} / ${esc(row[fullKeys.name]||'-')}</p></div><div><span class="status ${warns.length?'s3':'s2'}">${warns.length?'確認':(saveMode==='update'?'上書き':'追加')}</span></div></div><div class="list-row"><div><strong>自動計算項目</strong><p>DATE_1 ${esc(row[fullKeys.date]||'-')} / DATE_2 ${esc(row[fullKeys.date2]||'-')} / DEADLINE_1 ${esc(row[fullKeys.deadline1]||'-')}</p></div><div><span class="status s2">反映済み</span></div></div><div class="list-row"><div><strong>起案チェック状態</strong><p>${esc(checks||'未チェック')}</p></div><div><span class="status s2">保持対象</span></div></div>${warns.map(w=>`<div class="list-row"><div><strong>確認事項</strong><p>${esc(w)}</p></div><div><span class="status s4">保留</span></div></div>`).join('')}`;
 }
 function renderResult(done=false){
   if(!currentHeaders.length){
@@ -1915,7 +1844,7 @@ function renderResult(done=false){
 }
 function downloadCsv(){
   if(!currentHeaders.length){setStatus('ダウンロード対象のマスターがありません。');return}
-  rawRows=compactRawRows(rawRows).map(fillDerivedFieldsInRow);
+  rawRows=compactRawRows(rawRows);
   const csv=Papa.unparse({fields:currentHeaders,data:rawRows.map(row=>currentHeaders.map(h=>row[h]??''))});
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
   const a=document.createElement('a');
