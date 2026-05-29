@@ -3,63 +3,67 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>臨床研究研修会 かんたんハブ / 東亜重工 管制UI</title>
+<title>臨床研究研修会 管制ダッシュボード / GHOST SYSTEM UI</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
 <style>
 :root,[data-theme="dark"]{
-  --bg:#06090b;
-  --bg2:#0a0f12;
-  --panel:#0c1317;
-  --panel2:#101920;
-  --panel3:#151f27;
-  --line:#22303a;
-  --line2:#2f434f;
-  --text:#d9e6ef;
-  --muted:#7d929f;
-  --faint:#4a5f6c;
-  --accent:#b9f2ff;
-  --accent2:#6fd5f0;
-  --accent3:#1c95b3;
-  --success:#82e0b4;
+  --bg:#070808;
+  --bg2:#0d1011;
+  --panel:#111516;
+  --panel2:#161c1e;
+  --panel3:#1b2326;
+  --line:#2a3236;
+  --line2:#445057;
+  --text:#e7ece9;
+  --muted:#96a09a;
+  --faint:#62706b;
+  --amber:#ffb347;
+  --amber2:#ff8f1f;
+  --amber3:#ffcf87;
+  --cyan:#7de6ff;
+  --cyan2:#1bc7ff;
+  --success:#8de2a5;
   --warn:#ffd36e;
-  --danger:#ff8b8b;
-  --glow:0 0 0 1px rgba(185,242,255,.08), 0 0 28px rgba(84,183,214,.08);
-  --shadow:0 20px 40px rgba(0,0,0,.35);
+  --danger:#ff8f8f;
+  --shadow:0 20px 40px rgba(0,0,0,.32);
+  --glow:0 0 0 1px rgba(255,179,71,.06),0 0 24px rgba(255,143,31,.06);
   --radius:18px;
-  --radius-sm:10px;
-  --grid-gap:18px;
+  --radius-sm:12px;
 }
 [data-theme="light"]{
-  --bg:#f4f8fb;
-  --bg2:#ecf2f6;
-  --panel:#ffffff;
-  --panel2:#f3f7fa;
-  --panel3:#eef4f8;
-  --line:#c8d6df;
-  --line2:#a8beca;
-  --text:#10212c;
-  --muted:#577081;
-  --faint:#8198a7;
-  --accent:#0b6077;
-  --accent2:#1687a3;
-  --accent3:#36aac7;
-  --success:#207553;
-  --warn:#8f6300;
-  --danger:#a03f3f;
-  --glow:0 0 0 1px rgba(11,96,119,.08), 0 0 20px rgba(11,96,119,.06);
-  --shadow:0 14px 30px rgba(16,33,44,.08);
+  --bg:#f7f4ee;
+  --bg2:#f0ebe2;
+  --panel:#fffaf2;
+  --panel2:#f6efe5;
+  --panel3:#efe6da;
+  --line:#d4c7b5;
+  --line2:#bfa78d;
+  --text:#201912;
+  --muted:#736252;
+  --faint:#9b8a7b;
+  --amber:#a55600;
+  --amber2:#d66e00;
+  --amber3:#ffbd78;
+  --cyan:#0a91ae;
+  --cyan2:#057894;
+  --success:#227657;
+  --warn:#8c6300;
+  --danger:#a04242;
+  --shadow:0 14px 28px rgba(32,25,18,.08);
+  --glow:0 0 0 1px rgba(214,110,0,.06),0 0 16px rgba(214,110,0,.04);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{
   min-height:100%;
   background:
-    linear-gradient(180deg, rgba(111,213,240,.05), transparent 18%),
-    linear-gradient(90deg, rgba(185,242,255,.03) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(185,242,255,.02) 1px, transparent 1px),
+    radial-gradient(circle at 20% 0%, rgba(255,143,31,.08), transparent 22%),
+    radial-gradient(circle at 90% 10%, rgba(125,230,255,.05), transparent 20%),
+    linear-gradient(90deg, rgba(255,179,71,.025) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,179,71,.02) 1px, transparent 1px),
     var(--bg);
-  background-size:auto, 24px 24px, 24px 24px, auto;
+  background-size:auto, auto, 22px 22px, 22px 22px, auto;
   color:var(--text);
   font-family:'Satoshi','Inter',sans-serif;
   letter-spacing:.02em;
@@ -79,73 +83,69 @@ input,select,textarea{
 textarea{min-height:96px;resize:vertical}
 input:focus,select:focus,textarea:focus{
   outline:none;
-  border-color:var(--accent2);
-  box-shadow:0 0 0 3px rgba(111,213,240,.12);
+  border-color:var(--amber2);
+  box-shadow:0 0 0 3px rgba(255,143,31,.12);
 }
-input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
+input[readonly],textarea[readonly]{background:var(--panel2)}
 .wrap{
-  max-width:1560px;
+  max-width:1580px;
   margin:0 auto;
   padding:18px;
   display:grid;
   gap:18px;
 }
-.console-top{
-  display:grid;
-  grid-template-columns:1.45fr .9fr;
-  gap:18px;
-}
-.console-bar,.panel{
+.panel,.hero-panel{
   position:relative;
   overflow:hidden;
   background:
-    linear-gradient(180deg, rgba(185,242,255,.03), transparent 24%),
-    linear-gradient(90deg, rgba(185,242,255,.025), transparent 30%),
+    linear-gradient(180deg, rgba(255,179,71,.03), transparent 28%),
+    linear-gradient(90deg, rgba(255,179,71,.025), transparent 36%),
     var(--panel);
   border:1px solid var(--line);
   border-radius:var(--radius);
-  box-shadow:var(--shadow), var(--glow);
+  box-shadow:var(--shadow),var(--glow);
 }
-.console-bar{
-  padding:20px 22px;
-  min-height:140px;
-}
-.console-bar::before,.panel::before{
+.panel::before,.hero-panel::before{
   content:"";
   position:absolute;
   inset:0;
   pointer-events:none;
-  background:
-    linear-gradient(90deg, transparent, rgba(185,242,255,.035), transparent);
+  background:linear-gradient(90deg, transparent, rgba(255,179,71,.04), transparent);
   opacity:.6;
 }
-.console-title{
+.hero-grid{
+  display:grid;
+  grid-template-columns:1.35fr .95fr;
+  gap:18px;
+}
+.hero-panel{padding:20px 22px}
+.hero-head{
   display:flex;
   justify-content:space-between;
   gap:20px;
   align-items:flex-start;
   flex-wrap:wrap;
 }
+.kicker{
+  display:inline-flex;
+  align-items:center;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,179,71,.18);
+  background:rgba(255,179,71,.06);
+  color:var(--amber3);
+  font-size:.73rem;
+  font-weight:900;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
 .id-block{
   display:grid;
   gap:8px;
 }
-.kicker{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:6px 10px;
-  border:1px solid var(--line2);
-  border-radius:999px;
-  color:var(--accent);
-  background:rgba(185,242,255,.05);
-  font-size:.74rem;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.16em;
-}
 .id-block h1{
-  font-size:clamp(1.6rem,1.2rem + 1.6vw,2.6rem);
+  font-size:clamp(1.55rem,1.2rem + 1.7vw,2.7rem);
+  line-height:1.12;
   font-weight:900;
   letter-spacing:.08em;
 }
@@ -154,91 +154,36 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
   color:var(--muted);
   font-size:.93rem;
 }
-.head-stats{
+.hero-stats{
   display:grid;
   grid-template-columns:repeat(3,minmax(130px,1fr));
   gap:10px;
-  min-width:380px;
+  min-width:390px;
 }
-.stat-box{
+.stat-box,.mini-box,.summary-box,.date-card,.status-box,.hint-box,.table-row,.template-row,.alert-item,.list-row,.param-side{
   background:var(--panel2);
   border:1px solid var(--line);
   border-radius:14px;
-  padding:12px 14px;
-  display:grid;
-  gap:4px;
 }
-.stat-box span{
+.stat-box,.mini-box,.summary-box,.date-card,.param-side{padding:12px 14px}
+.stat-box span,.mini-box span,.summary-box span,.small-label,.field label{
+  display:block;
   color:var(--muted);
-  font-size:.76rem;
-  letter-spacing:.12em;
+  font-size:.74rem;
+  letter-spacing:.14em;
   text-transform:uppercase;
+  font-weight:900;
 }
-.stat-box b{
+.stat-box b,.summary-box b{
+  display:block;
+  margin-top:5px;
   font-size:1.35rem;
-  color:var(--accent);
+  color:var(--amber3);
 }
-.action-deck{
+.command-panel{
   padding:18px;
   display:grid;
   gap:12px;
-}
-.action-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-.btn{
-  min-height:46px;
-  padding:0 16px;
-  border-radius:12px;
-  border:1px solid var(--line2);
-  background:linear-gradient(180deg, rgba(185,242,255,.03), rgba(255,255,255,0)), var(--panel2);
-  color:var(--text);
-  font-weight:800;
-  letter-spacing:.05em;
-}
-.btn.primary{
-  background:
-    linear-gradient(180deg, rgba(185,242,255,.18), rgba(111,213,240,.06)),
-    rgba(19,72,88,.48);
-  color:var(--accent);
-  border-color:rgba(111,213,240,.55);
-  box-shadow:0 0 0 1px rgba(111,213,240,.08) inset, 0 0 18px rgba(111,213,240,.08);
-}
-.btn.small{min-height:38px;padding:0 12px;font-size:.83rem}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-.file-pick{
-  display:grid;
-  gap:6px;
-}
-.file-pick label,.field label,.small-label{
-  font-size:.75rem;
-  color:var(--muted);
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  font-weight:800;
-}
-.file-pick input[type=file]{
-  padding:9px 11px;
-  border-radius:12px;
-  background:var(--bg2);
-}
-.file-pick input[type=file]::file-selector-button{
-  margin-right:12px;
-  border:none;
-  border-radius:8px;
-  padding:8px 12px;
-  background:var(--accent3);
-  color:#eafcff;
-  font-weight:800;
-  cursor:pointer;
-}
-.main-grid{
-  display:grid;
-  grid-template-columns:1.3fr .9fr;
-  gap:18px;
-  align-items:start;
 }
 .panel{
   padding:18px;
@@ -248,96 +193,111 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
 .panel-head{
   display:flex;
   justify-content:space-between;
-  align-items:end;
   gap:12px;
+  align-items:end;
   flex-wrap:wrap;
-  padding-bottom:10px;
   border-bottom:1px solid var(--line);
+  padding-bottom:10px;
 }
 .panel-head h2{
   font-size:1rem;
   font-weight:900;
-  letter-spacing:.1em;
+  letter-spacing:.12em;
   text-transform:uppercase;
 }
 .panel-head p{
   color:var(--muted);
   font-size:.88rem;
 }
+.corner-label{
+  position:absolute;
+  top:12px;
+  right:14px;
+  font-size:.67rem;
+  color:var(--faint);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.btn{
+  min-height:46px;
+  padding:0 16px;
+  border-radius:12px;
+  border:1px solid var(--line2);
+  background:
+    linear-gradient(180deg, rgba(255,179,71,.05), rgba(255,255,255,0)),
+    var(--panel2);
+  color:var(--text);
+  font-weight:900;
+  letter-spacing:.05em;
+}
+.btn.primary{
+  background:
+    linear-gradient(180deg, rgba(255,179,71,.18), rgba(255,143,31,.08)),
+    rgba(80,44,12,.5);
+  border-color:rgba(255,179,71,.45);
+  color:var(--amber3);
+  box-shadow:0 0 0 1px rgba(255,179,71,.08) inset, 0 0 18px rgba(255,143,31,.07);
+}
+.btn.small{min-height:38px;padding:0 12px;font-size:.83rem}
+.btn:disabled{opacity:.42;cursor:not-allowed}
+.file-pick{display:grid;gap:6px}
+.file-pick input[type=file]{padding:9px 11px}
+.file-pick input[type=file]::file-selector-button{
+  margin-right:12px;
+  border:none;
+  border-radius:8px;
+  padding:8px 12px;
+  background:var(--amber2);
+  color:#fff4e5;
+  font-weight:900;
+  cursor:pointer;
+}
+.action-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.mini-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.main-grid{
+  display:grid;
+  grid-template-columns:1.32fr .92fr;
+  gap:18px;
+  align-items:start;
+}
 .master-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:12px;
 }
-.field{
-  display:grid;
-  gap:6px;
-}
+.field{display:grid;gap:6px}
 .field.full{grid-column:1/-1}
-.readout{
-  min-height:46px;
-  display:flex;
-  align-items:center;
-  padding:0 13px;
-  border:1px solid var(--line);
-  background:var(--panel2);
-  border-radius:12px;
-}
-.control-row{
+.control-row,.footer-actions{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
 }
-.status-box,.hint-box,.chip-box,.summary-box,.list-row,.template-row,.alert-item,.mini-cell,.date-card{
-  background:var(--panel2);
-  border:1px solid var(--line);
-  border-radius:14px;
-}
 .status-box,.hint-box{padding:13px 14px}
-.hint-box{
-  color:var(--muted);
-  font-size:.9rem;
-}
+.hint-box{color:var(--muted);font-size:.9rem}
 .side-stack{display:grid;gap:18px}
 .auto-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:10px;
 }
-.date-card{
-  padding:12px 14px;
-  display:grid;
-  gap:4px;
-}
 .date-card b{
-  color:var(--muted);
-  font-size:.74rem;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-}
-.date-card span{
-  color:var(--accent);
-  font-weight:700;
+  display:block;
+  margin-top:4px;
+  color:var(--amber3);
+  font-size:1rem;
 }
 .summary-grid{
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
   gap:10px;
-}
-.summary-box{
-  padding:13px 14px;
-  display:grid;
-  gap:5px;
-}
-.summary-box span{
-  color:var(--muted);
-  font-size:.73rem;
-  text-transform:uppercase;
-  letter-spacing:.12em;
-}
-.summary-box b{
-  font-size:1.35rem;
-  color:var(--accent);
 }
 .progress-shell{
   height:14px;
@@ -349,7 +309,78 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
 .progress-bar{
   height:100%;
   width:0%;
-  background:linear-gradient(90deg, var(--accent3), var(--accent), #d9fbff);
+  background:linear-gradient(90deg,var(--amber2),var(--amber),var(--amber3));
+}
+.parameter-wrap{
+  display:grid;
+  grid-template-columns:360px 1fr;
+  gap:16px;
+  align-items:center;
+}
+.param-gauge{
+  position:relative;
+  width:100%;
+  max-width:360px;
+  aspect-ratio:1/1;
+  margin:0 auto;
+  display:grid;
+  place-items:center;
+}
+.param-svg{
+  width:100%;
+  height:100%;
+  transform:rotate(-90deg);
+}
+.param-core{
+  position:absolute;
+  inset:18%;
+  border-radius:50%;
+  border:1px solid rgba(255,179,71,.18);
+  background:
+    radial-gradient(circle at center, rgba(255,179,71,.08), rgba(255,179,71,.02) 55%, transparent 70%),
+    rgba(10,12,12,.9);
+  display:grid;
+  place-items:center;
+  text-align:center;
+  box-shadow:0 0 24px rgba(255,143,31,.08) inset;
+}
+.param-core small{
+  display:block;
+  color:var(--muted);
+  font-size:.72rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.param-core strong{
+  display:block;
+  font-size:2.4rem;
+  color:var(--amber3);
+  line-height:1.1;
+  font-weight:900;
+}
+.param-core span{
+  display:block;
+  color:var(--cyan);
+  font-size:.9rem;
+  margin-top:4px;
+}
+.param-meta{
+  display:grid;
+  gap:10px;
+}
+.param-side{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  align-items:center;
+}
+.param-side b{
+  font-size:1.2rem;
+  color:var(--amber3);
+}
+.radar-note{
+  color:var(--muted);
+  font-size:.9rem;
 }
 .alert-wrap,.template-list,.table-list,.confirm-list,.folder-list{display:grid;gap:10px}
 .alert-item{
@@ -371,14 +402,14 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
   letter-spacing:.06em;
 }
 .alert-tag,.badge{
-  background:rgba(111,213,240,.08);
-  color:var(--accent);
-  border:1px solid rgba(111,213,240,.18);
+  background:rgba(255,179,71,.08);
+  color:var(--amber3);
+  border:1px solid rgba(255,179,71,.16);
 }
-.status.s2{background:rgba(130,224,180,.08);color:var(--success);border:1px solid rgba(130,224,180,.2)}
-.status.s3{background:rgba(111,213,240,.08);color:var(--accent);border:1px solid rgba(111,213,240,.2)}
-.status.s1{background:rgba(255,211,110,.08);color:var(--warn);border:1px solid rgba(255,211,110,.2)}
-.status.s4{background:rgba(255,139,139,.08);color:var(--danger);border:1px solid rgba(255,139,139,.2)}
+.status.s2{background:rgba(141,226,165,.08);color:var(--success);border:1px solid rgba(141,226,165,.18)}
+.status.s3{background:rgba(125,230,255,.08);color:var(--cyan);border:1px solid rgba(125,230,255,.16)}
+.status.s1{background:rgba(255,211,110,.08);color:var(--warn);border:1px solid rgba(255,211,110,.18)}
+.status.s4{background:rgba(255,143,143,.08);color:var(--danger);border:1px solid rgba(255,143,143,.16)}
 .table-head,.table-row{
   display:grid;
   grid-template-columns:90px 140px 1.2fr 1fr 140px 110px;
@@ -392,30 +423,23 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
   letter-spacing:.12em;
   text-transform:uppercase;
 }
-.table-row{
-  padding:14px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:var(--panel2);
-}
-.table-row strong,.template-row strong,.alert-item strong,.mini-cell strong{
-  font-weight:900;
-}
-.dual-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-}
-.confirm-list .list-row,.folder-list .list-row{
+.table-row{padding:14px}
+.table-row strong,.template-row strong,.alert-item strong,.list-row strong{font-weight:900}
+.list-row{
   padding:14px;
   display:flex;
   justify-content:space-between;
   gap:12px;
   align-items:flex-start;
 }
-.list-row p,.template-row p,.alert-item p,.table-row p,.mini-cell p{
+.table-row p,.template-row p,.alert-item p,.list-row p,.mini-box p{
   color:var(--muted);
   font-size:.9rem;
+}
+.dual-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
 }
 .template-row{
   padding:14px;
@@ -424,51 +448,16 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
   gap:12px;
   align-items:center;
 }
-.mini-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px;
-}
-.mini-cell{
-  padding:12px 14px;
-  display:grid;
-  gap:5px;
-}
-.mini-cell span{
-  color:var(--muted);
-  font-size:.72rem;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-}
-.footer-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-  flex-wrap:wrap;
-}
 .mono{
   font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
   font-size:.81rem;
   color:var(--muted);
 }
-.sep-line{
-  height:1px;
-  background:linear-gradient(90deg, transparent, var(--line2), transparent);
-}
-.corner-label{
-  position:absolute;
-  right:14px;
-  top:12px;
-  color:var(--faint);
-  font-size:.68rem;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-}
-@media (max-width:1200px){
-  .console-top,.main-grid,.dual-grid{grid-template-columns:1fr}
+@media (max-width:1240px){
+  .hero-grid,.main-grid,.dual-grid,.parameter-wrap{grid-template-columns:1fr}
 }
 @media (max-width:860px){
-  .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.head-stats,.table-head,.table-row,.template-row,.alert-item{
+  .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.template-row,.alert-item{
     grid-template-columns:1fr;
   }
 }
@@ -476,28 +465,29 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
 </head>
 <body>
 <div class="wrap">
-  <section class="console-top">
-    <div class="console-bar">
-      <div class="corner-label">THI / CONTROL SURFACE</div>
-      <div class="console-title">
+  <section class="hero-grid">
+    <section class="hero-panel">
+      <div class="corner-label">CYBERNETIC CONTROL / SECTION-STYLE UI</div>
+      <div class="hero-head">
         <div class="id-block">
-          <div class="kicker">Toa Heavy Industries / Sidonia Control Style</div>
+          <div class="kicker">Ghost System / Clinical Research Training Control</div>
           <h1>臨床研究研修会 管制ダッシュボード</h1>
-          <p>暗色高コントラストの管制UIを基調に、重要操作を上段に集約し、入力・自動計算・確認・出力の視線導線を短縮したレイアウトです。</p>
+          <p>攻殻機動隊系の高密度な端末画面を意識し、黒地にアンバー主軸のコントラスト、層状パネル、円環パラメータで状況把握を速くしたレイアウトです。</p>
         </div>
-        <div class="head-stats">
+        <div class="hero-stats">
           <div class="stat-box"><span>Records</span><b id="sumAllTop">0</b></div>
           <div class="stat-box"><span>Current Year</span><b id="sumYearTop">0</b></div>
           <div class="stat-box"><span>Next No</span><b id="sumNextTop">-</b></div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="panel action-deck">
+    <section class="panel command-panel">
+      <div class="corner-label">OPERATION STACK</div>
       <div class="panel-head">
         <div>
           <h2>Quick Operation</h2>
-          <p>起動時の主要操作を右上に固定しました。</p>
+          <p>主要操作を右上に集約しています。</p>
         </div>
       </div>
       <button class="btn" id="themeBtn">表示テーマ切替</button>
@@ -513,9 +503,50 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
         <option value="">Noを選択して表示</option>
       </select>
       <div class="mini-grid">
-        <div class="mini-cell"><span>Database</span><strong id="miniDbState">CSV未読込</strong><p id="miniDbText">CSVまたは新規DBを選択してください</p></div>
-        <div class="mini-cell"><span>Next</span><strong id="miniNext">-</strong><p>次回採番候補</p></div>
-        <div class="mini-cell"><span>Year Count</span><strong id="miniYearCount">0件</strong><p>当年度登録件数</p></div>
+        <div class="mini-box"><span>Database</span><b id="miniDbState">CSV未読込</b><p id="miniDbText">CSVまたは新規DBを選択してください</p></div>
+        <div class="mini-box"><span>Next</span><b id="miniNext">-</b><p>次回採番候補</p></div>
+        <div class="mini-box"><span>Year Count</span><b id="miniYearCount">0件</b><p>当年度登録件数</p></div>
+      </div>
+    </section>
+  </section>
+
+  <section class="panel">
+    <div class="corner-label">ANNUAL PLAN PARAMETER</div>
+    <div class="panel-head">
+      <div>
+        <h2>Annual Plan Parameter</h2>
+        <p>年間計画の進み具合を、攻殻風の円環パラメータで一目把握できるようにしました。</p>
+      </div>
+    </div>
+    <div class="parameter-wrap">
+      <div class="param-gauge">
+        <svg class="param-svg" viewBox="0 0 240 240" aria-hidden="true">
+          <circle cx="120" cy="120" r="92" fill="none" stroke="rgba(255,179,71,.10)" stroke-width="10"></circle>
+          <circle cx="120" cy="120" r="72" fill="none" stroke="rgba(125,230,255,.10)" stroke-width="3" stroke-dasharray="3 7"></circle>
+          <circle cx="120" cy="120" r="92" fill="none" stroke="url(#progressGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="578" stroke-dashoffset="578" id="annualGauge"></circle>
+          <circle cx="120" cy="120" r="108" fill="none" stroke="rgba(255,179,71,.16)" stroke-width="1" stroke-dasharray="1 9"></circle>
+          <defs>
+            <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ff8f1f"></stop>
+              <stop offset="55%" stop-color="#ffb347"></stop>
+              <stop offset="100%" stop-color="#7de6ff"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="param-core">
+          <div>
+            <small>Progress Ratio</small>
+            <strong id="annualGaugeText">0%</strong>
+            <span id="annualGaugeSub">0 / 0 Completed</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="param-meta">
+        <div class="param-side"><div><span class="small-label">年度件数</span><p class="radar-note">現在の年度に属する登録件数です。</p></div><b id="paramYearCount">0</b></div>
+        <div class="param-side"><div><span class="small-label">開催済み</span><p class="radar-note">今日より前に開催済みの件数です。</p></div><b id="paramDoneCount">0</b></div>
+        <div class="param-side"><div><span class="small-label">直近30日</span><p class="radar-note">30日以内に開催予定の件数です。</p></div><b id="paramSoonCount">0</b></div>
+        <div class="param-side"><div><span class="small-label">追加予定</span><p class="radar-note">現在フォームに保持している保存前データです。</p></div><b id="paramDraftCount">0</b></div>
       </div>
     </div>
   </section>
@@ -525,7 +556,7 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
     <div class="panel-head">
       <div>
         <h2>Deadline Alert</h2>
-        <p>7日以内に期限が迫るタスクを優先順で表示します。</p>
+        <p>7日以内に期限が迫るタスクを優先表示します。</p>
       </div>
     </div>
     <div class="alert-wrap" id="alertList">
@@ -539,11 +570,11 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
 
   <section class="main-grid">
     <section class="panel">
-      <div class="corner-label">DATA ENTRY</div>
+      <div class="corner-label">ENTRY CONSOLE</div>
       <div class="panel-head">
         <div>
           <h2>Entry Console</h2>
-          <p>入力欄は左、保存系操作は下段にまとめ、視認性を優先しています。</p>
+          <p>入力欄は左列に集約し、右列を参照監視領域に分離しています。</p>
         </div>
         <button class="btn" id="loadSelectedBtn" disabled>選択Noを反映</button>
       </div>
@@ -604,36 +635,36 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
 
     <aside class="side-stack">
       <section class="panel">
-        <div class="corner-label">AUTO CALC</div>
+        <div class="corner-label">SCHEDULE FEED</div>
         <div class="panel-head">
           <div>
             <h2>Computed Schedule</h2>
-            <p>重要日程を右列に固定表示し、入力中も常時監視できます。</p>
+            <p>派生値を常時表示し、入力ミスを早く検知できます。</p>
           </div>
         </div>
         <div class="auto-grid">
-          <div class="date-card"><b>起案1</b><span id="dK1">-</span></div>
-          <div class="date-card"><b>HP公開</b><span id="dHp">-</span></div>
-          <div class="date-card"><b>起案2</b><span id="dK2">-</span></div>
-          <div class="date-card"><b>起案3</b><span id="dK3">-</span></div>
-          <div class="date-card"><b>入室</b><span id="dRoomOpen">-</span></div>
-          <div class="date-card"><b>所要時間</b><span id="dDuration">-</span></div>
-          <div class="date-card"><b>DEADLINE_1</b><span id="dDeadline1">-</span></div>
-          <div class="date-card"><b>DEADLINE_2</b><span id="dDeadline2">-</span></div>
-          <div class="date-card"><b>DEADLINE_3</b><span id="dDeadline3">-</span></div>
-          <div class="date-card"><b>DATA_deadline</b><span id="dDataDeadline">-</span></div>
-          <div class="date-card"><b>DATE_2</b><span id="dDate2">-</span></div>
-          <div class="date-card"><b>SUBJECT_2</b><span id="dSubject2">-</span></div>
+          <div class="date-card"><span>起案1</span><b id="dK1">-</b></div>
+          <div class="date-card"><span>HP公開</span><b id="dHp">-</b></div>
+          <div class="date-card"><span>起案2</span><b id="dK2">-</b></div>
+          <div class="date-card"><span>起案3</span><b id="dK3">-</b></div>
+          <div class="date-card"><span>入室</span><b id="dRoomOpen">-</b></div>
+          <div class="date-card"><span>所要時間</span><b id="dDuration">-</b></div>
+          <div class="date-card"><span>DEADLINE_1</span><b id="dDeadline1">-</b></div>
+          <div class="date-card"><span>DEADLINE_2</span><b id="dDeadline2">-</b></div>
+          <div class="date-card"><span>DEADLINE_3</span><b id="dDeadline3">-</b></div>
+          <div class="date-card"><span>DATA_deadline</span><b id="dDataDeadline">-</b></div>
+          <div class="date-card"><span>DATE_2</span><b id="dDate2">-</b></div>
+          <div class="date-card"><span>SUBJECT_2</span><b id="dSubject2">-</b></div>
         </div>
-        <div class="hint-box">東亜重工風の「計器盤」感を出すため、日程類は独立カード化し、値だけを高輝度で強調しています。</div>
+        <div class="hint-box">橙色を主情報、シアンを補助情報として使い分け、攻殻機動隊系の端末らしい多層表示に寄せています。</div>
       </section>
 
       <section class="panel">
-        <div class="corner-label">ROADMAP</div>
+        <div class="corner-label">ROADMAP STACK</div>
         <div class="panel-head">
           <div>
             <h2>Operational Summary</h2>
-            <p>進行状況を上から順に読めるよう 4 指標 + バーに整理しました。</p>
+            <p>年次の状況を補助数値でも確認できます。</p>
           </div>
         </div>
         <div class="summary-grid">
@@ -646,7 +677,7 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
           <div class="summary-box"><span>直近30日</span><b id="sumSoon">0件</b></div>
           <div class="summary-box"><span>開催済み</span><b id="sumDone">0件</b></div>
           <div class="summary-box"><span>追加予定</span><b id="sumDraft">0件</b></div>
-          <div class="summary-box"><span>進行率</span><b id="roadmapLabel">0件 / 0件</b></div>
+          <div class="summary-box"><span>比率</span><b id="roadmapLabel">0 / 0</b></div>
         </div>
         <div class="progress-shell"><div class="progress-bar" id="roadmapBar"></div></div>
       </section>
@@ -681,9 +712,9 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
         </div>
       </div>
       <div class="mini-grid">
-        <div class="mini-cell"><span>保存予定</span><strong id="confirmCount">0件</strong></div>
-        <div class="mini-cell"><span>要確認</span><strong id="confirmWarn">0件</strong></div>
-        <div class="mini-cell"><span>状態</span><strong id="confirmState">待機</strong></div>
+        <div class="mini-box"><span>保存予定</span><b id="confirmCount">0件</b></div>
+        <div class="mini-box"><span>要確認</span><b id="confirmWarn">0件</b></div>
+        <div class="mini-box"><span>状態</span><b id="confirmState">待機</b></div>
       </div>
       <div class="confirm-list" id="checkList">
         <div class="list-row">
@@ -706,9 +737,9 @@ input[readonly],textarea[readonly]{background:var(--panel2);color:var(--text)}
         </div>
       </div>
       <div class="mini-grid">
-        <div class="mini-cell"><span>保存完了</span><strong id="resultDone">0件</strong></div>
-        <div class="mini-cell"><span>保留</span><strong id="resultHold">0件</strong></div>
-        <div class="mini-cell"><span>CSV</span><strong id="resultZip">0式</strong></div>
+        <div class="mini-box"><span>保存完了</span><b id="resultDone">0件</b></div>
+        <div class="mini-box"><span>保留</span><b id="resultHold">0件</b></div>
+        <div class="mini-box"><span>CSV</span><b id="resultZip">0式</b></div>
       </div>
       <div class="folder-list" id="folderView">
         <div class="list-row">
@@ -772,7 +803,7 @@ const DEFAULT_HEADERS=['起案行No','年度_YEAR_1','開催日_DATE_1','曜日 
 
 const fullKeys={no:'起案行No',year:'年度_YEAR_1',date:'開催日_DATE_1',day:'曜日 _DAY',start:'研修会開始_START_1',end:'研修会終了_END_1',roomOpen:'研修会入室開始時間_TIME_1',duration:'時間（分）_TIME_2',deadline1:'〆切院外_DEADLINE_1',deadline2:'〆切時間院内_DEADLINE_2',deadline3:'配布資料DL〆切_DEADLINE_3',title:'テーマ(標題)_TITLE',speaker:'担当講師_SPEAKER',subject:'対象_SUBJECT_1',subject2:'対象詳細_SUBJECT_2',site:'講演場所_SITE',cohost:'共催_COHOST_1',cohost3:'共催3(選択）_COHOST_3',k1:'起案1開催DATE_KIAN_1',k2:'起案2資料_DATE_KIAN_2',k3:'起案3受講証修了証_DATE_KIAN_3',hp:'HP案内開始チラシ配布',cost:'謝金_COST',purpose:'目的_PURPOSE',date2:'メール用研修会開催日付_DATE_2',name:'名前_NAME',zoomId:'Zoom_ID_WEBINER_ID',zoomUrl:'zoom_url_zoom_url',hpUrl:'HP_URL_url_1',passcode:'Zoom_パスコード_PASSCODE',intro1:'進行表導入_INTRO_1',intro2:'進行表研修会趣旨説明_INTRO_2',intro3:'進行表講師紹介_INTRO_3',dataDeadline:'講義資料提供の締切_DATA_deadline'};
 
-const els={csvFile:document.getElementById('csvFile'),newDbBtn:document.getElementById('newDbBtn'),recordSelect:document.getElementById('recordSelect'),openConfirmBtn:document.getElementById('openConfirmBtn'),appendBtn:document.getElementById('appendBtn'),prefillBtn:document.getElementById('prefillBtn'),loadSelectedBtn:document.getElementById('loadSelectedBtn'),confirmAppendBtn:document.getElementById('confirmAppendBtn'),downloadBtn:document.getElementById('downloadBtn'),backBtn:document.getElementById('backBtn'),tableList:document.getElementById('tableList'),statusBox:document.getElementById('statusBox'),miniNext:document.getElementById('miniNext'),miniYearCount:document.getElementById('miniYearCount'),miniDbState:document.getElementById('miniDbState'),miniDbText:document.getElementById('miniDbText'),sumAll:document.getElementById('sumAll'),sumYear:document.getElementById('sumYear'),sumNext:document.getElementById('sumNext'),sumSoon:document.getElementById('sumSoon'),sumDone:document.getElementById('sumDone'),sumDraft:document.getElementById('sumDraft'),sumSubject:document.getElementById('sumSubject'),roadmapLabel:document.getElementById('roadmapLabel'),roadmapBar:document.getElementById('roadmapBar'),dK1:document.getElementById('dK1'),dK2:document.getElementById('dK2'),dHp:document.getElementById('dHp'),dK3:document.getElementById('dK3'),dRoomOpen:document.getElementById('dRoomOpen'),dDuration:document.getElementById('dDuration'),dDeadline1:document.getElementById('dDeadline1'),dDeadline2:document.getElementById('dDeadline2'),dDeadline3:document.getElementById('dDeadline3'),dDataDeadline:document.getElementById('dDataDeadline'),dDate2:document.getElementById('dDate2'),dSubject2:document.getElementById('dSubject2'),checkList:document.getElementById('checkList'),confirmCount:document.getElementById('confirmCount'),confirmWarn:document.getElementById('confirmWarn'),confirmState:document.getElementById('confirmState'),folderView:document.getElementById('folderView'),resultDone:document.getElementById('resultDone'),resultHold:document.getElementById('resultHold'),resultZip:document.getElementById('resultZip'),alertList:document.getElementById('alertList'),templateFiles:document.getElementById('templateFiles'),mergeRecordSelect:document.getElementById('mergeRecordSelect'),templateState:document.getElementById('templateState'),mergeAllBtn:document.getElementById('mergeAllBtn'),mergeStatusBox:document.getElementById('mergeStatusBox'),templateList:document.getElementById('templateList'),sumAllTop:document.getElementById('sumAllTop'),sumYearTop:document.getElementById('sumYearTop'),sumNextTop:document.getElementById('sumNextTop')};
+const els={csvFile:document.getElementById('csvFile'),newDbBtn:document.getElementById('newDbBtn'),recordSelect:document.getElementById('recordSelect'),openConfirmBtn:document.getElementById('openConfirmBtn'),appendBtn:document.getElementById('appendBtn'),prefillBtn:document.getElementById('prefillBtn'),loadSelectedBtn:document.getElementById('loadSelectedBtn'),confirmAppendBtn:document.getElementById('confirmAppendBtn'),downloadBtn:document.getElementById('downloadBtn'),backBtn:document.getElementById('backBtn'),tableList:document.getElementById('tableList'),statusBox:document.getElementById('statusBox'),miniNext:document.getElementById('miniNext'),miniYearCount:document.getElementById('miniYearCount'),miniDbState:document.getElementById('miniDbState'),miniDbText:document.getElementById('miniDbText'),sumAll:document.getElementById('sumAll'),sumYear:document.getElementById('sumYear'),sumNext:document.getElementById('sumNext'),sumSoon:document.getElementById('sumSoon'),sumDone:document.getElementById('sumDone'),sumDraft:document.getElementById('sumDraft'),sumSubject:document.getElementById('sumSubject'),roadmapLabel:document.getElementById('roadmapLabel'),roadmapBar:document.getElementById('roadmapBar'),dK1:document.getElementById('dK1'),dK2:document.getElementById('dK2'),dHp:document.getElementById('dHp'),dK3:document.getElementById('dK3'),dRoomOpen:document.getElementById('dRoomOpen'),dDuration:document.getElementById('dDuration'),dDeadline1:document.getElementById('dDeadline1'),dDeadline2:document.getElementById('dDeadline2'),dDeadline3:document.getElementById('dDeadline3'),dDataDeadline:document.getElementById('dDataDeadline'),dDate2:document.getElementById('dDate2'),dSubject2:document.getElementById('dSubject2'),checkList:document.getElementById('checkList'),confirmCount:document.getElementById('confirmCount'),confirmWarn:document.getElementById('confirmWarn'),confirmState:document.getElementById('confirmState'),folderView:document.getElementById('folderView'),resultDone:document.getElementById('resultDone'),resultHold:document.getElementById('resultHold'),resultZip:document.getElementById('resultZip'),alertList:document.getElementById('alertList'),templateFiles:document.getElementById('templateFiles'),mergeRecordSelect:document.getElementById('mergeRecordSelect'),templateState:document.getElementById('templateState'),mergeAllBtn:document.getElementById('mergeAllBtn'),mergeStatusBox:document.getElementById('mergeStatusBox'),templateList:document.getElementById('templateList'),sumAllTop:document.getElementById('sumAllTop'),sumYearTop:document.getElementById('sumYearTop'),sumNextTop:document.getElementById('sumNextTop'),annualGauge:document.getElementById('annualGauge'),annualGaugeText:document.getElementById('annualGaugeText'),annualGaugeSub:document.getElementById('annualGaugeSub'),paramYearCount:document.getElementById('paramYearCount'),paramDoneCount:document.getElementById('paramDoneCount'),paramSoonCount:document.getElementById('paramSoonCount'),paramDraftCount:document.getElementById('paramDraftCount')};
 
 const fields={no:document.getElementById('fNo'),year:document.getElementById('fYear'),date:document.getElementById('fDate'),day:document.getElementById('fDay'),date2:document.getElementById('fDate2'),name:document.getElementById('fName'),title:document.getElementById('fTitle'),speaker:document.getElementById('fSpeaker'),start:document.getElementById('fStart'),end:document.getElementById('fEnd'),roomOpen:document.getElementById('fRoomOpen'),duration:document.getElementById('fDuration'),deadline1:document.getElementById('fDeadline1'),deadline2:document.getElementById('fDeadline2'),deadline3:document.getElementById('fDeadline3'),dataDeadline:document.getElementById('fDataDeadline'),cost:document.getElementById('fCost'),subject:document.getElementById('fSubject'),subject2:document.getElementById('fSubject2'),site:document.getElementById('fSite'),cohost:document.getElementById('fCohost'),cohost3:document.getElementById('fCohost3'),zoomId:document.getElementById('fZoomId'),passcode:document.getElementById('fPasscode'),zoomUrl:document.getElementById('fZoomUrl'),hpUrl:document.getElementById('fHpUrl'),purpose:document.getElementById('fPurpose'),intro1:document.getElementById('fIntro1'),intro2:document.getElementById('fIntro2'),intro3:document.getElementById('fIntro3')};
 
@@ -829,7 +860,6 @@ function buildTemplateData(row){
   map['NO']=String(row?.[fullKeys.no]??'');
   return map;
 }
-
 function xmlEscape(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function replaceAcrossTextRuns(xml,key,value){
   const escapedValue=xmlEscape(value);
@@ -927,7 +957,6 @@ function createNewDatabase(){
   renderMergeOptions();
   setStatus('空のマスターCSVを新規作成しました。');
 }
-
 function loadCsv(e){
   const file=e.target.files?.[0];
   if(!file){setStatus('CSVファイルが選択されていません。');return}
@@ -949,7 +978,7 @@ function loadCsv(e){
       els.recordSelect.disabled=dataRows.length===0;
       renderRecordOptions();
       setNextNo();
-      if(dataRows.length) prefillFromLast(); else fields.no.value='1';
+      if(dataRows.length)prefillFromLast();else fields.no.value='1';
       renderTable();
       renderStats();
       recalcDraft();
@@ -964,9 +993,8 @@ function loadCsv(e){
       setStatus(`CSVの読込に失敗しました: ${err?.message||'不明なエラー'}`);
       e.target.value='';
     }
-  })
+  });
 }
-
 function ensureHeader(h){if(!currentHeaders.includes(h))currentHeaders.push(h)}
 function normalizeRowShape(row){const out={};currentHeaders.forEach(h=>out[h]=row?.[h]??'');return out}
 function isMeaningfulRow(row){return currentHeaders.some(h=>String(row?.[h]??'').trim()!=='')}
@@ -1048,7 +1076,6 @@ function loadSelectedIntoForm(){
   recalcDraft();
   setStatus(`No.${selectedRow[fullKeys.no]} を入力欄へ反映しました。保存すると同じNoを上書きします。`);
 }
-
 function recalcDraft(){
   fields.day.value=weekdayJa(fields.date.value);
   calcDerivedFields();
@@ -1253,6 +1280,18 @@ function renderAlerts(){
   }
   els.alertList.innerHTML=alerts.map(a=>`<div class="alert-item"><div><span class="alert-tag">${a.diff===0?'TODAY':a.diff===1?'TOMORROW':`+${a.diff}D`}</span></div><div><strong>No.${esc(a.no)} / ${esc(a.title)}</strong><p>${esc(a.label)} : ${esc(a.raw||'-')}</p></div><div class="mono">Task alert</div></div>`).join('');
 }
+function updateAnnualGauge(done,total,yearCount,soon,draftCount){
+  const circumference=578;
+  const ratio=total?Math.max(0,Math.min(1,done/total)):0;
+  const offset=circumference-(circumference*ratio);
+  els.annualGauge.style.strokeDashoffset=String(offset);
+  els.annualGaugeText.textContent=`${Math.round(ratio*100)}%`;
+  els.annualGaugeSub.textContent=`${done} / ${total} Completed`;
+  els.paramYearCount.textContent=String(yearCount);
+  els.paramDoneCount.textContent=String(done);
+  els.paramSoonCount.textContent=String(soon);
+  els.paramDraftCount.textContent=String(draftCount);
+}
 function renderStats(){
   const total=dataRows.length;
   const years=dataRows.map(r=>String(r[fullKeys.year]||'').trim()).filter(Boolean).sort();
@@ -1263,11 +1302,12 @@ function renderStats(){
   const soon=dataRows.filter(r=>{const d=parseShortJapaneseDate(r[fullKeys.date],r[fullKeys.year]);if(!d)return false;const diff=(d-today0)/86400000;return diff>=0&&diff<=30}).length;
   const done=dataRows.filter(r=>{const d=parseShortJapaneseDate(r[fullKeys.date],r[fullKeys.year]);return d&&d<today0}).length;
   const next=dataRows.reduce((m,r)=>Math.max(m,Number(r[fullKeys.no]||0)),0)+1;
+  const draftCount=stagedRow?1:0;
   els.sumAll.textContent=total;
   els.sumYear.textContent=yearCount;
   els.sumSoon.textContent=`${soon}件`;
   els.sumDone.textContent=`${done}件`;
-  els.sumDraft.textContent=stagedRow?'1件':'0件';
+  els.sumDraft.textContent=`${draftCount}件`;
   els.sumSubject.textContent=fields.subject.value||'-';
   els.miniYearCount.textContent=`${yearCount}件`;
   els.miniNext.textContent=`No.${next}`;
@@ -1276,8 +1316,9 @@ function renderStats(){
   els.sumYearTop.textContent=yearCount;
   els.sumNextTop.textContent=next;
   const ratio=total?Math.round((done/total)*100):0;
-  els.roadmapLabel.textContent=`${done}件 / ${total}件`;
+  els.roadmapLabel.textContent=`${done} / ${total}`;
   els.roadmapBar.style.width=`${ratio}%`;
+  updateAnnualGauge(done,total,yearCount,soon,draftCount);
 }
 function renderConfirm(warns){
   if(!currentHeaders.length){
