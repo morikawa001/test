@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>臨床研究研修会 管制ダッシュボード / dual-theme control ui</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" onerror="this.onerror=null;this.src='https://unpkg.com/papaparse@5.4.1/papaparse.min.js'"></script>
-<script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js" onerror="this.onerror=null;this.src='https://unpkg.com/pizzip@3.1.7/dist/pizzip.min.js'"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
 <style>
 :root,[data-theme="dark"]{
   --bg:#040807;
@@ -122,8 +122,17 @@ input:focus,select:focus,textarea:focus{
   border-color:var(--green);
   box-shadow:0 0 0 3px color-mix(in srgb, var(--green) 14%, transparent);
 }
-input[readonly],textarea[readonly]{background:var(--readonly-bg);color:var(--text-strong)}
-.wrap{max-width:1580px;margin:0 auto;padding:18px;display:grid;gap:18px}
+input[readonly],textarea[readonly]{
+  background:var(--readonly-bg);
+  color:var(--text-strong);
+}
+.wrap{
+  max-width:1580px;
+  margin:0 auto;
+  padding:18px;
+  display:grid;
+  gap:18px;
+}
 .panel,.hero-panel{
   position:relative;
   overflow:hidden;
@@ -135,7 +144,10 @@ input[readonly],textarea[readonly]{background:var(--readonly-bg);color:var(--tex
   border-radius:var(--radius);
   box-shadow:var(--shadow),var(--glow);
 }
-[data-theme="light"] .panel,[data-theme="light"] .hero-panel{background:var(--panel)}
+[data-theme="light"] .panel,
+[data-theme="light"] .hero-panel{
+  background:var(--panel);
+}
 .panel::before,.hero-panel::before{
   content:"";
   position:absolute;
@@ -146,92 +158,313 @@ input[readonly],textarea[readonly]{background:var(--readonly-bg);color:var(--tex
     linear-gradient(90deg, transparent, color-mix(in srgb, var(--green) 3%, transparent), transparent);
   opacity:.8;
 }
-[data-theme="light"] .panel::before,[data-theme="light"] .hero-panel::before{background:none;opacity:0}
-.hero-grid{display:grid;grid-template-columns:1.35fr .95fr;gap:18px}
+[data-theme="light"] .panel::before,
+[data-theme="light"] .hero-panel::before{
+  background:none;
+  opacity:0;
+}
+.hero-grid{
+  display:grid;
+  grid-template-columns:1.35fr .95fr;
+  gap:18px;
+}
 .hero-panel{padding:20px 22px}
-.hero-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.hero-head{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:flex-start;
+  flex-wrap:wrap;
+}
 .kicker{
-  display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  padding:6px 10px;
+  border-radius:999px;
   border:1px solid color-mix(in srgb, var(--green) 18%, var(--line));
   background:color-mix(in srgb, var(--green) 5%, var(--panel2));
-  color:var(--text-strong);font-size:.74rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-strong);
+  font-size:.74rem;
+  font-weight:900;
+  letter-spacing:.18em;
+  text-transform:uppercase;
 }
 .id-block{display:grid;gap:9px}
 .id-block h1{
   font-size:clamp(1.7rem,1.2rem + 1.8vw,2.8rem);
-  line-height:1.12;font-weight:900;letter-spacing:.06em;color:var(--text-strong);text-shadow:var(--hero-title-shadow);
+  line-height:1.12;
+  font-weight:900;
+  letter-spacing:.06em;
+  color:var(--text-strong);
+  text-shadow:var(--hero-title-shadow);
 }
-.id-block p{max-width:76ch;color:var(--muted);font-size:.98rem}
-.hero-stats{display:grid;grid-template-columns:repeat(3,minmax(130px,1fr));gap:10px;min-width:390px}
+.id-block p{
+  max-width:76ch;
+  color:var(--muted);
+  font-size:.98rem;
+}
+.hero-stats{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(130px,1fr));
+  gap:10px;
+  min-width:390px;
+}
 .stat-box,.mini-box,.summary-box,.date-card,.status-box,.hint-box,.table-row,.template-row,.alert-item,.list-row,.param-side,.schedule-card{
-  background:var(--panel2);border:1px solid var(--line);border-radius:12px;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:12px;
 }
 .stat-box,.mini-box,.summary-box,.date-card,.param-side,.schedule-card{padding:13px 14px}
 .stat-box span,.mini-box span,.summary-box span,.small-label,.field label{
-  display:block;color:var(--muted);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;font-weight:800;
+  display:block;
+  color:var(--muted);
+  font-size:.74rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-weight:800;
 }
 .stat-box b,.summary-box b,.mini-box b{
-  display:block;margin-top:5px;font-size:1.38rem;color:var(--text-strong);text-shadow:none;
+  display:block;
+  margin-top:5px;
+  font-size:1.38rem;
+  color:var(--text-strong);
+  text-shadow:none;
 }
-.command-panel{padding:18px;display:grid;gap:12px}
-.panel{padding:18px;display:grid;gap:16px}
+.command-panel{
+  padding:18px;
+  display:grid;
+  gap:12px;
+}
+.panel{
+  padding:18px;
+  display:grid;
+  gap:16px;
+}
 .panel-head{
-  display:flex;justify-content:space-between;gap:12px;align-items:end;flex-wrap:wrap;
-  border-bottom:1px solid var(--line);padding-bottom:10px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:end;
+  flex-wrap:wrap;
+  border-bottom:1px solid var(--line);
+  padding-bottom:10px;
 }
-.panel-head h2{font-size:1.02rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text-strong)}
-.panel-head p{color:var(--muted);font-size:.92rem}
-.corner-label{position:absolute;top:12px;right:14px;font-size:.67rem;color:var(--faint);letter-spacing:.18em;text-transform:uppercase}
+.panel-head h2{
+  font-size:1.02rem;
+  font-weight:900;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-strong);
+}
+.panel-head p{
+  color:var(--muted);
+  font-size:.92rem;
+}
+.corner-label{
+  position:absolute;
+  top:12px;
+  right:14px;
+  font-size:.67rem;
+  color:var(--faint);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
 .btn{
-  min-height:46px;padding:0 16px;border-radius:10px;border:1px solid var(--line2);background:var(--button-bg);
-  color:var(--text-strong);font-weight:800;letter-spacing:.03em;transition:background 150ms ease,color 150ms ease,border-color 150ms ease,box-shadow 150ms ease;
+  min-height:46px;
+  padding:0 16px;
+  border-radius:10px;
+  border:1px solid var(--line2);
+  background:var(--button-bg);
+  color:var(--text-strong);
+  font-weight:800;
+  letter-spacing:.03em;
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,box-shadow 150ms ease;
 }
-.btn:hover{background:var(--panel3)}
-.btn.primary{background:var(--button-primary-bg);border-color:var(--button-primary-bg);color:#ffffff;box-shadow:none}
-.btn.primary:hover{background:color-mix(in srgb, var(--button-primary-bg) 92%, white)}
+.btn:hover{
+  background:var(--panel3);
+}
+.btn.primary{
+  background:var(--button-primary-bg);
+  border-color:var(--button-primary-bg);
+  color:#ffffff;
+  box-shadow:none;
+}
+.btn.primary:hover{
+  background:color-mix(in srgb, var(--button-primary-bg) 92%, white);
+}
 .btn.small{min-height:38px;padding:0 12px;font-size:.84rem}
 .btn:disabled{opacity:.42;cursor:not-allowed}
 .file-pick{display:grid;gap:6px}
 .file-pick input[type=file]{padding:9px 11px}
 .file-pick input[type=file]::file-selector-button{
-  margin-right:12px;border:none;border-radius:8px;padding:8px 12px;background:var(--panel3);color:var(--text-strong);font-weight:800;cursor:pointer;
+  margin-right:12px;
+  border:none;
+  border-radius:8px;
+  padding:8px 12px;
+  background:var(--panel3);
+  color:var(--text-strong);
+  font-weight:800;
+  cursor:pointer;
 }
-.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.mini-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.main-grid{display:grid;grid-template-columns:1.32fr .92fr;gap:18px;align-items:start}
-.master-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.action-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.mini-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.main-grid{
+  display:grid;
+  grid-template-columns:1.32fr .92fr;
+  gap:18px;
+  align-items:start;
+}
+.master-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
 .field{display:grid;gap:6px}
 .field.full{grid-column:1/-1}
-.control-row,.footer-actions{display:flex;gap:10px;flex-wrap:wrap}
-.status-box,.hint-box{padding:14px 15px;font-size:.96rem}
+.control-row,.footer-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.status-box,.hint-box{
+  padding:14px 15px;
+  font-size:.96rem;
+}
 .status-box{color:var(--text-strong)}
 .hint-box{color:var(--muted)}
 .side-stack{display:grid;gap:18px}
-.auto-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.date-card b{display:block;margin-top:5px;color:var(--text-strong);font-size:1.02rem}
-.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.progress-shell{height:14px;border-radius:999px;border:1px solid var(--line);background:var(--bg2);overflow:hidden}
-.progress-bar{height:100%;width:0%;background:var(--progress-grad);box-shadow:none}
-.parameter-wrap{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:center}
-.param-gauge{position:relative;width:100%;max-width:360px;aspect-ratio:1/1;margin:0 auto;display:grid;place-items:center}
-.param-svg{width:100%;height:100%;transform:rotate(-90deg);filter:none}
+.auto-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.date-card b{
+  display:block;
+  margin-top:5px;
+  color:var(--text-strong);
+  font-size:1.02rem;
+}
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.progress-shell{
+  height:14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:var(--bg2);
+  overflow:hidden;
+}
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:var(--progress-grad);
+  box-shadow:none;
+}
+.parameter-wrap{
+  display:grid;
+  grid-template-columns:360px 1fr;
+  gap:16px;
+  align-items:center;
+}
+.param-gauge{
+  position:relative;
+  width:100%;
+  max-width:360px;
+  aspect-ratio:1/1;
+  margin:0 auto;
+  display:grid;
+  place-items:center;
+}
+.param-svg{
+  width:100%;
+  height:100%;
+  transform:rotate(-90deg);
+  filter:none;
+}
 .param-core{
-  position:absolute;inset:18%;border-radius:50%;border:1px solid var(--line);background:var(--core-bg);
-  display:grid;place-items:center;text-align:center;box-shadow:none;
+  position:absolute;
+  inset:18%;
+  border-radius:50%;
+  border:1px solid var(--line);
+  background:var(--core-bg);
+  display:grid;
+  place-items:center;
+  text-align:center;
+  box-shadow:none;
 }
-.param-core small{display:block;color:var(--muted);font-size:.74rem;letter-spacing:.18em;text-transform:uppercase}
-.param-core strong{display:block;font-size:2.55rem;color:var(--text-strong);line-height:1.05;font-weight:900;text-shadow:none}
-.param-core span{display:block;color:var(--muted);font-size:.95rem;margin-top:4px}
-.param-meta{display:grid;gap:10px}
-.param-side{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
-.param-side b{font-size:1.22rem;color:var(--text-strong)}
-.radar-note{color:var(--muted);font-size:.92rem}
+.param-core small{
+  display:block;
+  color:var(--muted);
+  font-size:.74rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.param-core strong{
+  display:block;
+  font-size:2.55rem;
+  color:var(--text-strong);
+  line-height:1.05;
+  font-weight:900;
+  text-shadow:none;
+}
+.param-core span{
+  display:block;
+  color:var(--muted);
+  font-size:.95rem;
+  margin-top:4px;
+}
+.param-meta{
+  display:grid;
+  gap:10px;
+}
+.param-side{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  align-items:center;
+}
+.param-side b{
+  font-size:1.22rem;
+  color:var(--text-strong);
+}
+.radar-note{
+  color:var(--muted);
+  font-size:.92rem;
+}
 .alert-wrap,.template-list,.table-list,.confirm-list,.folder-list,.schedule-list{display:grid;gap:10px}
-.alert-item{padding:13px 14px;display:grid;grid-template-columns:120px 1fr 130px;gap:12px;align-items:center}
-.alert-tag,.badge,.status{
-  display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:4px 10px;border-radius:999px;font-size:.79rem;font-weight:800;letter-spacing:.05em;
+.alert-item{
+  padding:13px 14px;
+  display:grid;
+  grid-template-columns:120px 1fr 130px;
+  gap:12px;
+  align-items:center;
 }
-.alert-tag,.badge{background:var(--panel3);color:var(--text-strong);border:1px solid var(--line2)}
+.alert-tag,.badge,.status{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:28px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:.79rem;
+  font-weight:800;
+  letter-spacing:.05em;
+}
+.alert-tag,.badge{
+  background:var(--panel3);
+  color:var(--text-strong);
+  border:1px solid var(--line2);
+}
 .status.s2{background:#eef7f3;color:var(--success);border:1px solid #d7eee5}
 .status.s3{background:#eef5fb;color:var(--green);border:1px solid #d7e8f7}
 .status.s1{background:#fff8e7;color:var(--warn);border:1px solid #f2e3b4}
@@ -240,24 +473,99 @@ input[readonly],textarea[readonly]{background:var(--readonly-bg);color:var(--tex
 [data-theme="dark"] .status.s3{background:rgba(116,233,214,.08);color:var(--cyan);border:1px solid rgba(116,233,214,.15)}
 [data-theme="dark"] .status.s1{background:rgba(255,230,128,.08);color:var(--warn);border:1px solid rgba(255,230,128,.16)}
 [data-theme="dark"] .status.s4{background:rgba(255,143,177,.08);color:var(--danger);border:1px solid rgba(255,143,177,.15)}
-.table-head,.table-row{display:grid;grid-template-columns:90px 140px 1.2fr 1fr 140px 110px;gap:12px;align-items:start}
-.table-head{padding:0 6px 6px;color:var(--muted);font-size:.76rem;letter-spacing:.12em;text-transform:uppercase}
+.table-head,.table-row{
+  display:grid;
+  grid-template-columns:90px 140px 1.2fr 1fr 140px 110px;
+  gap:12px;
+  align-items:start;
+}
+.table-head{
+  padding:0 6px 6px;
+  color:var(--muted);
+  font-size:.76rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
 .table-row{padding:14px}
 .table-row strong,.template-row strong,.alert-item strong,.list-row strong,.schedule-card strong{font-weight:900;color:var(--text-strong)}
-.list-row{padding:14px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-.table-row p,.template-row p,.alert-item p,.list-row p,.mini-box p,.schedule-card p{color:var(--muted);font-size:.92rem}
-.dual-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.template-row{padding:14px;display:grid;grid-template-columns:1.2fr 90px 120px 150px;gap:12px;align-items:center}
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.83rem;color:var(--muted)}
-.scanline{position:fixed;inset:0;pointer-events:none;background:linear-gradient(to bottom, rgba(255,255,255,.02), rgba(255,255,255,0) 50%);background-size:100% 4px;opacity:var(--scanline-opacity);mix-blend-mode:screen}
-.schedule-card{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+.list-row{
+  padding:14px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+}
+.table-row p,.template-row p,.alert-item p,.list-row p,.mini-box p,.schedule-card p{
+  color:var(--muted);
+  font-size:.92rem;
+}
+.dual-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+.template-row{
+  padding:14px;
+  display:grid;
+  grid-template-columns:1.2fr 90px 120px 150px;
+  gap:12px;
+  align-items:center;
+}
+.mono{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.83rem;
+  color:var(--muted);
+}
+.scanline{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(to bottom, rgba(255,255,255,.02), rgba(255,255,255,0) 50%);
+  background-size:100% 4px;
+  opacity:var(--scanline-opacity);
+  mix-blend-mode:screen;
+}
+.schedule-card{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  align-items:center;
+}
 .schedule-left{display:grid;gap:4px}
-.schedule-check{display:inline-flex;align-items:center;gap:10px;user-select:none;cursor:pointer;color:var(--text-strong);font-weight:700}
-.schedule-check input{width:20px;height:20px;min-height:auto;accent-color:var(--green);cursor:pointer}
-.schedule-meta{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
-.check-note{color:var(--muted);font-size:.86rem}
-@media (max-width:1240px){.hero-grid,.main-grid,.dual-grid,.parameter-wrap{grid-template-columns:1fr}}
-@media (max-width:860px){.master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.template-row,.alert-item,.schedule-card{grid-template-columns:1fr}}
+.schedule-check{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  user-select:none;
+  cursor:pointer;
+  color:var(--text-strong);
+  font-weight:700;
+}
+.schedule-check input{
+  width:20px;
+  height:20px;
+  min-height:auto;
+  accent-color:var(--green);
+  cursor:pointer;
+}
+.schedule-meta{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.check-note{
+  color:var(--muted);
+  font-size:.86rem;
+}
+@media (max-width:1240px){
+  .hero-grid,.main-grid,.dual-grid,.parameter-wrap{grid-template-columns:1fr}
+}
+@media (max-width:860px){
+  .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.template-row,.alert-item,.schedule-card{
+    grid-template-columns:1fr;
+  }
+}
 </style>
 </head>
 <body>
@@ -385,8 +693,14 @@ input[readonly],textarea[readonly]{background:var(--readonly-bg);color:var(--tex
         <div class="field"><label>名前_NAME</label><input id="fName" value=""></div>
         <div class="field"><label>研修会タイトル_TITLE</label><input id="fTitle" value="臨床研究データ管理実務"></div>
         <div class="field"><label>講師名_SPEAKER</label><input id="fSpeaker" value="サンプル 講師"></div>
-        <div class="field"><label>開始_START_1</label><input id="fStart" type="time" value="17:30"></div>
+
+        <div class="field"><label>講義開始_START_TIME</label><input id="fLectureStart" type="time" value="17:30"></div>
+        <div class="field"><label>研修会開始_START_1</label><input id="fStart" type="time" value="17:30"></div>
         <div class="field"><label>終了_END_1</label><input id="fEnd" type="time" value="19:00"></div>
+        <div class="field"><label>事前打合せ開始時間_PRE_MEETING</label><input id="fPreMeeting" type="time" value=""></div>
+        <div class="field"><label>質疑応答締切_QA_DADLINE</label><input id="fQaDeadline" type="time" value=""></div>
+        <div class="field"><label>質疑応答_QA_TIME</label><input id="fQaTime" value=""></div>
+
         <div class="field"><label>入室_TIME_1</label><input id="fRoomOpen" readonly></div>
         <div class="field"><label>時間_TIME_2</label><input id="fDuration" readonly></div>
         <div class="field"><label>〆切_DEADLINE_1</label><input id="fDeadline1" readonly></div>
@@ -394,6 +708,7 @@ input[readonly],textarea[readonly]{background:var(--readonly-bg);color:var(--tex
         <div class="field"><label>資料DL_DEADLINE_3</label><input id="fDeadline3" readonly></div>
         <div class="field"><label>講義資料締切_DATA_deadline</label><input id="fDataDeadline" readonly></div>
         <div class="field"><label>謝金_COST</label><input id="fCost" value=""></div>
+
         <div class="field"><label>対象_SUBJECT_1</label>
           <select id="fSubject">
             <option>研究者</option>
@@ -479,6 +794,10 @@ input[readonly],textarea[readonly]{background:var(--readonly-bg);color:var(--tex
           </div>
           <div class="date-card"><span>入室</span><b id="dRoomOpen">-</b></div>
           <div class="date-card"><span>所要時間</span><b id="dDuration">-</b></div>
+          <div class="date-card"><span>講義開始</span><b id="dLectureStart">-</b></div>
+          <div class="date-card"><span>事前打合せ</span><b id="dPreMeeting">-</b></div>
+          <div class="date-card"><span>QA締切</span><b id="dQaDeadline">-</b></div>
+          <div class="date-card"><span>QA時間</span><b id="dQaTime">-</b></div>
           <div class="date-card"><span>DEADLINE_1</span><b id="dDeadline1">-</b></div>
           <div class="date-card"><span>DEADLINE_2</span><b id="dDeadline2">-</b></div>
           <div class="date-card"><span>DEADLINE_3</span><b id="dDeadline3">-</b></div>
@@ -633,8 +952,12 @@ const DEFAULT_HEADERS=[
   '年度_YEAR_1',
   '開催日_DATE_1',
   '曜日 _DAY',
+  '講義開始_START_TIME',
   '研修会開始_START_1',
   '研修会終了_END_1',
+  '質疑応答締切_QA_DADLINE',
+  '質疑応答_QA_TIME',
+  '事前打合せ開始時間_PRE_MEETING',
   '研修会入室開始時間_TIME_1',
   '時間（分）_TIME_2',
   '〆切院外_DEADLINE_1',
@@ -676,8 +999,12 @@ const fullKeys={
   year:'年度_YEAR_1',
   date:'開催日_DATE_1',
   day:'曜日 _DAY',
+  lectureStart:'講義開始_START_TIME',
   start:'研修会開始_START_1',
   end:'研修会終了_END_1',
+  qaDeadline:'質疑応答締切_QA_DADLINE',
+  qaTime:'質疑応答_QA_TIME',
+  preMeeting:'事前打合せ開始時間_PRE_MEETING',
   roomOpen:'研修会入室開始時間_TIME_1',
   duration:'時間（分）_TIME_2',
   deadline1:'〆切院外_DEADLINE_1',
@@ -746,6 +1073,10 @@ const els={
   dK3:document.getElementById('dK3'),
   dRoomOpen:document.getElementById('dRoomOpen'),
   dDuration:document.getElementById('dDuration'),
+  dLectureStart:document.getElementById('dLectureStart'),
+  dPreMeeting:document.getElementById('dPreMeeting'),
+  dQaDeadline:document.getElementById('dQaDeadline'),
+  dQaTime:document.getElementById('dQaTime'),
   dDeadline1:document.getElementById('dDeadline1'),
   dDeadline2:document.getElementById('dDeadline2'),
   dDeadline3:document.getElementById('dDeadline3'),
@@ -792,8 +1123,12 @@ const fields={
   name:document.getElementById('fName'),
   title:document.getElementById('fTitle'),
   speaker:document.getElementById('fSpeaker'),
+  lectureStart:document.getElementById('fLectureStart'),
   start:document.getElementById('fStart'),
   end:document.getElementById('fEnd'),
+  preMeeting:document.getElementById('fPreMeeting'),
+  qaDeadline:document.getElementById('fQaDeadline'),
+  qaTime:document.getElementById('fQaTime'),
   roomOpen:document.getElementById('fRoomOpen'),
   duration:document.getElementById('fDuration'),
   deadline1:document.getElementById('fDeadline1'),
@@ -843,9 +1178,11 @@ els.downloadBtn.addEventListener('click',downloadCsv);
 els.backBtn.addEventListener('click',()=>setStatus('入力内容を調整できます。必要なら項目を修正してください。'));
 fields.cohost.addEventListener('change',()=>{syncCohostFields();recalcDraft();});
 fields.subject.addEventListener('change',recalcDraft);
+
 [
-  fields.no,fields.date,fields.name,fields.start,fields.end,fields.title,fields.speaker,fields.cost,
-  fields.zoomId,fields.passcode,fields.zoomUrl,fields.hpUrl,
+  fields.no,fields.date,fields.name,fields.start,fields.end,fields.lectureStart,
+  fields.preMeeting,fields.qaDeadline,fields.qaTime,
+  fields.title,fields.speaker,fields.cost,fields.zoomId,fields.passcode,fields.zoomUrl,fields.hpUrl,
   fields.purpose,fields.intro1,fields.intro2,fields.intro3
 ].forEach(el=>el.addEventListener('input',recalcDraft));
 [fields.site].forEach(el=>el.addEventListener('change',recalcDraft));
@@ -866,54 +1203,32 @@ function syncCohostFields(){
   fields.cohost3.value=isTeam?COHOST3_TEXT_TEAM:'';
 }
 function setMergeStatus(msg){els.mergeStatusBox.textContent=msg}
-function setMergeState(){
-  const hasTemplates=selectedTemplates.length>0;
-  const hasNo=!!String(els.mergeRecordSelect.value||'').trim();
-  els.templateState.value=`${selectedTemplates.length}件`;
-  els.mergeAllBtn.disabled=!(hasTemplates&&hasNo);
-}
-function renderMergeOptions(){
-  const options=['<option value="">Noを選択して差し込み</option>'].concat(
-    dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`)
-  );
-  els.mergeRecordSelect.innerHTML=options.join('');
-  els.mergeRecordSelect.disabled=!dataRows.length;
-  setMergeState();
-}
-function renderTemplateList(){
-  if(!selectedTemplates.length){
-    els.templateList.innerHTML='<div class="template-row"><div><strong>テンプレート未選択</strong><p>pptx / xlsx / docx を複数まとめて選択できます。</p></div><div><span class="status s3">待機</span></div><div class="mono">-</div><div class="mono">-</div></div>';
-    return;
-  }
-  els.templateList.innerHTML=selectedTemplates.map(file=>`<div class="template-row"><div><strong>${esc(file.name)}</strong><p>${esc(file.type||'application/octet-stream')}</p></div><div><span class="status s2">読込済み</span></div><div class="mono">${esc(templateKind(file.name))}</div><div class="mono">${Math.round((file.size||0)/1024)} KB</div></div>`).join('');
-}
-function handleTemplateFiles(e){
-  selectedTemplates=Array.from(e.target.files||[]).filter(f=>/\.(docx|pptx|xlsx)$/i.test(f.name));
-  renderTemplateList();
-  setMergeState();
-  setMergeStatus(selectedTemplates.length?`${selectedTemplates.length}件のテンプレートを読み込みました。差し込み対象Noを選ぶと一括出力できます。`:'テンプレートファイルが未選択です。');
-}
-function getRowByNo(no){
-  return dataRows.find(r=>String(r[fullKeys.no]||'').trim()===String(no||'').trim())||null;
-}
+function setMergeState(){const hasTemplates=selectedTemplates.length>0;const hasNo=!!String(els.mergeRecordSelect.value||'').trim();els.templateState.value=`${selectedTemplates.length}件`;els.mergeAllBtn.disabled=!(hasTemplates&&hasNo)}
+function renderMergeOptions(){const options=['<option value="">Noを選択して差し込み</option>'].concat(dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`));els.mergeRecordSelect.innerHTML=options.join('');els.mergeRecordSelect.disabled=!dataRows.length;setMergeState()}
+function renderTemplateList(){if(!selectedTemplates.length){els.templateList.innerHTML='<div class="template-row"><div><strong>テンプレート未選択</strong><p>pptx / xlsx / docx を複数まとめて選択できます。</p></div><div><span class="status s3">待機</span></div><div class="mono">-</div><div class="mono">-</div></div>';return}els.templateList.innerHTML=selectedTemplates.map(file=>`<div class="template-row"><div><strong>${esc(file.name)}</strong><p>${esc(file.type||'application/octet-stream')}</p></div><div><span class="status s2">読込済み</span></div><div class="mono">${esc(templateKind(file.name))}</div><div class="mono">${Math.round((file.size||0)/1024)} KB</div></div>`).join('')}
+function handleTemplateFiles(e){selectedTemplates=Array.from(e.target.files||[]).filter(f=>/\.(docx|pptx|xlsx)$/i.test(f.name));renderTemplateList();setMergeState();setMergeStatus(selectedTemplates.length?`${selectedTemplates.length}件のテンプレートを読み込みました。差し込み対象Noを選ぶと一括出力できます。`:'テンプレートファイルが未選択です。')}
+function getRowByNo(no){return dataRows.find(r=>String(r[fullKeys.no]||'').trim()===String(no||'').trim())||null}
 
 function buildTemplateData(row){
   const map={};
   currentHeaders.forEach(h=>map[h]=String(row?.[h]??''));
-
   const aliasEntries = {
     DATE_1: row?.[fullKeys.date] ?? '',
     DATE_2: row?.[fullKeys.date2] ?? '',
+    YEAR_1: row?.[fullKeys.year] ?? '',
+    DAY: row?.[fullKeys.day] ?? '',
+    START_TIME: row?.[fullKeys.lectureStart] ?? '',
+    START_1: row?.[fullKeys.start] ?? '',
+    END_1: row?.[fullKeys.end] ?? '',
+    QA_DADLINE: row?.[fullKeys.qaDeadline] ?? '',
+    QA_TIME: row?.[fullKeys.qaTime] ?? '',
+    PRE_MEETING: row?.[fullKeys.preMeeting] ?? '',
+    TIME_1: row?.[fullKeys.roomOpen] ?? '',
+    TIME_2: row?.[fullKeys.duration] ?? '',
     DEADLINE_1: row?.[fullKeys.deadline1] ?? '',
     DEADLINE_2: row?.[fullKeys.deadline2] ?? '',
     DEADLINE_3: row?.[fullKeys.deadline3] ?? '',
     DATA_deadline: row?.[fullKeys.dataDeadline] ?? '',
-    YEAR_1: row?.[fullKeys.year] ?? '',
-    DAY: row?.[fullKeys.day] ?? '',
-    START_1: row?.[fullKeys.start] ?? '',
-    END_1: row?.[fullKeys.end] ?? '',
-    TIME_1: row?.[fullKeys.roomOpen] ?? '',
-    TIME_2: row?.[fullKeys.duration] ?? '',
     TITLE: row?.[fullKeys.title] ?? '',
     SPEAKER: row?.[fullKeys.speaker] ?? '',
     SUBJECT_1: row?.[fullKeys.subject] ?? '',
@@ -939,11 +1254,7 @@ function buildTemplateData(row){
     Zoom_ID: row?.[fullKeys.zoomId] ?? '',
     ZOOM_ID: row?.[fullKeys.zoomId] ?? ''
   };
-
-  Object.entries(aliasEntries).forEach(([k,v])=>{
-    map[k]=String(v ?? '');
-  });
-
+  Object.entries(aliasEntries).forEach(([k,v])=>{map[k]=String(v ?? '')});
   map[fullKeys.zoomId]=String(row?.[fullKeys.zoomId] ?? '');
   map['Zoom_ID_WEBINER_ID']=String(row?.[fullKeys.zoomId] ?? '');
   map['WEBINER_ID']=String(row?.[fullKeys.zoomId] ?? '');
@@ -970,6 +1281,15 @@ function buildTemplateData(row){
   map[fullKeys.closing1]=String(row?.[fullKeys.closing1] ?? '');
   map['進行表クロージング（選択）_CLOSING_1']=String(row?.[fullKeys.closing1] ?? '');
 
+  map[fullKeys.lectureStart]=String(row?.[fullKeys.lectureStart] ?? '');
+  map['講義開始_START_TIME']=String(row?.[fullKeys.lectureStart] ?? '');
+  map[fullKeys.qaDeadline]=String(row?.[fullKeys.qaDeadline] ?? '');
+  map['質疑応答締切_QA_DADLINE']=String(row?.[fullKeys.qaDeadline] ?? '');
+  map[fullKeys.qaTime]=String(row?.[fullKeys.qaTime] ?? '');
+  map['質疑応答_QA_TIME']=String(row?.[fullKeys.qaTime] ?? '');
+  map[fullKeys.preMeeting]=String(row?.[fullKeys.preMeeting] ?? '');
+  map['事前打合せ開始時間_PRE_MEETING']=String(row?.[fullKeys.preMeeting] ?? '');
+
   return map;
 }
 
@@ -987,10 +1307,7 @@ function replacePlaceholdersInXml(xml,data){
   entries.forEach(([key,val])=>{out=replaceAcrossTextRuns(out,key,val)});
   return out;
 }
-function templateKind(name){
-  const ext=(String(name).split('.').pop()||'').toLowerCase();
-  return ext.toUpperCase();
-}
+function templateKind(name){const ext=(String(name).split('.').pop()||'').toLowerCase();return ext.toUpperCase()}
 function targetXmlPathsForTemplate(zip,fileName){
   const ext=(String(fileName).split('.').pop()||'').toLowerCase();
   const names=Object.keys(zip.files||{});
@@ -1011,11 +1328,7 @@ async function mergeSingleTemplate(file,row){
       zip.file(path,replacePlaceholdersInXml(xml,data));
     }
   });
-  const mimeMap={
-    docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-  };
+  const mimeMap={docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'};
   const ext=(String(file.name).split('.').pop()||'').toLowerCase();
   const out=zip.generate({type:'blob',mimeType:mimeMap[ext]||'application/octet-stream'});
   const a=document.createElement('a');
@@ -1085,117 +1398,71 @@ function createNewDatabase(){
 function loadCsv(e){
   const file=e.target.files?.[0];
   if(!file){setStatus('CSVファイルが選択されていません。');return}
-
-  if(typeof Papa==='undefined'){
-    setStatus('PapaParse の読み込みに失敗しています。ページを再読み込みしてください。');
-    e.target.value='';
-    return;
-  }
-
-  setStatus('CSVを読み込み中...');
-
   Papa.parse(file,{
     header:true,
     skipEmptyLines:false,
     encoding:'UTF-8',
-    complete:(result)=>{
-      try{
-        const meta=result?.meta||{};
-        const parsed=result?.data||[];
-
-        currentHeaders=(meta.fields&&meta.fields.length)?meta.fields.slice():[...DEFAULT_HEADERS];
-        ensureAdditionalHeaders();
-
-        rawRows=Array.isArray(parsed)?compactRawRows(parsed.map(r=>normalizeRowShape(r))):[];
-        dataRows=buildDisplayRowsFromRaw(rawRows);
-
-        els.appendBtn.disabled=false;
-        els.openConfirmBtn.disabled=false;
-        els.confirmAppendBtn.disabled=false;
-        els.downloadBtn.disabled=false;
-        els.prefillBtn.disabled=dataRows.length===0;
-        els.loadSelectedBtn.disabled=dataRows.length===0;
-        els.recordSelect.disabled=dataRows.length===0;
-
-        renderRecordOptions();
-        setNextNo();
-
-        if(dataRows.length){
-          prefillFromLast();
-        }else{
-          fields.no.value='1';
-          fields.cohost.value=COHOST_OPTION_NONE;
-          syncCohostFields();
-          resetScheduleChecks();
-        }
-
-        renderTable();
-        renderStats();
-        recalcDraft();
-        renderAlerts();
-
-        els.miniDbState.textContent='既存CSV読込済み';
-        els.miniDbText.textContent=dataRows.length
-          ?`既存データ ${dataRows.length} 件を読み込みました。`
-          :'ヘッダーのみのCSVを読み込みました。';
-
-        renderMergeOptions();
-        setStatus(
-          dataRows.length
-            ?`CSVを読み込みました。${dataRows.length}件を表示しています。`
-            :'ヘッダーのみのCSVを読み込みました。'
-        );
-      }catch(err){
-        console.error('CSV処理エラー:',err);
-        setStatus(`CSV処理中にエラーが発生しました: ${err?.message||'詳細不明'}`);
+    complete:({data,meta})=>{
+      currentHeaders=(meta?.fields?.length?meta.fields:[...DEFAULT_HEADERS]);
+      ensureAdditionalHeaders();
+      rawRows=Array.isArray(data)?compactRawRows(data.map(r=>normalizeRowShape(r))):[];
+      dataRows=buildDisplayRowsFromRaw(rawRows);
+      els.appendBtn.disabled=false;
+      els.openConfirmBtn.disabled=false;
+      els.confirmAppendBtn.disabled=false;
+      els.downloadBtn.disabled=false;
+      els.prefillBtn.disabled=dataRows.length===0;
+      els.loadSelectedBtn.disabled=dataRows.length===0;
+      els.recordSelect.disabled=dataRows.length===0;
+      renderRecordOptions();
+      setNextNo();
+      if(dataRows.length)prefillFromLast();else{
+        fields.no.value='1';
+        fields.cohost.value=COHOST_OPTION_NONE;
+        syncCohostFields();
+        resetScheduleChecks();
       }
+      renderTable();
+      renderStats();
+      recalcDraft();
+      renderAlerts();
+      els.miniDbState.textContent='既存CSV読込済み';
+      els.miniDbText.textContent=dataRows.length?`既存データ ${dataRows.length} 件を読み込みました。`:'ヘッダーのみのCSVを読み込みました。';
+      renderMergeOptions();
+      setStatus(dataRows.length?`CSVを読み込みました。${dataRows.length}件を表示しています。`:'ヘッダーのみのCSVを読み込みました。');
       e.target.value='';
     },
     error:(err)=>{
-      console.error('PapaParse error:',err);
-      setStatus(`CSVの読込に失敗しました: ${err?.message||'ファイル形式を確認してください'}`);
+      setStatus(`CSVの読込に失敗しました: ${err?.message||'不明なエラー'}`);
       e.target.value='';
     }
   });
 }
 
-function ensureHeader(h){
-  if(!currentHeaders.includes(h)) currentHeaders.push(h);
-}
-function ensureCheckHeaders(){
-  [fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK2,fullKeys.checkK3].forEach(ensureHeader);
-}
+function ensureHeader(h){if(!currentHeaders.includes(h))currentHeaders.push(h)}
+function ensureCheckHeaders(){[fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK2,fullKeys.checkK3].forEach(ensureHeader)}
 function ensureAdditionalHeaders(){
   ensureCheckHeaders();
   [
+    fullKeys.lectureStart,fullKeys.qaDeadline,fullKeys.qaTime,fullKeys.preMeeting,
     fullKeys.deadline3,fullKeys.cost,fullKeys.dataDeadline,fullKeys.date2,fullKeys.subject2,
     fullKeys.name,fullKeys.cohost3,fullKeys.head1,fullKeys.closing1,
     fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK2,fullKeys.checkK3
   ].forEach(ensureHeader);
 }
-function normalizeRowShape(row){
-  if(!row||typeof row!=='object') return {};
-  const out={};
-  (currentHeaders||[]).forEach(h=>{
-    out[h]=(row[h]!==undefined&&row[h]!==null)?String(row[h]):'';
-  });
-  return out;
-}
-function isMeaningfulRow(row){
-  return (currentHeaders||[]).some(h=>String(row?.[h]??'').trim()!=='');
-}
-function compactRawRows(rows){
-  return (rows||[]).filter(r=>isMeaningfulRow(r));
-}
+
+function normalizeRowShape(row){const out={};currentHeaders.forEach(h=>out[h]=row?.[h]??'');return out}
+function isMeaningfulRow(row){return currentHeaders.some(h=>String(row?.[h]??'').trim()!=='')}
+function compactRawRows(rows){return rows.filter(r=>isMeaningfulRow(r))}
 function buildDisplayRowsFromRaw(rows){
   return compactRawRows(rows)
     .filter(r=>/^\d+$/.test(String(r[fullKeys.no]||'').trim()))
     .sort((a,b)=>Number(a[fullKeys.no]||0)-Number(b[fullKeys.no]||0))
-    .filter((r,i,arr)=>arr.findIndex(x=>String(x[fullKeys.no]).trim()===String(r[fullKeys.no]).trim())===i);
+    .filter((r,i,arr)=>arr.findIndex(x=>String(x[fullKeys.no]).trim()===String(r[fullKeys.no]).trim())===i)
 }
 function setNextNo(){
   const next=dataRows.reduce((m,r)=>Math.max(m,Number(r[fullKeys.no]||0)),0)+1;
-  if(!/^\d+$/.test(String(fields.no.value||'').trim())||Number(String(fields.no.value||'').trim())<1) fields.no.value=String(next);
+  if(!/^\d+$/.test(String(fields.no.value||'').trim())||Number(String(fields.no.value||'').trim())<1)fields.no.value=String(next);
   els.miniNext.textContent=`No.${next}`;
   els.sumNext.textContent=next;
   els.sumNextTop.textContent=next;
@@ -1225,14 +1492,18 @@ function prefillFromLast(){
   fields.no.value=String(Number(last[fullKeys.no]||0)+1);
   fields.year.value=(last[fullKeys.year]||'2026年').replace(/\s+/g,'');
   fields.name.value=last[fullKeys.name]||'';
+  fields.lectureStart.value=normTime(last[fullKeys.lectureStart])||normTime(last[fullKeys.start])||'17:30';
   fields.start.value=normTime(last[fullKeys.start])||'17:30';
   fields.end.value=normTime(last[fullKeys.end])||'19:00';
+  fields.preMeeting.value=normTime(last[fullKeys.preMeeting])||'';
+  fields.qaDeadline.value=normTime(last[fullKeys.qaDeadline])||'';
+  fields.qaTime.value=last[fullKeys.qaTime]||'';
   fields.subject.value=last[fullKeys.subject]||'研究者';
   fields.site.value=last[fullKeys.site]||'Web会議室';
   const cohostValue=String(last[fullKeys.cohost]||'').trim()===COHOST_OPTION_TEAM?COHOST_OPTION_TEAM:COHOST_OPTION_NONE;
   fields.cohost.value=cohostValue;
   syncCohostFields();
-  if(cohostValue!==COHOST_OPTION_TEAM) fields.cohost3.value='';
+  if(cohostValue!==COHOST_OPTION_TEAM){fields.cohost3.value=''}
   fields.zoomId.value=last[fullKeys.zoomId]||'';
   fields.passcode.value=last[fullKeys.passcode]||'';
   fields.zoomUrl.value=last[fullKeys.zoomUrl]||'https://zoom.us/';
@@ -1245,23 +1516,29 @@ function prefillFromLast(){
   resetScheduleChecks();
   recalcDraft();
 }
+
 function handleSelectRecord(){
   const no=els.recordSelect.value;
   selectedRow=dataRows.find(r=>String(r[fullKeys.no]||'').trim()===String(no||'').trim())||null;
-  if(selectedRow) setStatus(`No.${selectedRow[fullKeys.no]} を選択しました。`);
+  if(selectedRow)setStatus(`No.${selectedRow[fullKeys.no]} を選択しました。`);
 }
+
 function loadSelectedIntoForm(){
   if(!selectedRow){setStatus('先に表示したい No を選択してください。');return}
   fields.no.value=selectedRow[fullKeys.no]||'';
   fields.year.value=selectedRow[fullKeys.year]||'';
-  fields.date.value=toIsoDateFromShortDate(selectedRow[fullKeys.date],fields.year.value);
+  fields.date.value=toIsoDateFromShortDate(selectedRow[fullKeys.date], fields.year.value);
   fields.day.value=selectedRow[fullKeys.day]||'';
   fields.date2.value=selectedRow[fullKeys.date2]||'';
   fields.name.value=selectedRow[fullKeys.name]||'';
   fields.title.value=selectedRow[fullKeys.title]||'';
   fields.speaker.value=selectedRow[fullKeys.speaker]||'';
+  fields.lectureStart.value=normTime(selectedRow[fullKeys.lectureStart])||'';
   fields.start.value=normTime(selectedRow[fullKeys.start])||'';
   fields.end.value=normTime(selectedRow[fullKeys.end])||'';
+  fields.preMeeting.value=normTime(selectedRow[fullKeys.preMeeting])||'';
+  fields.qaDeadline.value=normTime(selectedRow[fullKeys.qaDeadline])||'';
+  fields.qaTime.value=selectedRow[fullKeys.qaTime]||'';
   fields.roomOpen.value=normTime(selectedRow[fullKeys.roomOpen])||'';
   fields.duration.value=selectedRow[fullKeys.duration]||'';
   fields.deadline1.value=selectedRow[fullKeys.deadline1]||'';
@@ -1274,7 +1551,7 @@ function loadSelectedIntoForm(){
   fields.site.value=selectedRow[fullKeys.site]||'Web会議室';
   fields.cohost.value=String(selectedRow[fullKeys.cohost]||'').trim()===COHOST_OPTION_TEAM?COHOST_OPTION_TEAM:COHOST_OPTION_NONE;
   syncCohostFields();
-  if(String(selectedRow[fullKeys.cohost]||'').trim()!==COHOST_OPTION_TEAM) fields.cohost3.value='';
+  if(String(selectedRow[fullKeys.cohost]||'').trim()!==COHOST_OPTION_TEAM){fields.cohost3.value=''}
   fields.zoomId.value=selectedRow[fullKeys.zoomId]||'';
   fields.passcode.value=selectedRow[fullKeys.passcode]||'';
   fields.zoomUrl.value=selectedRow[fullKeys.zoomUrl]||'';
@@ -1289,25 +1566,25 @@ function loadSelectedIntoForm(){
 }
 
 function recalcDraft(){
-  try{
-    fields.day.value=weekdayJa(fields.date.value);
-    calcDerivedFields();
-    const base=fields.date.value?new Date(fields.date.value+'T00:00:00'):null;
-    const auto=calcAutoDates(base);
-    els.dK1.textContent=fmtDate(auto.k1);
-    els.dK2.textContent=fmtDate(auto.k2);
-    els.dHp.textContent=fmtDate(auto.hp);
-    els.dK3.textContent=fmtDate(auto.k3);
-    renderConfirm(validateDraft());
-    renderResult();
-    renderStats();
-  }catch(err){
-    console.error('recalcDraft error:',err);
-  }
+  fields.day.value=weekdayJa(fields.date.value);
+  calcDerivedFields();
+  const base=fields.date.value?new Date(fields.date.value+'T00:00:00'):null;
+  const auto=calcAutoDates(base);
+  els.dK1.textContent=fmtDate(auto.k1);
+  els.dK2.textContent=fmtDate(auto.k2);
+  els.dHp.textContent=fmtDate(auto.hp);
+  els.dK3.textContent=fmtDate(auto.k3);
+  renderConfirm(validateDraft());
+  renderResult();
+  renderStats();
 }
 
 function calcDerivedFields(){
   const start=fields.start.value,end=fields.end.value,date=fields.date.value;
+  const lectureStart=fields.lectureStart.value||'';
+  const preMeeting=fields.preMeeting.value||'';
+  const qaDeadline=fields.qaDeadline.value||'';
+  const qaTime=fields.qaTime.value||'';
   const roomOpen=start?shiftTime(start,-5):'';
   const duration=(start&&end)?String(diffMin(start,end)):'';
   const deadline2=start?shiftTime(start,-60):'';
@@ -1317,6 +1594,7 @@ function calcDerivedFields(){
   const date2=date?formatDate2(date):'';
   const subject2=subjectDetail(fields.subject.value);
   syncCohostFields();
+
   fields.roomOpen.value=roomOpen;
   fields.duration.value=duration&&Number(duration)>=0?duration:'';
   fields.deadline1.value=deadline1;
@@ -1325,6 +1603,11 @@ function calcDerivedFields(){
   fields.dataDeadline.value=dataDeadline;
   fields.date2.value=date2;
   fields.subject2.value=subject2;
+
+  els.dLectureStart.textContent=lectureStart||'-';
+  els.dPreMeeting.textContent=preMeeting||'-';
+  els.dQaDeadline.textContent=qaDeadline||'-';
+  els.dQaTime.textContent=qaTime||'-';
   els.dRoomOpen.textContent=roomOpen||'-';
   els.dDuration.textContent=duration&&Number(duration)>=0?`${duration}分`:'-';
   els.dDeadline1.textContent=deadline1||'-';
@@ -1334,6 +1617,7 @@ function calcDerivedFields(){
   els.dDate2.textContent=date2||'-';
   els.dSubject2.textContent=subject2||'-';
 }
+
 function calcAutoDates(base){return{k1:base?addDays(base,-35):null,hp:base?addDays(base,-28):null,k2:base?addDays(base,-7):null,k3:nextBusinessMondayRule(base)}}
 function nextBusinessMondayRule(base){if(!base)return null;const nextDay=addDays(base,1);const day=nextDay.getDay();if(day===6)return addDays(base,3);if(day===0)return addDays(base,2);return nextDay}
 function nextBusinessDate(date){let d=new Date(date);while(isHolidayOrWeekend(d))d=addDays(d,1);return d}
@@ -1355,18 +1639,19 @@ function subjectDetail(v){if(v==='研究者')return '（医師・歯科医師等
 
 function validateDraft(){
   const warns=[];
-  if(!String(fields.no.value||'').trim()) warns.push('Noが未入力です');
-  if(!/^\d+$/.test(String(fields.no.value||'').trim())) warns.push('Noは整数で入力してください');
-  if(!fields.date.value) warns.push('開催日が未入力です');
-  if(!fields.title.value.trim()) warns.push('タイトルが未入力です');
-  if(!fields.speaker.value.trim()) warns.push('講師名が未入力です');
-  if(!fields.start.value||!fields.end.value) warns.push('開始/終了時間が未入力です');
-  if(fields.start.value&&fields.end.value&&diffMin(fields.start.value,fields.end.value)<=0) warns.push('終了時間は開始時間より後にしてください');
-  if(fields.zoomUrl.value&&!/^https?:\/\//.test(fields.zoomUrl.value)) warns.push('Zoom URL は http/https で始めてください');
-  if(fields.hpUrl.value&&!/^https?:\/\//.test(fields.hpUrl.value)) warns.push('HP_URL_url_1 は http/https で始めてください');
-  if(fields.cost.value&&isNaN(Number(String(fields.cost.value).replace(/,/g,'')))) warns.push('謝金_COST は数値で入力してください');
+  if(!String(fields.no.value||'').trim())warns.push('Noが未入力です');
+  if(!/^\d+$/.test(String(fields.no.value||'').trim()))warns.push('Noは整数で入力してください');
+  if(!fields.date.value)warns.push('開催日が未入力です');
+  if(!fields.title.value.trim())warns.push('タイトルが未入力です');
+  if(!fields.speaker.value.trim())warns.push('講師名が未入力です');
+  if(!fields.start.value||!fields.end.value)warns.push('開始/終了時間が未入力です');
+  if(fields.start.value&&fields.end.value&&diffMin(fields.start.value,fields.end.value)<=0)warns.push('終了時間は開始時間より後にしてください');
+  if(fields.zoomUrl.value&&!/^https?:\/\//.test(fields.zoomUrl.value))warns.push('Zoom URL は http/https で始めてください');
+  if(fields.hpUrl.value&&!/^https?:\/\//.test(fields.hpUrl.value))warns.push('HP_URL_url_1 は http/https で始めてください');
+  if(fields.cost.value&&isNaN(Number(String(fields.cost.value).replace(/,/g,''))))warns.push('謝金_COST は数値で入力してください');
   return warns;
 }
+
 function stageDraft(){
   if(!currentHeaders.length){setStatus('先にCSVを読み込むか、新規データベースを作成してください。');return}
   stagedRow=buildRow();
@@ -1374,6 +1659,7 @@ function stageDraft(){
   renderConfirm(validateDraft());
   setStatus(lastSaveMode==='update'?`No.${stagedRow[fullKeys.no]} は既存行を上書き保存します。`:`No.${stagedRow[fullKeys.no]} は新規行として追加保存します。`);
 }
+
 function buildRow(){
   const base=fields.date.value?new Date(fields.date.value+'T00:00:00'):null;
   const auto=calcAutoDates(base);
@@ -1383,10 +1669,12 @@ function buildRow(){
   row[fullKeys.year]=fields.year.value;
   row[fullKeys.date]=formatDate1Short(fields.date.value);
   row[fullKeys.day]=fields.day.value;
-  row[fullKeys.date2]=fields.date2.value;
-  row[fullKeys.name]=fields.name.value;
+  row[fullKeys.lectureStart]=fields.lectureStart.value;
   row[fullKeys.start]=fields.start.value;
   row[fullKeys.end]=fields.end.value;
+  row[fullKeys.qaDeadline]=fields.qaDeadline.value;
+  row[fullKeys.qaTime]=fields.qaTime.value;
+  row[fullKeys.preMeeting]=fields.preMeeting.value;
   row[fullKeys.roomOpen]=fields.roomOpen.value;
   row[fullKeys.duration]=fields.duration.value;
   row[fullKeys.deadline1]=fields.deadline1.value;
@@ -1407,6 +1695,8 @@ function buildRow(){
   row[fullKeys.hp]=fmtMonthDay(auto.hp);
   row[fullKeys.cost]=String(fields.cost.value||'').trim();
   row[fullKeys.purpose]=fields.purpose.value;
+  row[fullKeys.date2]=fields.date2.value;
+  row[fullKeys.name]=fields.name.value;
   row[fullKeys.zoomId]=fields.zoomId.value;
   row[fullKeys.zoomUrl]=fields.zoomUrl.value;
   row[fullKeys.hpUrl]=fields.hpUrl.value;
@@ -1421,6 +1711,7 @@ function buildRow(){
   row[fullKeys.checkK3]=boolToCsv(els.ckK3.checked);
   return row;
 }
+
 function commitDraft(){
   if(!currentHeaders.length){setStatus('先にCSVを読み込むか、新規データベースを作成してください。');return}
   const warns=validateDraft();
@@ -1444,19 +1735,17 @@ function commitDraft(){
   els.loadSelectedBtn.disabled=!dataRows.length;
   els.prefillBtn.disabled=!dataRows.length;
   els.downloadBtn.disabled=false;
-  if(lastSaveMode==='insert') fields.no.value=String(dataRows.reduce((m,r)=>Math.max(m,Number(r[fullKeys.no]||0)),0)+1);
+  if(lastSaveMode==='insert')fields.no.value=String(dataRows.reduce((m,r)=>Math.max(m,Number(r[fullKeys.no]||0)),0)+1);
   setStatus(lastSaveMode==='update'?`No.${no} の元行を上書き保存しました。新しい行は追加していません。`:`No.${no} を新規追加しました。`);
 }
-function getRawRowIndexByNo(no){
-  return rawRows.findIndex(r=>String(r?.[fullKeys.no]||'').trim()===String(no||'').trim());
-}
+
+function getRawRowIndexByNo(no){return rawRows.findIndex(r=>String(r?.[fullKeys.no]||'').trim()===String(no||'').trim())}
 function renderRecordOptions(){
-  const options=['<option value="">Noを選択して表示</option>'].concat(
-    dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`)
-  );
+  const options=['<option value="">Noを選択して表示</option>'].concat(dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`));
   els.recordSelect.innerHTML=options.join('');
   renderMergeOptions();
 }
+
 function renderTable(){
   if(!currentHeaders.length){
     els.tableList.innerHTML='<div class="table-row"><div>-</div><div>-</div><div>CSVを読み込むか、新規データベースを作成してください。</div><div>-</div><div>-</div><div>-</div></div>';
@@ -1471,7 +1760,8 @@ function renderTable(){
     return `<div class="table-row"><div><span class="badge">${esc(r[fullKeys.no]||'')}</span></div><div>${esc(r[fullKeys.date]||'-')}</div><div><strong>${esc(r[fullKeys.title]||'-')}</strong></div><div><p>${esc(r[fullKeys.speaker]||'-')}</p></div><div>${esc(r[fullKeys.subject]||'-')}</div><div>${mark}${esc(r[fullKeys.k1]||'-')}</div></div>`;
   }).join('');
 }
-function parseMonthDayText(v,yearText){
+
+function parseMonthDayText(v, yearText){
   const m=String(v||'').match(/(\d{1,2})\/(\d{1,2})/);
   const y=String(yearText||'').match(/(\d{4})/);
   return m&&y?new Date(`${y[1]}-${String(m[1]).padStart(2,'0')}-${String(m[2]).padStart(2,'0')}T00:00:00`):null;
@@ -1489,12 +1779,7 @@ function collectDeadlineAlerts(){
     const year=r[fullKeys.year]||fields.year.value||'';
     const title=r[fullKeys.title]||'無題';
     const no=r[fullKeys.no]||'-';
-    const pushItem=(label,dateObj,raw)=>{
-      if(!dateObj)return;
-      const diff=daysBetween(baseToday,dateObj);
-      if(diff<0||diff>7)return;
-      items.push({no,title,label,raw:raw||fmtDate(dateObj),diff});
-    };
+    const pushItem=(label,dateObj,raw)=>{if(!dateObj)return;const diff=daysBetween(baseToday,dateObj);if(diff<0||diff>7)return;items.push({no,title,label,raw:raw||fmtDate(dateObj),diff})};
     pushItem('起案1',parseMonthDayText(r[fullKeys.k1],year),r[fullKeys.k1]);
     pushItem('起案2',parseMonthDayText(r[fullKeys.k2],year),r[fullKeys.k2]);
     pushItem('起案3',parseMonthDayText(r[fullKeys.k3],year),r[fullKeys.k3]);
@@ -1517,6 +1802,7 @@ function renderAlerts(){
   }
   els.alertList.innerHTML=alerts.map(a=>`<div class="alert-item"><div><span class="alert-tag">${a.diff===0?'TODAY':a.diff===1?'TOMORROW':`+${a.diff}D`}</span></div><div><strong>No.${esc(a.no)} / ${esc(a.title)}</strong><p>${esc(a.label)} : ${esc(a.raw||'-')}</p></div><div class="mono">Task alert</div></div>`).join('');
 }
+
 function updateAnnualGauge(done,total,yearCount,soon,draftCount){
   const circumference=578;
   const ratio=total?Math.max(0,Math.min(1,done/total)):0;
@@ -1529,6 +1815,7 @@ function updateAnnualGauge(done,total,yearCount,soon,draftCount){
   els.paramSoonCount.textContent=String(soon);
   els.paramDraftCount.textContent=String(draftCount);
 }
+
 function renderStats(){
   const total=dataRows.length;
   const currentYearText=String(fields.year.value||'').trim();
@@ -1574,6 +1861,7 @@ function renderStats(){
   els.roadmapBar.style.width=`${ratio}%`;
   updateAnnualGauge(done,total,yearCount,soon,draftCount);
 }
+
 function renderConfirm(warns){
   if(!currentHeaders.length){
     els.confirmCount.textContent='0件';
@@ -1593,8 +1881,9 @@ function renderConfirm(warns){
   els.confirmCount.textContent='1件';
   els.confirmWarn.textContent=warns.length;
   els.confirmState.textContent=warns.length?'要確認':(saveMode==='update'?'上書き保存':'新規追加');
-  els.checkList.innerHTML=`<div class="list-row"><div><strong>${saveMode==='update'?'既存行を上書き保存':'新規行を追加保存'}</strong><p>No.${esc(row[fullKeys.no])} / ${esc(row[fullKeys.date]||'-')} / ${esc(row[fullKeys.title]||'-')} / ${esc(row[fullKeys.name]||'-')}</p></div><div><span class="status ${warns.length?'s3':'s2'}">${warns.length?'確認':(saveMode==='update'?'上書き':'追加')}</span></div></div><div class="list-row"><div><strong>自動計算項目</strong><p>DATE_1 ${esc(row[fullKeys.date]||'-')} / DATE_2 ${esc(row[fullKeys.date2]||'-')} / DEADLINE_1 ${esc(row[fullKeys.deadline1]||'-')}</p></div><div><span class="status s2">反映済み</span></div></div><div class="list-row"><div><strong>起案チェック状態</strong><p>${esc(checks||'未チェック')}</p></div><div><span class="status s2">保持対象</span></div></div>${warns.map(w=>`<div class="list-row"><div><strong>確認事項</strong><p>${esc(w)}</p></div><div><span class="status s4">保留</span></div></div>`).join('')}`;
+  els.checkList.innerHTML=`<div class="list-row"><div><strong>${saveMode==='update'?'既存行を上書き保存':'新規行を追加保存'}</strong><p>No.${esc(row[fullKeys.no])} / ${esc(row[fullKeys.date]||'-')} / ${esc(row[fullKeys.title]||'-')} / ${esc(row[fullKeys.name]||'-')}</p></div><div><span class="status ${warns.length?'s3':'s2'}">${warns.length?'確認':(saveMode==='update'?'上書き':'追加')}</span></div></div><div class="list-row"><div><strong>自動計算項目</strong><p>START_TIME ${esc(row[fullKeys.lectureStart]||'-')} / QA_DADLINE ${esc(row[fullKeys.qaDeadline]||'-')} / QA_TIME ${esc(row[fullKeys.qaTime]||'-')} / PRE_MEETING ${esc(row[fullKeys.preMeeting]||'-')}</p></div><div><span class="status s2">反映済み</span></div></div><div class="list-row"><div><strong>起案チェック状態</strong><p>${esc(checks||'未チェック')}</p></div><div><span class="status s2">保持対象</span></div></div>${warns.map(w=>`<div class="list-row"><div><strong>確認事項</strong><p>${esc(w)}</p></div><div><span class="status s4">保留</span></div></div>`).join('')}`;
 }
+
 function renderResult(done=false){
   if(!currentHeaders.length){
     els.resultDone.textContent='0件';
@@ -1609,8 +1898,9 @@ function renderResult(done=false){
   const name=`${fields.date.value||'clinical-master'}_${safeName(fields.title.value||'updated')}.csv`;
   els.folderView.innerHTML=`<div class="list-row"><div><strong>${esc(name)}</strong><p>${done?(lastSaveMode==='update'?'同じNoの元行を上書きしたCSVです。':'新規追加したCSVです。'):'現在のマスターCSVをダウンロードできます。'}</p></div><button class="btn small primary" id="inlineDownloadBtn">ダウンロード</button></div>`;
   const inlineBtn=document.getElementById('inlineDownloadBtn');
-  if(inlineBtn) inlineBtn.addEventListener('click',downloadCsv);
+  if(inlineBtn)inlineBtn.addEventListener('click',downloadCsv);
 }
+
 function downloadCsv(){
   if(!currentHeaders.length){setStatus('ダウンロード対象のマスターがありません。');return}
   rawRows=compactRawRows(rawRows);
@@ -1623,6 +1913,7 @@ function downloadCsv(){
   a.click();
   URL.revokeObjectURL(url);
 }
+
 function setStatus(msg){els.statusBox.textContent=msg}
 function weekdayJa(iso){return iso?['日','月','火','水','木','金','土'][new Date(iso+'T00:00:00').getDay()]:''}
 function addDays(d,days){const x=new Date(d);x.setDate(x.getDate()+days);return x}
