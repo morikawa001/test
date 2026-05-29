@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>dual-theme control ui</title>
+<title>臨床研究研修会 管制ダッシュボード / dual-theme control ui</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
@@ -306,17 +306,6 @@ input[readonly],textarea[readonly]{
   font-weight:800;
   cursor:pointer;
 }
-#templateFiles{padding:9px 11px}
-#templateFiles::file-selector-button{
-  margin-right:12px;
-  border:none;
-  border-radius:8px;
-  padding:8px 12px;
-  background:var(--panel3);
-  color:var(--text-strong);
-  font-weight:800;
-  cursor:pointer;
-}
 .action-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -588,8 +577,8 @@ input[readonly],textarea[readonly]{
       <div class="hero-head">
         <div class="id-block">
           <div class="kicker">Clinical Research Training Control</div>
-          <h1></h1>
-          <p>Notion 風の明るく読みやすい業務UIへ切り替わるようにしました。</p>
+          <h1>臨床研究研修会 管制ダッシュボード</h1>
+          <p>ダークテーマは攻殻機動隊 / 押井守版寄りのグリーン端末調を維持し、ライトテーマは Notion 風の明るく読みやすい業務UIへ切り替わるようにしました。</p>
         </div>
         <div class="hero-stats">
           <div class="stat-box"><span>Records</span><b id="sumAllTop">0</b></div>
@@ -604,25 +593,25 @@ input[readonly],textarea[readonly]{
       <div class="panel-head">
         <div>
           <h2>Quick Operation</h2>
-          <p></p>
+          <p>テーマ切替を含む主要操作を右上に集約しています。</p>
         </div>
       </div>
-      <button class="btn" id="themeBtn"></button>
+      <button class="btn" id="themeBtn">表示テーマ切替</button>
       <div class="file-pick">
-        <label for="csvFile">CSV</label>
+        <label for="csvFile">マスターCSV</label>
         <input id="csvFile" type="file" accept=".csv,text/csv" />
       </div>
       <div class="action-grid">
-        <button class="btn" id="newDbBtn">DB</button>
-        <button class="btn primary" id="openConfirmBtn" disabled></button>
+        <button class="btn" id="newDbBtn">新規DB作成</button>
+        <button class="btn primary" id="openConfirmBtn" disabled>確認画面へ進む</button>
       </div>
       <select class="btn" id="recordSelect" disabled>
-        <option value="">No</option>
+        <option value="">Noを選択して表示</option>
       </select>
       <div class="mini-grid">
-        <div class="mini-box"><span>Database</span><b id="miniDbState">CSV</b><p id="miniDbText">CSVDB</p></div>
-        <div class="mini-box"><span>Next</span><b id="miniNext">-</b><p></p></div>
-        <div class="mini-box"><span>Year Count</span><b id="miniYearCount">0</b><p></p></div>
+        <div class="mini-box"><span>Database</span><b id="miniDbState">CSV未読込</b><p id="miniDbText">CSVまたは新規DBを選択してください</p></div>
+        <div class="mini-box"><span>Next</span><b id="miniNext">-</b><p>次回採番候補</p></div>
+        <div class="mini-box"><span>Year Count</span><b id="miniYearCount">0</b><p>当年度登録件数</p></div>
       </div>
     </section>
   </section>
@@ -632,7 +621,7 @@ input[readonly],textarea[readonly]{
     <div class="panel-head">
       <div>
         <h2>Annual Plan Parameter</h2>
-        <p>HUDUI</p>
+        <p>年間計画の進み具合を、ダーク時はHUD風、ライト時は落ち着いた業務UI風リングで表示します。</p>
       </div>
     </div>
     <div class="parameter-wrap">
@@ -659,10 +648,10 @@ input[readonly],textarea[readonly]{
         </div>
       </div>
       <div class="param-meta">
-        <div class="param-side"><div><span class="small-label"></span><p class="radar-note"></p></div><b id="paramYearCount">0</b></div>
-        <div class="param-side"><div><span class="small-label"></span><p class="radar-note"></p></div><b id="paramDoneCount">0</b></div>
-        <div class="param-side"><div><span class="small-label">30</span><p class="radar-note">30</p></div><b id="paramSoonCount">0</b></div>
-        <div class="param-side"><div><span class="small-label"></span><p class="radar-note"></p></div><b id="paramDraftCount">0</b></div>
+        <div class="param-side"><div><span class="small-label">年度件数</span><p class="radar-note">現在年度に属する登録件数です。</p></div><b id="paramYearCount">0</b></div>
+        <div class="param-side"><div><span class="small-label">開催済み</span><p class="radar-note">今日より前に開催済みの件数です。</p></div><b id="paramDoneCount">0</b></div>
+        <div class="param-side"><div><span class="small-label">直近30日</span><p class="radar-note">30日以内に開催予定の件数です。</p></div><b id="paramSoonCount">0</b></div>
+        <div class="param-side"><div><span class="small-label">追加予定</span><p class="radar-note">現在フォームに保持している保存前データです。</p></div><b id="paramDraftCount">0</b></div>
       </div>
     </div>
   </section>
@@ -672,13 +661,13 @@ input[readonly],textarea[readonly]{
     <div class="panel-head">
       <div>
         <h2>Deadline Alert</h2>
-        <p>7</p>
+        <p>7日以内に期限が迫るタスクを上から優先表示します。</p>
       </div>
     </div>
     <div class="alert-wrap" id="alertList">
       <div class="alert-item">
         <div><span class="alert-tag">WAIT</span></div>
-        <div><strong></strong><p>CSV</p></div>
+        <div><strong>期限監視待機中</strong><p>CSVを読み込むと期限アラートがここに表示されます。</p></div>
         <div class="mono">No data</div>
       </div>
     </div>
@@ -690,72 +679,75 @@ input[readonly],textarea[readonly]{
       <div class="panel-head">
         <div>
           <h2>Entry Console</h2>
-          <p>Notion </p>
+          <p>ダークでは電子端末風、ライトでは Notion 風の落ち着いた視認性重視フォームになります。</p>
         </div>
-        <button class="btn" id="loadSelectedBtn" disabled>No</button>
+        <button class="btn" id="loadSelectedBtn" disabled>選択Noを反映</button>
       </div>
 
       <div class="master-grid">
         <div class="field"><label>No</label><input id="fNo"></div>
-        <div class="field"><label>YEAR_1</label><input id="fYear" value="2026"></div>
-        <div class="field"><label>DATE_1</label><input id="fDate" type="date"></div>
-        <div class="field"><label>DAY</label><input id="fDay" readonly></div>
-        <div class="field"><label>DATE_2</label><input id="fDate2" readonly></div>
-        <div class="field"><label>NAME</label><input id="fName" value=""></div>
-        <div class="field"><label>TITLE</label><input id="fTitle" value=""></div>
-        <div class="field"><label>SPEAKER</label><input id="fSpeaker" value=""></div>
-        <div class="field"><label>START_TIME</label><input id="fLectureStart" type="time" value="17:30"></div>
-        <div class="field"><label>START_1</label><input id="fStart" type="time" value="17:30"></div>
-        <div class="field"><label>END_1</label><input id="fEnd" type="time" value="19:00"></div>
-        <div class="field"><label>PRE_MEETING</label><input id="fPreMeeting" type="time" value=""></div>
-        <div class="field"><label>QA_DEADLINE</label><input id="fQaDeadline" type="time" value=""></div>
-        <div class="field"><label>QA_TIME</label><input id="fQaTime" value=""></div>
-        <div class="field"><label>TIME_1</label><input id="fRoomOpen" readonly></div>
-        <div class="field"><label>TIME_2</label><input id="fDuration" readonly></div>
-        <div class="field"><label>DEADLINE_1</label><input id="fDeadline1" readonly></div>
-        <div class="field"><label>DEADLINE_2</label><input id="fDeadline2" readonly></div>
-        <div class="field"><label>DL_DEADLINE_3</label><input id="fDeadline3" readonly></div>
-        <div class="field"><label>DATA_deadline</label><input id="fDataDeadline" readonly></div>
-        <div class="field"><label>COST</label><input id="fCost" value=""></div>
-        <div class="field"><label>SUBJECT_1</label>
+        <div class="field"><label>年度_YEAR_1</label><input id="fYear" value="2026年"></div>
+        <div class="field"><label>開催日_DATE_1</label><input id="fDate" type="date"></div>
+        <div class="field"><label>曜日_DAY</label><input id="fDay" readonly></div>
+        <div class="field"><label>メール用開催日_DATE_2</label><input id="fDate2" readonly></div>
+        <div class="field"><label>名前_NAME</label><input id="fName" value=""></div>
+        <div class="field"><label>研修会タイトル_TITLE</label><input id="fTitle" value="臨床研究データ管理実務"></div>
+        <div class="field"><label>講師名_SPEAKER</label><input id="fSpeaker" value="サンプル 講師"></div>
+
+        <div class="field"><label>講義開始_START_TIME</label><input id="fLectureStart" type="time" value="17:30"></div>
+        <div class="field"><label>研修会開始_START_1</label><input id="fStart" type="time" value="17:30"></div>
+        <div class="field"><label>終了_END_1</label><input id="fEnd" type="time" value="19:00"></div>
+        <div class="field"><label>事前打合せ開始時間_PRE_MEETING</label><input id="fPreMeeting" type="time" value=""></div>
+        <div class="field"><label>質疑応答締切_QA_DADLINE</label><input id="fQaDeadline" type="time" value=""></div>
+        <div class="field"><label>質疑応答_QA_TIME</label><input id="fQaTime" value=""></div>
+
+        <div class="field"><label>入室_TIME_1</label><input id="fRoomOpen" readonly></div>
+        <div class="field"><label>時間_TIME_2</label><input id="fDuration" readonly></div>
+        <div class="field"><label>〆切_DEADLINE_1</label><input id="fDeadline1" readonly></div>
+        <div class="field"><label>院内〆切_DEADLINE_2</label><input id="fDeadline2" readonly></div>
+        <div class="field"><label>資料DL_DEADLINE_3</label><input id="fDeadline3" readonly></div>
+        <div class="field"><label>講義資料締切_DATA_deadline</label><input id="fDataDeadline" readonly></div>
+        <div class="field"><label>謝金_COST</label><input id="fCost" value=""></div>
+
+        <div class="field"><label>対象_SUBJECT_1</label>
           <select id="fSubject">
-            <option></option>
-            <option></option>
-            <option></option>
+            <option>研究者</option>
+            <option>研究支援者</option>
+            <option>倫理審査委員会委員</option>
           </select>
         </div>
-        <div class="field"><label>SUBJECT_2</label><input id="fSubject2" readonly></div>
-        <div class="field"><label>SITE</label>
+        <div class="field"><label>対象詳細_SUBJECT_2</label><input id="fSubject2" readonly></div>
+        <div class="field"><label>開催方法_SITE</label>
           <select id="fSite">
-            <option>Web</option>
-            <option></option>
-            <option></option>
-            <option></option>
+            <option>Web会議室</option>
+            <option>（研修室１）</option>
+            <option>会議室</option>
+            <option>ハイブリッド</option>
           </select>
         </div>
-        <div class="field"><label>COHOST_1</label>
+        <div class="field"><label>共催_COHOST_1</label>
           <select id="fCohost">
-            <option value=""></option>
-            <option value=""></option>
+            <option value="なし">なし</option>
+            <option value="企画人材班">企画人材班</option>
           </select>
         </div>
-        <div class="field"><label>3_COHOST_3</label><input id="fCohost3" readonly></div>
+        <div class="field"><label>共催3_COHOST_3</label><input id="fCohost3" readonly></div>
         <div class="field"><label>Zoom ID</label><input id="fZoomId" value=""></div>
-        <div class="field"><label>PASSCODE</label><input id="fPasscode" value=""></div>
+        <div class="field"><label>パスコード_PASSCODE</label><input id="fPasscode" value=""></div>
         <div class="field full"><label>Zoom URL</label><input id="fZoomUrl" value="https://zoom.us/"></div>
         <div class="field full"><label>HP_URL_url_1</label><input id="fHpUrl" value=""></div>
-        <div class="field full"><label>PURPOSE</label><textarea id="fPurpose"></textarea></div>
-        <div class="field full"><label>INTRO_1</label><textarea id="fIntro1"></textarea></div>
-        <div class="field full"><label>INTRO_2</label><textarea id="fIntro2"></textarea></div>
-        <div class="field full"><label>INTRO_3</label><textarea id="fIntro3"></textarea></div>
+        <div class="field full"><label>目的_PURPOSE</label><textarea id="fPurpose">本研修会では、臨床研究に必要な実務の基本をわかりやすく学びます。</textarea></div>
+        <div class="field full"><label>進行表導入_INTRO_1</label><textarea id="fIntro1">本日は臨床研究研修会にご参加いただきありがとうございます。</textarea></div>
+        <div class="field full"><label>趣旨説明_INTRO_2</label><textarea id="fIntro2">本研修会では、臨床研究を進めるうえで必要となる基本事項と実務上のポイントを共有します。</textarea></div>
+        <div class="field full"><label>講師紹介_INTRO_3</label><textarea id="fIntro3">本日の講師は、臨床研究支援に関する実務経験を有する専門家です。</textarea></div>
       </div>
 
       <div class="control-row">
-        <button class="btn primary" id="appendBtn" disabled></button>
-        <button class="btn" id="prefillBtn" disabled></button>
+        <button class="btn primary" id="appendBtn" disabled>保存する</button>
+        <button class="btn" id="prefillBtn" disabled>直近行を複製</button>
       </div>
 
-      <div class="status-box" id="statusBox">CSV</div>
+      <div class="status-box" id="statusBox">CSVを読み込むか、新規データベースを作成すると入力を開始できます。</div>
     </section>
 
     <aside class="side-stack">
@@ -764,48 +756,48 @@ input[readonly],textarea[readonly]{
         <div class="panel-head">
           <div>
             <h2>Computed Schedule</h2>
-            <p></p>
+            <p>起案スケジュールと各チェック状態を右側に固定表示します。</p>
           </div>
         </div>
         <div class="schedule-list">
           <div class="schedule-card">
             <div class="schedule-left">
-              <span class="small-label">1</span>
+              <span class="small-label">起案1</span>
               <strong id="dK1">-</strong>
-              <p>35</p>
+              <p>開催35日前の起案予定です。</p>
             </div>
-            <label class="schedule-check"><input type="checkbox" id="ckK1"><span></span></label>
+            <label class="schedule-check"><input type="checkbox" id="ckK1"><span>実施済み</span></label>
           </div>
           <div class="schedule-card">
             <div class="schedule-left">
-              <span class="small-label">HP</span>
+              <span class="small-label">HP公開</span>
               <strong id="dHp">-</strong>
-              <p>28</p>
+              <p>開催28日前の案内開始予定です。</p>
             </div>
-            <label class="schedule-check"><input type="checkbox" id="ckHp"><span></span></label>
+            <label class="schedule-check"><input type="checkbox" id="ckHp"><span>実施済み</span></label>
           </div>
           <div class="schedule-card">
             <div class="schedule-left">
-              <span class="small-label">2</span>
+              <span class="small-label">起案2</span>
               <strong id="dK2">-</strong>
-              <p>7</p>
+              <p>開催7日前の資料起案予定です。</p>
             </div>
-            <label class="schedule-check"><input type="checkbox" id="ckK2"><span></span></label>
+            <label class="schedule-check"><input type="checkbox" id="ckK2"><span>実施済み</span></label>
           </div>
           <div class="schedule-card">
             <div class="schedule-left">
-              <span class="small-label">3</span>
+              <span class="small-label">起案3</span>
               <strong id="dK3">-</strong>
-              <p></p>
+              <p>開催翌営業日の受講証・修了証起案予定です。</p>
             </div>
-            <label class="schedule-check"><input type="checkbox" id="ckK3"><span></span></label>
+            <label class="schedule-check"><input type="checkbox" id="ckK3"><span>実施済み</span></label>
           </div>
-          <div class="date-card"><span></span><b id="dRoomOpen">-</b></div>
-          <div class="date-card"><span></span><b id="dDuration">-</b></div>
-          <div class="date-card"><span></span><b id="dLectureStart">-</b></div>
-          <div class="date-card"><span></span><b id="dPreMeeting">-</b></div>
-          <div class="date-card"><span>QA</span><b id="dQaDeadline">-</b></div>
-          <div class="date-card"><span>QA</span><b id="dQaTime">-</b></div>
+          <div class="date-card"><span>入室</span><b id="dRoomOpen">-</b></div>
+          <div class="date-card"><span>所要時間</span><b id="dDuration">-</b></div>
+          <div class="date-card"><span>講義開始</span><b id="dLectureStart">-</b></div>
+          <div class="date-card"><span>事前打合せ</span><b id="dPreMeeting">-</b></div>
+          <div class="date-card"><span>QA締切</span><b id="dQaDeadline">-</b></div>
+          <div class="date-card"><span>QA時間</span><b id="dQaTime">-</b></div>
           <div class="date-card"><span>DEADLINE_1</span><b id="dDeadline1">-</b></div>
           <div class="date-card"><span>DEADLINE_2</span><b id="dDeadline2">-</b></div>
           <div class="date-card"><span>DEADLINE_3</span><b id="dDeadline3">-</b></div>
@@ -813,7 +805,7 @@ input[readonly],textarea[readonly]{
           <div class="date-card"><span>DATE_2</span><b id="dDate2">-</b></div>
           <div class="date-card"><span>SUBJECT_2</span><b id="dSubject2">-</b></div>
         </div>
-        <div class="hint-box">CSV1 HP 2 3 </div>
+        <div class="hint-box">CSV保存時には、起案1 / HP / 起案2 / 起案3 のチェック状態も一緒に保持します。</div>
       </section>
 
       <section class="panel">
@@ -821,20 +813,20 @@ input[readonly],textarea[readonly]{
         <div class="panel-head">
           <div>
             <h2>Operational Summary</h2>
-            <p></p>
+            <p>年次の状況を補助数値でも確認できます。</p>
           </div>
         </div>
         <div class="summary-grid">
-          <div class="summary-box"><span></span><b id="sumAll">0</b></div>
-          <div class="summary-box"><span></span><b id="sumYear">0</b></div>
-          <div class="summary-box"><span>No</span><b id="sumNext">-</b></div>
-          <div class="summary-box"><span></span><b id="sumSubject">-</b></div>
+          <div class="summary-box"><span>登録件数</span><b id="sumAll">0</b></div>
+          <div class="summary-box"><span>年度件数</span><b id="sumYear">0</b></div>
+          <div class="summary-box"><span>次No</span><b id="sumNext">-</b></div>
+          <div class="summary-box"><span>対象</span><b id="sumSubject">-</b></div>
         </div>
         <div class="summary-grid">
-          <div class="summary-box"><span>30</span><b id="sumSoon">0</b></div>
-          <div class="summary-box"><span></span><b id="sumDone">0</b></div>
-          <div class="summary-box"><span></span><b id="sumDraft">0</b></div>
-          <div class="summary-box"><span></span><b id="roadmapLabel">0 / 0</b></div>
+          <div class="summary-box"><span>直近30日</span><b id="sumSoon">0件</b></div>
+          <div class="summary-box"><span>開催済み</span><b id="sumDone">0件</b></div>
+          <div class="summary-box"><span>追加予定</span><b id="sumDraft">0件</b></div>
+          <div class="summary-box"><span>比率</span><b id="roadmapLabel">0 / 0</b></div>
         </div>
         <div class="progress-shell"><div class="progress-bar" id="roadmapBar"></div></div>
       </section>
@@ -846,15 +838,15 @@ input[readonly],textarea[readonly]{
     <div class="panel-head">
       <div>
         <h2>Master Table</h2>
-        <p>No1</p>
+        <p>同じNoは1行だけ保持し、保存時は既存行を上書き更新します。</p>
       </div>
     </div>
     <div class="table-head">
-      <div>No</div><div></div><div></div><div></div><div></div><div>1</div>
+      <div>No</div><div>開催日</div><div>タイトル</div><div>講師</div><div>対象</div><div>起案1</div>
     </div>
     <div class="table-list" id="tableList">
       <div class="table-row">
-        <div>-</div><div>-</div><div>CSV</div><div>-</div><div>-</div><div>-</div>
+        <div>-</div><div>-</div><div>CSVを読み込むか、新規データベースを作成してください。</div><div>-</div><div>-</div><div>-</div>
       </div>
     </div>
   </section>
@@ -865,23 +857,23 @@ input[readonly],textarea[readonly]{
       <div class="panel-head">
         <div>
           <h2>Commit Check</h2>
-          <p></p>
+          <p>保存直前の差分・注意点を一覧化します。</p>
         </div>
       </div>
       <div class="mini-grid">
-        <div class="mini-box"><span></span><b id="confirmCount">0</b></div>
-        <div class="mini-box"><span></span><b id="confirmWarn">0</b></div>
-        <div class="mini-box"><span></span><b id="confirmState"></b></div>
+        <div class="mini-box"><span>保存予定</span><b id="confirmCount">0件</b></div>
+        <div class="mini-box"><span>要確認</span><b id="confirmWarn">0件</b></div>
+        <div class="mini-box"><span>状態</span><b id="confirmState">待機</b></div>
       </div>
       <div class="confirm-list" id="checkList">
         <div class="list-row">
-          <div><strong></strong><p>CSV</p></div>
-          <div><span class="status s3"></span></div>
+          <div><strong>次回研修会</strong><p>CSVを読み込んだ後に入力内容が表示されます。</p></div>
+          <div><span class="status s3">待機</span></div>
         </div>
       </div>
       <div class="footer-actions">
-        <button class="btn" id="backBtn"></button>
-        <button class="btn primary" id="confirmAppendBtn" disabled></button>
+        <button class="btn" id="backBtn">戻る</button>
+        <button class="btn primary" id="confirmAppendBtn" disabled>この内容で保存</button>
       </div>
     </section>
 
@@ -890,22 +882,22 @@ input[readonly],textarea[readonly]{
       <div class="panel-head">
         <div>
           <h2>Export Result</h2>
-          <p>CSV</p>
+          <p>保存後のCSV出力状態を表示します。</p>
         </div>
       </div>
       <div class="mini-grid">
-        <div class="mini-box"><span></span><b id="resultDone">0</b></div>
-        <div class="mini-box"><span></span><b id="resultHold">0</b></div>
-        <div class="mini-box"><span>CSV</span><b id="resultZip">0</b></div>
+        <div class="mini-box"><span>保存完了</span><b id="resultDone">0件</b></div>
+        <div class="mini-box"><span>保留</span><b id="resultHold">0件</b></div>
+        <div class="mini-box"><span>CSV</span><b id="resultZip">0式</b></div>
       </div>
       <div class="folder-list" id="folderView">
         <div class="list-row">
-          <div><strong>CSV</strong><p></p></div>
-          <div><span class="status s3"></span></div>
+          <div><strong>更新CSV</strong><p>まだ作成していません。</p></div>
+          <div><span class="status s3">待機</span></div>
         </div>
       </div>
       <div class="footer-actions">
-        <button class="btn primary" id="downloadBtn" disabled>CSV</button>
+        <button class="btn primary" id="downloadBtn" disabled>更新CSVをダウンロード</button>
       </div>
     </section>
   </section>
@@ -915,138 +907,138 @@ input[readonly],textarea[readonly]{
     <div class="panel-head">
       <div>
         <h2>Template Injection</h2>
-        <p>pptx / xlsx / docx  No</p>
+        <p>pptx / xlsx / docx を複数同時読込し、選択Noのデータで一括差し込みします。</p>
       </div>
     </div>
     <div class="master-grid">
       <div class="field full">
-        <label></label>
+        <label>テンプレートファイル</label>
         <input id="templateFiles" type="file" multiple accept=".docx,.pptx,.xlsx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       </div>
       <div class="field">
-        <label>No</label>
+        <label>差し込み対象No</label>
         <select id="mergeRecordSelect" disabled>
-          <option value="">No</option>
+          <option value="">Noを選択して差し込み</option>
         </select>
       </div>
       <div class="field">
-        <label></label>
-        <input id="templateState" value="0" readonly>
+        <label>登録テンプレート数</label>
+        <input id="templateState" value="0件" readonly>
       </div>
     </div>
 
     <div class="template-list" id="templateList">
       <div class="template-row">
-        <div><strong></strong><p>pptx / xlsx / docx </p></div>
-        <div><span class="status s3"></span></div>
+        <div><strong>テンプレート未選択</strong><p>pptx / xlsx / docx を複数まとめて選択できます。</p></div>
+        <div><span class="status s3">待機</span></div>
         <div class="mono">-</div>
         <div class="mono">-</div>
       </div>
     </div>
 
     <div class="footer-actions">
-      <button class="btn primary" id="mergeAllBtn" disabled></button>
+      <button class="btn primary" id="mergeAllBtn" disabled>選択テンプレートを一括差し込み出力</button>
     </div>
-    <div class="status-box" id="mergeStatusBox"></div>
+    <div class="status-box" id="mergeStatusBox">テンプレートファイルを複数選択すると、一括差し込み出力できます。</div>
   </section>
 </div>
 
 <script>
 const root=document.documentElement;
-document.getElementById('themeBtn').addEventListener('click',()=>root.setAttribute('data-theme',root.getAttribute('data-theme')==='dark'?'light':'dark'));
+document.getElementById('themeBtn').addEventListener('click',()=>{root.setAttribute('data-theme',root.getAttribute('data-theme')==='dark'?'light':'dark')});
 
 const DEFAULT_HEADERS=[
-  'No',
-  'YEAR_1',
-  'DATE_1',
-  'DAY',
-  'START_TIME',
-  'START_1',
-  'END_1',
-  'QA_DEADLINE',
-  'QA_TIME',
-  'PRE_MEETING',
-  'TIME_1',
-  'TIME_2',
-  'DEADLINE_1',
-  'DEADLINE_2',
-  'DL_DEADLINE_3',
-  'TITLE',
-  'SPEAKER',
-  'SUBJECT_1',
-  'SUBJECT_2',
-  'SITE',
-  'COHOST_1',
-  '3_COHOST_3',
-  'HEAD_1',
-  'CLOSING_1',
-  '1_DATE_KIAN_1',
-  '2_DATE_KIAN_2',
-  '3_DATE_KIAN_3',
-  'HP',
-  'COST',
-  'PURPOSE',
-  'DATE_2',
-  'NAME',
+  '起案行No',
+  '年度_YEAR_1',
+  '開催日_DATE_1',
+  '曜日 _DAY',
+  '講義開始_START_TIME',
+  '研修会開始_START_1',
+  '研修会終了_END_1',
+  '質疑応答締切_QA_DADLINE',
+  '質疑応答_QA_TIME',
+  '事前打合せ開始時間_PRE_MEETING',
+  '研修会入室開始時間_TIME_1',
+  '時間（分）_TIME_2',
+  '〆切院外_DEADLINE_1',
+  '〆切時間院内_DEADLINE_2',
+  '配布資料DL〆切_DEADLINE_3',
+  'テーマ(標題)_TITLE',
+  '担当講師_SPEAKER',
+  '対象_SUBJECT_1',
+  '対象詳細_SUBJECT_2',
+  '講演場所_SITE',
+  '共催_COHOST_1',
+  '共催3(選択）_COHOST_3',
+  'オリエンテーションスライドヘッダー_HEAD_1',
+  '進行表クロージング（選択）_CLOSING_1',
+  '起案1開催DATE_KIAN_1',
+  '起案2資料_DATE_KIAN_2',
+  '起案3受講証修了証_DATE_KIAN_3',
+  'HP案内開始チラシ配布',
+  '謝金_COST',
+  '目的_PURPOSE',
+  'メール用研修会開催日付_DATE_2',
+  '名前_NAME',
   'Zoom_ID_WEBINER_ID',
   'zoom_url_zoom_url',
   'HP_URL_url_1',
   'Zoom_パスコード_PASSCODE',
-  'INTRO_1',
-  'INTRO_2',
-  'INTRO_3',
-  'DATA_deadline',
-  '1_CHECK_K1',
-  'HP_CHECK_HP',
-  '2_CHECK_K2',
-  '3_CHECK_K3'
+  '進行表導入_INTRO_1',
+  '進行表研修会趣旨説明_INTRO_2',
+  '進行表講師紹介_INTRO_3',
+  '講義資料提供の締切_DATA_deadline',
+  '起案1チェック_CHECK_K1',
+  'HPチェック_CHECK_HP',
+  '起案2チェック_CHECK_K2',
+  '起案3チェック_CHECK_K3'
 ];
 
 const fullKeys={
-  no:'No',
-  year:'YEAR_1',
-  date:'DATE_1',
-  day:'DAY',
-  lectureStart:'START_TIME',
-  start:'START_1',
-  end:'END_1',
-  qaDeadline:'QA_DEADLINE',
-  qaTime:'QA_TIME',
-  preMeeting:'PRE_MEETING',
-  roomOpen:'TIME_1',
-  duration:'TIME_2',
-  deadline1:'DEADLINE_1',
-  deadline2:'DEADLINE_2',
-  deadline3:'DL_DEADLINE_3',
-  title:'TITLE',
-  speaker:'SPEAKER',
-  subject:'SUBJECT_1',
-  subject2:'SUBJECT_2',
-  site:'SITE',
-  cohost:'COHOST_1',
-  cohost3:'3_COHOST_3',
-  head1:'HEAD_1',
-  closing1:'CLOSING_1',
-  k1:'1_DATE_KIAN_1',
-  k2:'2_DATE_KIAN_2',
-  k3:'3_DATE_KIAN_3',
-  hp:'HP',
-  cost:'COST',
-  purpose:'PURPOSE',
-  date2:'DATE_2',
-  name:'NAME',
+  no:'起案行No',
+  year:'年度_YEAR_1',
+  date:'開催日_DATE_1',
+  day:'曜日 _DAY',
+  lectureStart:'講義開始_START_TIME',
+  start:'研修会開始_START_1',
+  end:'研修会終了_END_1',
+  qaDeadline:'質疑応答締切_QA_DADLINE',
+  qaTime:'質疑応答_QA_TIME',
+  preMeeting:'事前打合せ開始時間_PRE_MEETING',
+  roomOpen:'研修会入室開始時間_TIME_1',
+  duration:'時間（分）_TIME_2',
+  deadline1:'〆切院外_DEADLINE_1',
+  deadline2:'〆切時間院内_DEADLINE_2',
+  deadline3:'配布資料DL〆切_DEADLINE_3',
+  title:'テーマ(標題)_TITLE',
+  speaker:'担当講師_SPEAKER',
+  subject:'対象_SUBJECT_1',
+  subject2:'対象詳細_SUBJECT_2',
+  site:'講演場所_SITE',
+  cohost:'共催_COHOST_1',
+  cohost3:'共催3(選択）_COHOST_3',
+  head1:'オリエンテーションスライドヘッダー_HEAD_1',
+  closing1:'進行表クロージング（選択）_CLOSING_1',
+  k1:'起案1開催DATE_KIAN_1',
+  k2:'起案2資料_DATE_KIAN_2',
+  k3:'起案3受講証修了証_DATE_KIAN_3',
+  hp:'HP案内開始チラシ配布',
+  cost:'謝金_COST',
+  purpose:'目的_PURPOSE',
+  date2:'メール用研修会開催日付_DATE_2',
+  name:'名前_NAME',
   zoomId:'Zoom_ID_WEBINER_ID',
   zoomUrl:'zoom_url_zoom_url',
   hpUrl:'HP_URL_url_1',
   passcode:'Zoom_パスコード_PASSCODE',
-  intro1:'INTRO_1',
-  intro2:'INTRO_2',
-  intro3:'INTRO_3',
-  dataDeadline:'DATA_deadline',
-  checkK1:'1_CHECK_K1',
-  checkHp:'HP_CHECK_HP',
-  checkK2:'2_CHECK_K2',
-  checkK3:'3_CHECK_K3'
+  intro1:'進行表導入_INTRO_1',
+  intro2:'進行表研修会趣旨説明_INTRO_2',
+  intro3:'進行表講師紹介_INTRO_3',
+  dataDeadline:'講義資料提供の締切_DATA_deadline',
+  checkK1:'起案1チェック_CHECK_K1',
+  checkHp:'HPチェック_CHECK_HP',
+  checkK2:'起案2チェック_CHECK_K2',
+  checkK3:'起案3チェック_CHECK_K3'
 };
 
 const els={
@@ -1161,14 +1153,15 @@ const fields={
 
 let currentHeaders=[],rawRows=[],dataRows=[],selectedRow=null,stagedRow=null,lastSaveMode='',selectedTemplates=[];
 
-const HEAD_TEXT_DEFAULT='2026';
-const HEAD_TEXT_COHOST='2026';
-const COHOST_OPTION_NONE='';
-const COHOST_OPTION_TEAM='';
-const COHOST3_TEXT_TEAM='';
-const CLOSING_TEXT_RESEARCHER='3/4 3 2026';
-const CLOSING_TEXT_SUPPORT='3/4 3 2026';
-const CLOSING_TEXT_COMMITTEE='3/4 2026';
+const HEAD_TEXT_DEFAULT='2026年度　臨床研究研修会';
+const HEAD_TEXT_COHOST='2026年度　臨床腫瘍学コース・臨床研究研修会（共催）';
+const COHOST_OPTION_NONE='なし';
+const COHOST_OPTION_TEAM='企画人材班';
+const COHOST3_TEXT_TEAM='臨床腫瘍学コースとの共催';
+
+const CLOSING_TEXT_RESEARCHER='司会:（研究者） 本日の研修の受講証を希望する方は、終了後のアンケートよりお申込みください。 なお、受講証につきましては、研修会開始から質疑応答終了までの時間のうち3/4以上を聴講した方で、 希望される方に発行いたします。 また、本研修会の修了証書の発行につきまして、修了証書をご希望の方は、 今回を含め、研究者対象の研修会を3回以上受講した方のみ、お申込みいただけます。 対象の研修会を3回受講された方で、修了証の発行をご希望の方は、アンケートよりお申し込みください。 ＜スライド切り替え＞ 最後になりますが、受講者の皆様には、アンケートへのご回答、ご協力をお願いいたします。 ウェビナー退室後にアンケートが表示されますので、 ご回答後に送信ボタンを押して提出してください。 本日は、2026年度_静岡がんセンター臨床研究研修会にご参加いただき、どうもありがとうございました。 本ウェビナーはまもなく切断いたします。';
+const CLOSING_TEXT_SUPPORT='司会:（支援者） 本日の研修の受講証を希望する方は、終了後のアンケートよりお申込みください。 なお、受講証につきましては、研修会開始から質疑応答終了までの時間のうち3/4以上を聴講した方で、 希望される方に発行いたします。 また、本研修会の修了証書の発行につきまして、修了証書をご希望の方は、 今回を含め、研究支援者対象の研修会を3回以上受講した方のみ、お申込みいただけます。 対象の研修会を3回受講された方で、修了証の発行をご希望の方は、アンケートよりお申し込みください。 ＜スライド切り替え＞ 最後になりますが、受講者の皆様には、アンケートへのご回答、ご協力をお願いいたします。 ウェビナー退室後にアンケートが表示されますので、 ご回答後に送信ボタンを押して提出してください。 本日は、2026年度_静岡がんセンター臨床研究研修会にご参加いただき、どうもありがとうございました。 本ウェビナーはまもなく切断いたします。';
+const CLOSING_TEXT_COMMITTEE='司会:（委員会） 本日の研修の受講証を希望する方は、終了後のアンケートよりお申込みください。 なお、受講証につきましては、研修会開始から質疑応答終了までの時間のうち3/4以上を聴講した方で、 希望される方に発行いたします。 ＜スライド切り替え＞ 最後になりますが、受講者の皆様には、アンケートへのご回答、ご協力をお願いいたします。 ウェビナー退室後にアンケートが表示されますので、 ご回答後に送信ボタンを押して提出してください。 本日は、2026年度_静岡がんセンター臨床研究研修会にご参加いただき、どうもありがとうございました。 本ウェビナーはまもなく切断いたします。';
 
 els.csvFile.addEventListener('change',loadCsv);
 els.templateFiles.addEventListener('change',handleTemplateFiles);
@@ -1182,9 +1175,10 @@ els.appendBtn.addEventListener('click',stageDraft);
 els.openConfirmBtn.addEventListener('click',stageDraft);
 els.confirmAppendBtn.addEventListener('click',commitDraft);
 els.downloadBtn.addEventListener('click',downloadCsv);
-els.backBtn.addEventListener('click',()=>setStatus(''));
+els.backBtn.addEventListener('click',()=>setStatus('入力内容を調整できます。必要なら項目を修正してください。'));
 fields.cohost.addEventListener('change',()=>{syncCohostFields();recalcDraft();});
 fields.subject.addEventListener('change',recalcDraft);
+
 [
   fields.no,fields.date,fields.name,fields.start,fields.end,fields.lectureStart,
   fields.preMeeting,fields.qaDeadline,fields.qaTime,
@@ -1199,9 +1193,9 @@ function getHead1ValueByCohost(cohostValue){
 }
 function getClosingTextBySubject(subjectValue){
   const v=String(subjectValue||'').trim();
-  if(v==='') return CLOSING_TEXT_RESEARCHER;
-  if(v==='') return CLOSING_TEXT_SUPPORT;
-  if(v==='') return CLOSING_TEXT_COMMITTEE;
+  if(v==='研究者') return CLOSING_TEXT_RESEARCHER;
+  if(v==='研究支援者') return CLOSING_TEXT_SUPPORT;
+  if(v==='倫理審査委員会委員') return CLOSING_TEXT_COMMITTEE;
   return '';
 }
 function syncCohostFields(){
@@ -1209,10 +1203,10 @@ function syncCohostFields(){
   fields.cohost3.value=isTeam?COHOST3_TEXT_TEAM:'';
 }
 function setMergeStatus(msg){els.mergeStatusBox.textContent=msg}
-function setMergeState(){const hasTemplates=selectedTemplates.length>0;const hasNo=!!String(els.mergeRecordSelect.value||'').trim();els.templateState.value=`${selectedTemplates.length}`;els.mergeAllBtn.disabled=!(hasTemplates&&hasNo)}
-function renderMergeOptions(){const options=['<option value="">No</option>'].concat(dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`));els.mergeRecordSelect.innerHTML=options.join('');els.mergeRecordSelect.disabled=!dataRows.length;setMergeState()}
-function renderTemplateList(){if(!selectedTemplates.length){els.templateList.innerHTML='<div class="template-row"><div><strong></strong><p>pptx / xlsx / docx </p></div><div><span class="status s3"></span></div><div class="mono">-</div><div class="mono">-</div></div>';return}els.templateList.innerHTML=selectedTemplates.map(file=>`<div class="template-row"><div><strong>${esc(file.name)}</strong><p>${esc(file.type||'application/octet-stream')}</p></div><div><span class="status s2"></span></div><div class="mono">${esc(templateKind(file.name))}</div><div class="mono">${Math.round((file.size||0)/1024)} KB</div></div>`).join('')}
-function handleTemplateFiles(e){selectedTemplates=Array.from(e.target.files||[]).filter(f=>/\.(docx|pptx|xlsx)$/i.test(f.name));renderTemplateList();setMergeState();setMergeStatus(selectedTemplates.length?`${selectedTemplates.length}`:'')}
+function setMergeState(){const hasTemplates=selectedTemplates.length>0;const hasNo=!!String(els.mergeRecordSelect.value||'').trim();els.templateState.value=`${selectedTemplates.length}件`;els.mergeAllBtn.disabled=!(hasTemplates&&hasNo)}
+function renderMergeOptions(){const options=['<option value="">Noを選択して差し込み</option>'].concat(dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`));els.mergeRecordSelect.innerHTML=options.join('');els.mergeRecordSelect.disabled=!dataRows.length;setMergeState()}
+function renderTemplateList(){if(!selectedTemplates.length){els.templateList.innerHTML='<div class="template-row"><div><strong>テンプレート未選択</strong><p>pptx / xlsx / docx を複数まとめて選択できます。</p></div><div><span class="status s3">待機</span></div><div class="mono">-</div><div class="mono">-</div></div>';return}els.templateList.innerHTML=selectedTemplates.map(file=>`<div class="template-row"><div><strong>${esc(file.name)}</strong><p>${esc(file.type||'application/octet-stream')}</p></div><div><span class="status s2">読込済み</span></div><div class="mono">${esc(templateKind(file.name))}</div><div class="mono">${Math.round((file.size||0)/1024)} KB</div></div>`).join('')}
+function handleTemplateFiles(e){selectedTemplates=Array.from(e.target.files||[]).filter(f=>/\.(docx|pptx|xlsx)$/i.test(f.name));renderTemplateList();setMergeState();setMergeStatus(selectedTemplates.length?`${selectedTemplates.length}件のテンプレートを読み込みました。差し込み対象Noを選ぶと一括出力できます。`:'テンプレートファイルが未選択です。')}
 function getRowByNo(no){return dataRows.find(r=>String(r[fullKeys.no]||'').trim()===String(no||'').trim())||null}
 
 function buildTemplateData(row){
@@ -1226,7 +1220,7 @@ function buildTemplateData(row){
     START_TIME: row?.[fullKeys.lectureStart] ?? '',
     START_1: row?.[fullKeys.start] ?? '',
     END_1: row?.[fullKeys.end] ?? '',
-    QA_DEADLINE: row?.[fullKeys.qaDeadline] ?? '',
+    QA_DADLINE: row?.[fullKeys.qaDeadline] ?? '',
     QA_TIME: row?.[fullKeys.qaTime] ?? '',
     PRE_MEETING: row?.[fullKeys.preMeeting] ?? '',
     TIME_1: row?.[fullKeys.roomOpen] ?? '',
@@ -1260,37 +1254,45 @@ function buildTemplateData(row){
     Zoom_ID: row?.[fullKeys.zoomId] ?? '',
     ZOOM_ID: row?.[fullKeys.zoomId] ?? ''
   };
-  Object.entries(aliasEntries).forEach(([k,v])=>{map[k] = String(v ?? '')});
-  map[fullKeys.zoomId] = String(row?.[fullKeys.zoomId] ?? '');
-  map['Zoom_ID_WEBINER_ID'] = String(row?.[fullKeys.zoomId] ?? '');
-  map['WEBINER_ID'] = String(row?.[fullKeys.zoomId] ?? '');
-  map['Zoom_ID'] = String(row?.[fullKeys.zoomId] ?? '');
-  map['ZOOM_ID'] = String(row?.[fullKeys.zoomId] ?? '');
-  map[fullKeys.hpUrl] = String(row?.[fullKeys.hpUrl] ?? '');
-  map['HP_URL_url_1'] = String(row?.[fullKeys.hpUrl] ?? '');
-  map['url_1'] = String(row?.[fullKeys.hpUrl] ?? '');
-  map['URL_1'] = String(row?.[fullKeys.hpUrl] ?? '');
-  map[fullKeys.zoomUrl] = String(row?.[fullKeys.zoomUrl] ?? '');
-  map['zoom_url_zoom_url'] = String(row?.[fullKeys.zoomUrl] ?? '');
-  map['zoom_url'] = String(row?.[fullKeys.zoomUrl] ?? '');
-  map['ZOOM_URL'] = String(row?.[fullKeys.zoomUrl] ?? '');
-  map[fullKeys.passcode] = String(row?.[fullKeys.passcode] ?? '');
-  map['Zoom_パスコード_PASSCODE'] = String(row?.[fullKeys.passcode] ?? '');
-  map['PASSCODE'] = String(row?.[fullKeys.passcode] ?? '');
-  map[fullKeys.head1] = String(row?.[fullKeys.head1] ?? '');
-  map['HEAD_1'] = String(row?.[fullKeys.head1] ?? '');
-  map[fullKeys.closing1] = String(row?.[fullKeys.closing1] ?? '');
-  map['CLOSING_1'] = String(row?.[fullKeys.closing1] ?? '');
-  map[fullKeys.lectureStart] = String(row?.[fullKeys.lectureStart] ?? '');
-  map['START_TIME'] = String(row?.[fullKeys.lectureStart] ?? '');
-  map[fullKeys.qaDeadline] = String(row?.[fullKeys.qaDeadline] ?? '');
-  map['QA_DEADLINE'] = String(row?.[fullKeys.qaDeadline] ?? '');
-  map[fullKeys.qaTime] = String(row?.[fullKeys.qaTime] ?? '');
-  map['QA_TIME'] = String(row?.[fullKeys.qaTime] ?? '');
-  map[fullKeys.preMeeting] = String(row?.[fullKeys.preMeeting] ?? '');
-  map['PRE_MEETING'] = String(row?.[fullKeys.preMeeting] ?? '');
+  Object.entries(aliasEntries).forEach(([k,v])=>{map[k]=String(v ?? '')});
+  map[fullKeys.zoomId]=String(row?.[fullKeys.zoomId] ?? '');
+  map['Zoom_ID_WEBINER_ID']=String(row?.[fullKeys.zoomId] ?? '');
+  map['WEBINER_ID']=String(row?.[fullKeys.zoomId] ?? '');
+  map['Zoom_ID']=String(row?.[fullKeys.zoomId] ?? '');
+  map['ZOOM_ID']=String(row?.[fullKeys.zoomId] ?? '');
+
+  map[fullKeys.hpUrl]=String(row?.[fullKeys.hpUrl] ?? '');
+  map['HP_URL_url_1']=String(row?.[fullKeys.hpUrl] ?? '');
+  map['url_1']=String(row?.[fullKeys.hpUrl] ?? '');
+  map['URL_1']=String(row?.[fullKeys.hpUrl] ?? '');
+
+  map[fullKeys.zoomUrl]=String(row?.[fullKeys.zoomUrl] ?? '');
+  map['zoom_url_zoom_url']=String(row?.[fullKeys.zoomUrl] ?? '');
+  map['zoom_url']=String(row?.[fullKeys.zoomUrl] ?? '');
+  map['ZOOM_URL']=String(row?.[fullKeys.zoomUrl] ?? '');
+
+  map[fullKeys.passcode]=String(row?.[fullKeys.passcode] ?? '');
+  map['Zoom_パスコード_PASSCODE']=String(row?.[fullKeys.passcode] ?? '');
+  map['PASSCODE']=String(row?.[fullKeys.passcode] ?? '');
+
+  map[fullKeys.head1]=String(row?.[fullKeys.head1] ?? '');
+  map['オリエンテーションスライドヘッダー_HEAD_1']=String(row?.[fullKeys.head1] ?? '');
+
+  map[fullKeys.closing1]=String(row?.[fullKeys.closing1] ?? '');
+  map['進行表クロージング（選択）_CLOSING_1']=String(row?.[fullKeys.closing1] ?? '');
+
+  map[fullKeys.lectureStart]=String(row?.[fullKeys.lectureStart] ?? '');
+  map['講義開始_START_TIME']=String(row?.[fullKeys.lectureStart] ?? '');
+  map[fullKeys.qaDeadline]=String(row?.[fullKeys.qaDeadline] ?? '');
+  map['質疑応答締切_QA_DADLINE']=String(row?.[fullKeys.qaDeadline] ?? '');
+  map[fullKeys.qaTime]=String(row?.[fullKeys.qaTime] ?? '');
+  map['質疑応答_QA_TIME']=String(row?.[fullKeys.qaTime] ?? '');
+  map[fullKeys.preMeeting]=String(row?.[fullKeys.preMeeting] ?? '');
+  map['事前打合せ開始時間_PRE_MEETING']=String(row?.[fullKeys.preMeeting] ?? '');
+
   return map;
 }
+
 function xmlEscape(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function replaceAcrossTextRuns(xml,key,value){
   const escapedValue=xmlEscape(value);
@@ -1319,7 +1321,7 @@ async function mergeSingleTemplate(file,row){
   const zip=new PizZip(arrayBuffer);
   const data=buildTemplateData(row);
   const targets=targetXmlPathsForTemplate(zip,file.name);
-  if(!targets.length) throw new Error('XML');
+  if(!targets.length) throw new Error('差し込み対象XMLが見つかりません');
   targets.forEach(path=>{
     if(zip.file(path)){
       const xml=zip.file(path).asText();
@@ -1338,10 +1340,10 @@ async function mergeSingleTemplate(file,row){
   return {name:file.name,type:templateKind(file.name)};
 }
 async function mergeAllTemplates(){
-  if(!selectedTemplates.length){setMergeStatus('');return}
+  if(!selectedTemplates.length){setMergeStatus('先にテンプレートファイルを選択してください。');return}
   const no=els.mergeRecordSelect.value;
   const row=getRowByNo(no);
-  if(!row){setMergeStatus('No');return}
+  if(!row){setMergeStatus('差し込み対象Noを選択してください。');return}
   try{
     let ok=0;
     const logs=[];
@@ -1352,15 +1354,16 @@ async function mergeAllTemplates(){
         logs.push(`${result.type}: ${result.name}`);
       }catch(err){
         console.error(err);
-        logs.push(`${file.name}`);
+        logs.push(`失敗: ${file.name}`);
       }
     }
-    setMergeStatus(`No.${row.no||no} ${ok}/${selectedTemplates.length} ${logs.join(' / ')}`);
+    setMergeStatus(`No.${no} のデータで ${ok}/${selectedTemplates.length} 件を出力しました。 ${logs.join(' / ')}`);
   }catch(err){
     console.error(err);
-    setMergeStatus(`${err?.message||''}`);
+    setMergeStatus(`一括差し込みに失敗しました: ${err?.message||'テンプレート形式を確認してください。'}`);
   }
 }
+
 function createNewDatabase(){
   currentHeaders=[...DEFAULT_HEADERS];
   rawRows=[];
@@ -1373,7 +1376,7 @@ function createNewDatabase(){
   fields.cohost.value=COHOST_OPTION_NONE;
   syncCohostFields();
   resetScheduleChecks();
-  els.recordSelect.innerHTML='<option value="">No</option>';
+  els.recordSelect.innerHTML='<option value="">Noを選択して表示</option>';
   els.recordSelect.disabled=true;
   els.prefillBtn.disabled=true;
   els.loadSelectedBtn.disabled=true;
@@ -1381,19 +1384,20 @@ function createNewDatabase(){
   els.openConfirmBtn.disabled=false;
   els.confirmAppendBtn.disabled=false;
   els.downloadBtn.disabled=false;
-  els.miniDbState.textContent='DB';
-  els.miniDbText.textContent='1';
+  els.miniDbState.textContent='新規DB作成済み';
+  els.miniDbText.textContent='空マスターを初期化しました。1件目から登録できます。';
   renderTable();
   setNextNo();
   renderStats();
   recalcDraft();
   renderAlerts();
   renderMergeOptions();
-  setStatus('CSV');
+  setStatus('空のマスターCSVを新規作成しました。');
 }
+
 function loadCsv(e){
   const file=e.target.files?.[0];
-  if(!file){setStatus('CSV');return}
+  if(!file){setStatus('CSVファイルが選択されていません。');return}
   Papa.parse(file,{
     header:true,
     skipEmptyLines:false,
@@ -1422,18 +1426,19 @@ function loadCsv(e){
       renderStats();
       recalcDraft();
       renderAlerts();
-      els.miniDbState.textContent='CSV';
-      els.miniDbText.textContent=dataRows.length?`${dataRows.length} CSV`:'CSV';
+      els.miniDbState.textContent='既存CSV読込済み';
+      els.miniDbText.textContent=dataRows.length?`既存データ ${dataRows.length} 件を読み込みました。`:'ヘッダーのみのCSVを読み込みました。';
       renderMergeOptions();
-      setStatus(dataRows.length?`CSV${dataRows.length}`:'CSV');
+      setStatus(dataRows.length?`CSVを読み込みました。${dataRows.length}件を表示しています。`:'ヘッダーのみのCSVを読み込みました。');
       e.target.value='';
     },
     error:(err)=>{
-      setStatus(`CSV ${err?.message||''}`);
+      setStatus(`CSVの読込に失敗しました: ${err?.message||'不明なエラー'}`);
       e.target.value='';
     }
   });
 }
+
 function ensureHeader(h){if(!currentHeaders.includes(h))currentHeaders.push(h)}
 function ensureCheckHeaders(){[fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK2,fullKeys.checkK3].forEach(ensureHeader)}
 function ensureAdditionalHeaders(){
@@ -1445,6 +1450,7 @@ function ensureAdditionalHeaders(){
     fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK2,fullKeys.checkK3
   ].forEach(ensureHeader);
 }
+
 function normalizeRowShape(row){const out={};currentHeaders.forEach(h=>out[h]=row?.[h]??'');return out}
 function isMeaningfulRow(row){return currentHeaders.some(h=>String(row?.[h]??'').trim()!=='')}
 function compactRawRows(rows){return rows.filter(r=>isMeaningfulRow(r))}
@@ -1476,14 +1482,15 @@ function applyScheduleChecksFromRow(row){
 }
 function isCheckedValue(v){
   const s=String(v??'').trim().toLowerCase();
-  return ['1','true','yes','y','on','checked','',''].includes(s);
+  return ['1','true','yes','y','on','checked','済','済み'].includes(s);
 }
 function boolToCsv(v){return v?'1':'0'}
+
 function prefillFromLast(){
   const last=dataRows[dataRows.length-1];
   if(!last)return;
   fields.no.value=String(Number(last[fullKeys.no]||0)+1);
-  fields.year.value=(last[fullKeys.year]||'2026').replace(/\s+/g,'');
+  fields.year.value=(last[fullKeys.year]||'2026年').replace(/\s+/g,'');
   fields.name.value=last[fullKeys.name]||'';
   fields.lectureStart.value=normTime(last[fullKeys.lectureStart])||normTime(last[fullKeys.start])||'17:30';
   fields.start.value=normTime(last[fullKeys.start])||'17:30';
@@ -1491,31 +1498,33 @@ function prefillFromLast(){
   fields.preMeeting.value=normTime(last[fullKeys.preMeeting])||'';
   fields.qaDeadline.value=normTime(last[fullKeys.qaDeadline])||'';
   fields.qaTime.value=last[fullKeys.qaTime]||'';
-  fields.subject.value=last[fullKeys.subject]||'';
-  fields.site.value=last[fullKeys.site]||'Web';
+  fields.subject.value=last[fullKeys.subject]||'研究者';
+  fields.site.value=last[fullKeys.site]||'Web会議室';
   const cohostValue=String(last[fullKeys.cohost]||'').trim()===COHOST_OPTION_TEAM?COHOST_OPTION_TEAM:COHOST_OPTION_NONE;
   fields.cohost.value=cohostValue;
   syncCohostFields();
-  if(cohostValue!==COHOST_OPTION_TEAM)fields.cohost3.value='';
+  if(cohostValue!==COHOST_OPTION_TEAM){fields.cohost3.value=''}
   fields.zoomId.value=last[fullKeys.zoomId]||'';
   fields.passcode.value=last[fullKeys.passcode]||'';
   fields.zoomUrl.value=last[fullKeys.zoomUrl]||'https://zoom.us/';
   fields.hpUrl.value=last[fullKeys.hpUrl]||'';
   fields.cost.value=last[fullKeys.cost]||'';
-  fields.purpose.value=last[fullKeys.purpose]||'';
-  fields.intro1.value=last[fullKeys.intro1]||'';
-  fields.intro2.value=last[fullKeys.intro2]||'';
-  fields.intro3.value=last[fullKeys.intro3]||'';
+  fields.purpose.value=last[fullKeys.purpose]||'本研修会では、臨床研究に必要な実務の基本をわかりやすく学びます。';
+  fields.intro1.value=last[fullKeys.intro1]||'本日は臨床研究研修会にご参加いただきありがとうございます。';
+  fields.intro2.value=last[fullKeys.intro2]||'本研修会では、臨床研究を進めるうえで必要となる基本事項と実務上のポイントを共有します。';
+  fields.intro3.value=last[fullKeys.intro3]||'本日の講師は、臨床研究支援に関する実務経験を有する専門家です。';
   resetScheduleChecks();
   recalcDraft();
 }
+
 function handleSelectRecord(){
   const no=els.recordSelect.value;
   selectedRow=dataRows.find(r=>String(r[fullKeys.no]||'').trim()===String(no||'').trim())||null;
-  if(selectedRow)setStatus(`No.${selectedRow[fullKeys.no]}`);
+  if(selectedRow)setStatus(`No.${selectedRow[fullKeys.no]} を選択しました。`);
 }
+
 function loadSelectedIntoForm(){
-  if(!selectedRow){setStatus('No');return}
+  if(!selectedRow){setStatus('先に表示したい No を選択してください。');return}
   fields.no.value=selectedRow[fullKeys.no]||'';
   fields.year.value=selectedRow[fullKeys.year]||'';
   fields.date.value=toIsoDateFromShortDate(selectedRow[fullKeys.date], fields.year.value);
@@ -1537,12 +1546,12 @@ function loadSelectedIntoForm(){
   fields.deadline3.value=selectedRow[fullKeys.deadline3]||'';
   fields.dataDeadline.value=selectedRow[fullKeys.dataDeadline]||'';
   fields.cost.value=selectedRow[fullKeys.cost]||'';
-  fields.subject.value=selectedRow[fullKeys.subject]||'';
+  fields.subject.value=selectedRow[fullKeys.subject]||'研究者';
   fields.subject2.value=selectedRow[fullKeys.subject2]||'';
-  fields.site.value=selectedRow[fullKeys.site]||'Web';
+  fields.site.value=selectedRow[fullKeys.site]||'Web会議室';
   fields.cohost.value=String(selectedRow[fullKeys.cohost]||'').trim()===COHOST_OPTION_TEAM?COHOST_OPTION_TEAM:COHOST_OPTION_NONE;
   syncCohostFields();
-  if(String(selectedRow[fullKeys.cohost]||'').trim()!==COHOST_OPTION_TEAM)fields.cohost3.value='';
+  if(String(selectedRow[fullKeys.cohost]||'').trim()!==COHOST_OPTION_TEAM){fields.cohost3.value=''}
   fields.zoomId.value=selectedRow[fullKeys.zoomId]||'';
   fields.passcode.value=selectedRow[fullKeys.passcode]||'';
   fields.zoomUrl.value=selectedRow[fullKeys.zoomUrl]||'';
@@ -1553,8 +1562,9 @@ function loadSelectedIntoForm(){
   fields.intro3.value=selectedRow[fullKeys.intro3]||'';
   applyScheduleChecksFromRow(selectedRow);
   recalcDraft();
-  setStatus(`No.${selectedRow[fullKeys.no]} No`);
+  setStatus(`No.${selectedRow[fullKeys.no]} を入力欄へ反映しました。保存すると同じNoを上書きします。`);
 }
+
 function recalcDraft(){
   fields.day.value=weekdayJa(fields.date.value);
   calcDerivedFields();
@@ -1568,12 +1578,13 @@ function recalcDraft(){
   renderResult();
   renderStats();
 }
+
 function calcDerivedFields(){
   const start=fields.start.value,end=fields.end.value,date=fields.date.value;
-  const lectureStart=fields.lectureStart.value;
-  const preMeeting=fields.preMeeting.value;
-  const qaDeadline=fields.qaDeadline.value;
-  const qaTime=fields.qaTime.value;
+  const lectureStart=fields.lectureStart.value||'';
+  const preMeeting=fields.preMeeting.value||'';
+  const qaDeadline=fields.qaDeadline.value||'';
+  const qaTime=fields.qaTime.value||'';
   const roomOpen=start?shiftTime(start,-5):'';
   const duration=(start&&end)?String(diffMin(start,end)):'';
   const deadline2=start?shiftTime(start,-60):'';
@@ -1583,6 +1594,7 @@ function calcDerivedFields(){
   const date2=date?formatDate2(date):'';
   const subject2=subjectDetail(fields.subject.value);
   syncCohostFields();
+
   fields.roomOpen.value=roomOpen;
   fields.duration.value=duration&&Number(duration)>=0?duration:'';
   fields.deadline1.value=deadline1;
@@ -1591,12 +1603,13 @@ function calcDerivedFields(){
   fields.dataDeadline.value=dataDeadline;
   fields.date2.value=date2;
   fields.subject2.value=subject2;
+
   els.dLectureStart.textContent=lectureStart||'-';
   els.dPreMeeting.textContent=preMeeting||'-';
   els.dQaDeadline.textContent=qaDeadline||'-';
   els.dQaTime.textContent=qaTime||'-';
   els.dRoomOpen.textContent=roomOpen||'-';
-  els.dDuration.textContent=duration&&Number(duration)>=0?`${duration}`:'-';
+  els.dDuration.textContent=duration&&Number(duration)>=0?`${duration}分`:'-';
   els.dDeadline1.textContent=deadline1||'-';
   els.dDeadline2.textContent=deadline2||'-';
   els.dDeadline3.textContent=deadline3||'-';
@@ -1604,6 +1617,7 @@ function calcDerivedFields(){
   els.dDate2.textContent=date2||'-';
   els.dSubject2.textContent=subject2||'-';
 }
+
 function calcAutoDates(base){return{k1:base?addDays(base,-35):null,hp:base?addDays(base,-28):null,k2:base?addDays(base,-7):null,k3:nextBusinessMondayRule(base)}}
 function nextBusinessMondayRule(base){if(!base)return null;const nextDay=addDays(base,1);const day=nextDay.getDay();if(day===6)return addDays(base,3);if(day===0)return addDays(base,2);return nextDay}
 function nextBusinessDate(date){let d=new Date(date);while(isHolidayOrWeekend(d))d=addDays(d,1);return d}
@@ -1620,29 +1634,32 @@ function isJapaneseHoliday(date){
   return false;
 }
 function formatDate2(iso){const [y,m,d]=iso.split('-');return `${Number(m)}/${Number(d)}`}
-function formatDate1Short(iso){const [y,m,d]=iso.split('-');return `${Number(m)}/${Number(d)}`}
-function subjectDetail(v){if(v==='')return '';if(v==='')return '';return ''}
+function formatDate1Short(iso){const [y,m,d]=iso.split('-');return `${Number(m)}月${Number(d)}日`}
+function subjectDetail(v){if(v==='研究者')return '（医師・歯科医師等）';if(v==='研究支援者')return '（薬剤師・看護師等）';return ''}
+
 function validateDraft(){
   const warns=[];
-  if(!String(fields.no.value||'').trim())warns.push('No');
-  if(!/^\d+$/.test(String(fields.no.value||'').trim()))warns.push('No');
-  if(!fields.date.value)warns.push('');
-  if(!fields.title.value.trim())warns.push('');
-  if(!fields.speaker.value.trim())warns.push('');
-  if(!fields.start.value||!fields.end.value)warns.push('');
-  if(fields.start.value&&fields.end.value&&diffMin(fields.start.value,fields.end.value)<=0)warns.push('');
-  if(fields.zoomUrl.value&&!/^https?:\/\//.test(fields.zoomUrl.value))warns.push('Zoom URL http/https');
-  if(fields.hpUrl.value&&!/^https?:\/\//.test(fields.hpUrl.value))warns.push('HP_URL_url_1 http/https');
-  if(fields.cost.value&&isNaN(Number(String(fields.cost.value).replace(/,/g,''))))warns.push('COST');
+  if(!String(fields.no.value||'').trim())warns.push('Noが未入力です');
+  if(!/^\d+$/.test(String(fields.no.value||'').trim()))warns.push('Noは整数で入力してください');
+  if(!fields.date.value)warns.push('開催日が未入力です');
+  if(!fields.title.value.trim())warns.push('タイトルが未入力です');
+  if(!fields.speaker.value.trim())warns.push('講師名が未入力です');
+  if(!fields.start.value||!fields.end.value)warns.push('開始/終了時間が未入力です');
+  if(fields.start.value&&fields.end.value&&diffMin(fields.start.value,fields.end.value)<=0)warns.push('終了時間は開始時間より後にしてください');
+  if(fields.zoomUrl.value&&!/^https?:\/\//.test(fields.zoomUrl.value))warns.push('Zoom URL は http/https で始めてください');
+  if(fields.hpUrl.value&&!/^https?:\/\//.test(fields.hpUrl.value))warns.push('HP_URL_url_1 は http/https で始めてください');
+  if(fields.cost.value&&isNaN(Number(String(fields.cost.value).replace(/,/g,''))))warns.push('謝金_COST は数値で入力してください');
   return warns;
 }
+
 function stageDraft(){
-  if(!currentHeaders.length){setStatus('CSV');return}
+  if(!currentHeaders.length){setStatus('先にCSVを読み込むか、新規データベースを作成してください。');return}
   stagedRow=buildRow();
   lastSaveMode=getRawRowIndexByNo(stagedRow[fullKeys.no])>=0?'update':'insert';
   renderConfirm(validateDraft());
-  setStatus(lastSaveMode==='update'?`No.${stagedRow[fullKeys.no]}`:`No.${stagedRow[fullKeys.no]}`);
+  setStatus(lastSaveMode==='update'?`No.${stagedRow[fullKeys.no]} は既存行を上書き保存します。`:`No.${stagedRow[fullKeys.no]} は新規行として追加保存します。`);
 }
+
 function buildRow(){
   const base=fields.date.value?new Date(fields.date.value+'T00:00:00'):null;
   const auto=calcAutoDates(base);
@@ -1694,10 +1711,11 @@ function buildRow(){
   row[fullKeys.checkK3]=boolToCsv(els.ckK3.checked);
   return row;
 }
+
 function commitDraft(){
-  if(!currentHeaders.length){setStatus('CSV');return}
+  if(!currentHeaders.length){setStatus('先にCSVを読み込むか、新規データベースを作成してください。');return}
   const warns=validateDraft();
-  if(warns.length){renderConfirm(warns);setStatus(`${warns.join(' / ')}`);return}
+  if(warns.length){renderConfirm(warns);setStatus(`保存前に修正が必要です: ${warns.join(' / ')}`);return}
   stagedRow=buildRow();
   const no=String(stagedRow[fullKeys.no]||'').trim();
   const rawIndex=getRawRowIndexByNo(no);
@@ -1718,21 +1736,23 @@ function commitDraft(){
   els.prefillBtn.disabled=!dataRows.length;
   els.downloadBtn.disabled=false;
   if(lastSaveMode==='insert')fields.no.value=String(dataRows.reduce((m,r)=>Math.max(m,Number(r[fullKeys.no]||0)),0)+1);
-  setStatus(lastSaveMode==='update'?`No.${no}`:`No.${no}`);
+  setStatus(lastSaveMode==='update'?`No.${no} の元行を上書き保存しました。新しい行は追加していません。`:`No.${no} を新規追加しました。`);
 }
+
 function getRawRowIndexByNo(no){return rawRows.findIndex(r=>String(r?.[fullKeys.no]||'').trim()===String(no||'').trim())}
 function renderRecordOptions(){
-  const options=['<option value="">No</option>'].concat(dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`));
+  const options=['<option value="">Noを選択して表示</option>'].concat(dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`));
   els.recordSelect.innerHTML=options.join('');
   renderMergeOptions();
 }
+
 function renderTable(){
   if(!currentHeaders.length){
-    els.tableList.innerHTML='<div class="table-row"><div>-</div><div>-</div><div>CSV</div><div>-</div><div>-</div><div>-</div></div>';
+    els.tableList.innerHTML='<div class="table-row"><div>-</div><div>-</div><div>CSVを読み込むか、新規データベースを作成してください。</div><div>-</div><div>-</div><div>-</div></div>';
     return;
   }
   if(!dataRows.length){
-    els.tableList.innerHTML='<div class="table-row"><div>-</div><div>-</div><div>1</div><div>-</div><div>-</div><div>-</div></div>';
+    els.tableList.innerHTML='<div class="table-row"><div>-</div><div>-</div><div>現在は空のマスターです。最初の1件を登録してください。</div><div>-</div><div>-</div><div>-</div></div>';
     return;
   }
   els.tableList.innerHTML=dataRows.map(r=>{
@@ -1740,6 +1760,7 @@ function renderTable(){
     return `<div class="table-row"><div><span class="badge">${esc(r[fullKeys.no]||'')}</span></div><div>${esc(r[fullKeys.date]||'-')}</div><div><strong>${esc(r[fullKeys.title]||'-')}</strong></div><div><p>${esc(r[fullKeys.speaker]||'-')}</p></div><div>${esc(r[fullKeys.subject]||'-')}</div><div>${mark}${esc(r[fullKeys.k1]||'-')}</div></div>`;
   }).join('');
 }
+
 function parseMonthDayText(v, yearText){
   const m=String(v||'').match(/(\d{1,2})\/(\d{1,2})/);
   const y=String(yearText||'').match(/(\d{4})/);
@@ -1756,31 +1777,32 @@ function collectDeadlineAlerts(){
   const items=[];
   dataRows.forEach(r=>{
     const year=r[fullKeys.year]||fields.year.value||'';
-    const title=r[fullKeys.title]||'';
+    const title=r[fullKeys.title]||'無題';
     const no=r[fullKeys.no]||'-';
     const pushItem=(label,dateObj,raw)=>{if(!dateObj)return;const diff=daysBetween(baseToday,dateObj);if(diff<0||diff>7)return;items.push({no,title,label,raw:raw||fmtDate(dateObj),diff})};
-    pushItem('1',parseMonthDayText(r[fullKeys.k1],year),r[fullKeys.k1]);
-    pushItem('2',parseMonthDayText(r[fullKeys.k2],year),r[fullKeys.k2]);
-    pushItem('3',parseMonthDayText(r[fullKeys.k3],year),r[fullKeys.k3]);
-    pushItem('',parseShortJapaneseDate(String(r[fullKeys.deadline1]||'').replace(/（.*?）/,'').replace('月','/').replace('日',''),year),r[fullKeys.deadline1]);
-    pushItem('',parseMonthDayText(r[fullKeys.dataDeadline],year),r[fullKeys.dataDeadline]);
-    pushItem('DL',parseMonthDayText(r[fullKeys.deadline3],year),r[fullKeys.deadline3]);
+    pushItem('起案1',parseMonthDayText(r[fullKeys.k1],year),r[fullKeys.k1]);
+    pushItem('起案2',parseMonthDayText(r[fullKeys.k2],year),r[fullKeys.k2]);
+    pushItem('起案3',parseMonthDayText(r[fullKeys.k3],year),r[fullKeys.k3]);
+    pushItem('院外締切',parseShortJapaneseDate(String(r[fullKeys.deadline1]||'').replace(/（.*?）/,'').replace('月','/').replace('日',''),year),r[fullKeys.deadline1]);
+    pushItem('資料締切',parseMonthDayText(r[fullKeys.dataDeadline],year),r[fullKeys.dataDeadline]);
+    pushItem('配布資料DL締切',parseMonthDayText(r[fullKeys.deadline3],year),r[fullKeys.deadline3]);
   });
   items.sort((a,b)=>a.diff-b.diff||Number(a.no)-Number(b.no));
   return items;
 }
 function renderAlerts(){
   if(!currentHeaders.length){
-    els.alertList.innerHTML='<div class="alert-item"><div><span class="alert-tag">WAIT</span></div><div><strong></strong><p>CSV</p></div><div class="mono">No data</div></div>';
+    els.alertList.innerHTML='<div class="alert-item"><div><span class="alert-tag">WAIT</span></div><div><strong>期限監視待機中</strong><p>CSVを読み込むと期限アラートがここに表示されます。</p></div><div class="mono">No data</div></div>';
     return;
   }
   const alerts=collectDeadlineAlerts();
   if(!alerts.length){
-    els.alertList.innerHTML='<div class="alert-item"><div><span class="alert-tag">CLEAR</span></div><div><strong></strong><p>7</p></div><div class="mono">Stable</div></div>';
+    els.alertList.innerHTML='<div class="alert-item"><div><span class="alert-tag">CLEAR</span></div><div><strong>期限逼迫タスクなし</strong><p>現在、7日以内に期限が迫っているタスクはありません。</p></div><div class="mono">Stable</div></div>';
     return;
   }
   els.alertList.innerHTML=alerts.map(a=>`<div class="alert-item"><div><span class="alert-tag">${a.diff===0?'TODAY':a.diff===1?'TOMORROW':`+${a.diff}D`}</span></div><div><strong>No.${esc(a.no)} / ${esc(a.title)}</strong><p>${esc(a.label)} : ${esc(a.raw||'-')}</p></div><div class="mono">Task alert</div></div>`).join('');
 }
+
 function updateAnnualGauge(done,total,yearCount,soon,draftCount){
   const circumference=578;
   const ratio=total?Math.max(0,Math.min(1,done/total)):0;
@@ -1793,6 +1815,7 @@ function updateAnnualGauge(done,total,yearCount,soon,draftCount){
   els.paramSoonCount.textContent=String(soon);
   els.paramDraftCount.textContent=String(draftCount);
 }
+
 function renderStats(){
   const total=dataRows.length;
   const currentYearText=String(fields.year.value||'').trim();
@@ -1804,6 +1827,7 @@ function renderStats(){
         return normalizedRowYear===normalizedCurrentYear;
       }).length
     : 0;
+
   const today=new Date();
   const today0=new Date(today.getFullYear(),today.getMonth(),today.getDate());
   const soon=dataRows.filter(r=>{
@@ -1818,62 +1842,67 @@ function renderStats(){
   }).length;
   const next=dataRows.reduce((m,r)=>Math.max(m,Number(r[fullKeys.no]||0)),0)+1;
   const draftCount=stagedRow?1:0;
+
   els.sumAll.textContent=total;
   els.sumYear.textContent=yearCount;
-  els.sumSoon.textContent=`${soon}`;
-  els.sumDone.textContent=`${done}`;
-  els.sumDraft.textContent=`${draftCount}`;
+  els.sumSoon.textContent=`${soon}件`;
+  els.sumDone.textContent=`${done}件`;
+  els.sumDraft.textContent=`${draftCount}件`;
   els.sumSubject.textContent=fields.subject.value||'-';
-  els.miniYearCount.textContent=`${yearCount}`;
+  els.miniYearCount.textContent=`${yearCount}件`;
   els.miniNext.textContent=`No.${next}`;
   els.sumNext.textContent=next;
   els.sumAllTop.textContent=total;
   els.sumYearTop.textContent=yearCount;
   els.sumNextTop.textContent=next;
+
   const ratio=total?Math.round((done/total)*100):0;
   els.roadmapLabel.textContent=`${done} / ${total}`;
   els.roadmapBar.style.width=`${ratio}%`;
   updateAnnualGauge(done,total,yearCount,soon,draftCount);
 }
+
 function renderConfirm(warns){
   if(!currentHeaders.length){
-    els.confirmCount.textContent='0';
-    els.confirmWarn.textContent='0';
-    els.confirmState.textContent='';
-    els.checkList.innerHTML='<div class="list-row"><div><strong></strong><p>CSV</p></div><div><span class="status s3"></span></div></div>';
+    els.confirmCount.textContent='0件';
+    els.confirmWarn.textContent='0件';
+    els.confirmState.textContent='待機';
+    els.checkList.innerHTML='<div class="list-row"><div><strong>次回研修会</strong><p>CSVを読み込むか、新規データベースを作成すると確認内容が表示されます。</p></div><div><span class="status s3">待機</span></div></div>';
     return;
   }
   const row=stagedRow||buildRow();
   const saveMode=getRawRowIndexByNo(row[fullKeys.no])>=0?'update':'insert';
   const checks=[
-    row[fullKeys.checkK1]==='1'?'1':'',
+    row[fullKeys.checkK1]==='1'?'起案1':'',
     row[fullKeys.checkHp]==='1'?'HP':'',
-    row[fullKeys.checkK2]==='1'?'2':'',
-    row[fullKeys.checkK3]==='1'?'3':''
+    row[fullKeys.checkK2]==='1'?'起案2':'',
+    row[fullKeys.checkK3]==='1'?'起案3':''
   ].filter(Boolean).join(' / ');
-  els.confirmCount.textContent='1';
+  els.confirmCount.textContent='1件';
   els.confirmWarn.textContent=warns.length;
-  els.confirmState.textContent=warns.length?'':(saveMode==='update'?'':'');
-  els.checkList.innerHTML=`<div class="list-row"><div><strong>${saveMode==='update'?'':' '}</strong><p>No.${esc(row[fullKeys.no])} / ${esc(row[fullKeys.date]||'-')} / ${esc(row[fullKeys.title]||'-')} / ${esc(row[fullKeys.name]||'-')}</p></div><div><span class="status ${warns.length?'s3':'s2'}">${warns.length?'':(saveMode==='update'?'':'')}</span></div></div><div class="list-row"><div><strong></strong><p>START_TIME ${esc(row[fullKeys.lectureStart]||'-')} / QA_DEADLINE ${esc(row[fullKeys.qaDeadline]||'-')} / QA_TIME ${esc(row[fullKeys.qaTime]||'-')} / PRE_MEETING ${esc(row[fullKeys.preMeeting]||'-')}</p></div><div><span class="status s2"></span></div></div><div class="list-row"><div><strong></strong><p>${esc(checks||'')}</p></div><div><span class="status s2"></span></div></div>${warns.map(w=>`<div class="list-row"><div><strong></strong><p>${esc(w)}</p></div><div><span class="status s4"></span></div></div>`).join('')}`;
+  els.confirmState.textContent=warns.length?'要確認':(saveMode==='update'?'上書き保存':'新規追加');
+  els.checkList.innerHTML=`<div class="list-row"><div><strong>${saveMode==='update'?'既存行を上書き保存':'新規行を追加保存'}</strong><p>No.${esc(row[fullKeys.no])} / ${esc(row[fullKeys.date]||'-')} / ${esc(row[fullKeys.title]||'-')} / ${esc(row[fullKeys.name]||'-')}</p></div><div><span class="status ${warns.length?'s3':'s2'}">${warns.length?'確認':(saveMode==='update'?'上書き':'追加')}</span></div></div><div class="list-row"><div><strong>自動計算項目</strong><p>START_TIME ${esc(row[fullKeys.lectureStart]||'-')} / QA_DADLINE ${esc(row[fullKeys.qaDeadline]||'-')} / QA_TIME ${esc(row[fullKeys.qaTime]||'-')} / PRE_MEETING ${esc(row[fullKeys.preMeeting]||'-')}</p></div><div><span class="status s2">反映済み</span></div></div><div class="list-row"><div><strong>起案チェック状態</strong><p>${esc(checks||'未チェック')}</p></div><div><span class="status s2">保持対象</span></div></div>${warns.map(w=>`<div class="list-row"><div><strong>確認事項</strong><p>${esc(w)}</p></div><div><span class="status s4">保留</span></div></div>`).join('')}`;
 }
+
 function renderResult(done=false){
   if(!currentHeaders.length){
-    els.resultDone.textContent='0';
-    els.resultHold.textContent='0';
-    els.resultZip.textContent='0';
-    els.folderView.innerHTML='<div class="list-row"><div><strong>CSV</strong><p>CSV</p></div><div><span class="status s3"></span></div></div>';
+    els.resultDone.textContent='0件';
+    els.resultHold.textContent='0件';
+    els.resultZip.textContent='0式';
+    els.folderView.innerHTML='<div class="list-row"><div><strong>更新CSV</strong><p>CSVを読み込むか、新規データベースを作成すると出力できます。</p></div><div><span class="status s3">待機</span></div></div>';
     return;
   }
-  els.resultDone.textContent=done?'1':'0';
-  els.resultHold.textContent=done?'0':String(validateDraft().length);
-  els.resultZip.textContent='1';
+  els.resultDone.textContent=done?'1件':'0件';
+  els.resultHold.textContent=done?'0件':String(validateDraft().length);
+  els.resultZip.textContent='1式';
   const name=`${fields.date.value||'clinical-master'}_${safeName(fields.title.value||'updated')}.csv`;
-  els.folderView.innerHTML=`<div class="list-row"><div><strong>${esc(name)}</strong><p>${done?(lastSaveMode==='update'?'NoCSV':'CSV'):'CSV'}</p></div><button class="btn small primary" id="inlineDownloadBtn"></button></div>`;
+  els.folderView.innerHTML=`<div class="list-row"><div><strong>${esc(name)}</strong><p>${done?(lastSaveMode==='update'?'同じNoの元行を上書きしたCSVです。':'新規追加したCSVです。'):'現在のマスターCSVをダウンロードできます。'}</p></div><button class="btn small primary" id="inlineDownloadBtn">ダウンロード</button></div>`;
   const inlineBtn=document.getElementById('inlineDownloadBtn');
   if(inlineBtn)inlineBtn.addEventListener('click',downloadCsv);
 }
+
 function downloadCsv(){
-  if(!currentHeaders.length){setStatus('');return}
+  if(!currentHeaders.length){setStatus('ダウンロード対象のマスターがありません。');return}
   rawRows=compactRawRows(rawRows);
   const csv=Papa.unparse({fields:currentHeaders,data:rawRows.map(row=>currentHeaders.map(h=>row[h]??''))});
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
@@ -1884,12 +1913,13 @@ function downloadCsv(){
   a.click();
   URL.revokeObjectURL(url);
 }
+
 function setStatus(msg){els.statusBox.textContent=msg}
 function weekdayJa(iso){return iso?['日','月','火','水','木','金','土'][new Date(iso+'T00:00:00').getDay()]:''}
 function addDays(d,days){const x=new Date(d);x.setDate(x.getDate()+days);return x}
 function fmtDate(d){return d?`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`:'-'}
 function fmtMonthDay(d){return d?`${d.getMonth()+1}/${d.getDate()}`:''}
-function formatMonthDayWeek(d){if(!d)return'';const w=['日','月','火','水','木','金','土'][d.getDay()];return `${d.getMonth()+1}/${d.getDate()}(${w})`}
+function formatMonthDayWeek(d){if(!d)return'';const w=['日','月','火','水','木','金','土'][d.getDay()];return `${d.getMonth()+1}月${d.getDate()}日（${w}）`}
 function parseShortJapaneseDate(v,yearText){
   const m=String(v||'').match(/(\d{1,2})月\s*(\d{1,2})日|^(\d{1,2})\/(\d{1,2})$/);
   const y=String(yearText||'').match(/(\d{4})/);
@@ -1915,7 +1945,7 @@ function formatDeadline1(isoDate){
   const base=new Date(isoDate+'T00:00:00');
   base.setDate(base.getDate()-8);
   const week=['日','月','火','水','木','金','土'][base.getDay()];
-  return `${base.getMonth()+1}/${base.getDate()}(${week})12:00`;
+  return `${base.getMonth()+1}月${base.getDate()}日（${week}）12:00`;
 }
 function normTime(v){const m=String(v||'').match(/(\d{1,2}):(\d{2})/);return m?`${m[1].padStart(2,'0')}:${m[2]}`:''}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
