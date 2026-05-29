@@ -1356,59 +1356,137 @@ function buildTemplateData(row){
   return map;
 }
 function xmlEscape(s){
-  return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
 }
-function replaceAcrossTextRuns(xml,key,value){
-  const escapedValue=xmlEscape(value);
-  const chars=String(key).split('').map(ch=>ch.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('[^<>]{0,12}?');
-  const re=new RegExp(chars,'g');
-  return xml.replace(re,escapedValue);
+
+function escapeRegExp(s){
+  return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
-function replacePlaceholdersInXml(xml,data){
-  let out=String(xml);
-  const entries=Object.entries(data).sort((a,b)=>b[0].length-a[0].length);
-  entries.forEach(([key,val])=>{out=out.split(String(key)).join(xmlEscape(val));});
-  entries.forEach(([key,val])=>{out=replaceAcrossTextRuns(out,key,val);});
+
+function replaceInTextNodes(xml, data, textTagPattern){
+  const matches = [];
+  xml.replace(textTagPattern, (full, openTag, text, closeTag, offset) => {
+    matches.push({
+      full,
+      openTag,
+      text: text || '',
+      closeTag,
+      offset,
+      length: full.length
+    });
+    return full;
+  });
+
+  if (!matches.length) return xml;
+
+  let combined = matches.map(m => m.text).join('');
+  const entries = Object.entries(data).sort((a, b) => b[0].length - a[0].length);
+
+  for (const [key, val] of entries) {
+    combined = combined.replace(new RegExp(escapeRegExp(String(key)), 'g'), String(val ?? ''));
+  }
+
+  let cursor = 0;
+  const replacedParts = matches.map((m, idx) => {
+    const originalLen = m.text.length;
+    const isLast = idx === matches.length - 1;
+    const slice = isLast ? combined.slice(cursor) : combined.slice(cursor, cursor + originalLen);
+    cursor += originalLen;
+    return `${m.openTag}${xmlEscape(slice)}${m.closeTag}`;
+  });
+
+  let out = '';
+  let lastIndex = 0;
+  matches.forEach((m, idx) => {
+    out += xml.slice(lastIndex, m.offset);
+    out += replacedParts[idx];
+    lastIndex = m.offset + m.length;
+  });
+  out += xml.slice(lastIndex);
   return out;
 }
-function templateKind(name){
-  const ext=String(name.split('.').pop()||'').toLowerCase();
-  return ext.toUpperCase();
+
+function replacePlaceholdersInXml(xml, data, kind){
+  let out = String(xml);
+
+  if (kind === 'docx') {
+    out = replaceInTextNodes(out, data, /(<w:t\b[^>]*>)([\s\S]*?)(<\/w:t>)/g);
+  } else if (kind === 'pptx') {
+    out = replaceInTextNodes(out, data, /(<a:t\b[^>]*>)([\s\S]*?)(<\/a:t>)/g);
+  } else if (kind === 'xlsx') {
+    out = replaceInTextNodes(out, data, /(<t\b[^>]*>)([\s\S]*?)(<\/t>)/g);
+  }
+
+  return out;
 }
-function targetXmlPathsForTemplate(zip,fileName){
-  const ext=String(fileName.split('.').pop()||'').toLowerCase();
-  const names=Object.keys(zip.files);
-  if(ext==='docx') return names.filter(n=>/word\/.*\.xml$/i.test(n));
-  if(ext==='pptx') return names.filter(n=>/ppt\/(slides|slideMasters|slideLayouts|notesSlides|comments|handoutMasters)\/.*\.xml$/i.test(n));
-  if(ext==='xlsx') return names.filter(n=>/xl\/(worksheets\/.*\.xml|sharedStrings\.xml|workbook\.xml|comments.*\.xml|drawings\/.*\.xml)$/i.test(n));
+
+function targetXmlPathsForTemplate(zip, fileName){
+  const ext = String(fileName.split('.').pop() || '').toLowerCase();
+  const names = Object.keys(zip.files);
+
+  if (ext === 'docx') {
+    return names.filter(n =>
+      /^word\/(document|header\d*|footer\d*)\.xml$/i.test(n)
+    );
+  }
+
+  if (ext === 'pptx') {
+    return names.filter(n =>
+      /^ppt\/(slides\/slide\d+\.xml|notesSlides\/notesSlide\d+\.xml)$/.test(n)
+    );
+  }
+
+  if (ext === 'xlsx') {
+    return names.filter(n =>
+      /^xl\/(sharedStrings\.xml|worksheets\/sheet\d+\.xml)$/.test(n)
+    );
+  }
+
   return [];
 }
-async function mergeSingleTemplate(file,row){
-  const arrayBuffer=await file.arrayBuffer();
-  const zip=new PizZip(arrayBuffer);
-  const data=buildTemplateData(row);
-  const targets=targetXmlPathsForTemplate(zip,file.name);
-  if(!targets.length) throw new Error('XML target not found');
-  targets.forEach(path=>{
-    if(zip.file(path)){
-      const xml=zip.file(path).asText();
-      zip.file(path,replacePlaceholdersInXml(xml,data));
-    }
+
+async function mergeSingleTemplate(file, row){
+  const arrayBuffer = await file.arrayBuffer();
+  const zip = new PizZip(arrayBuffer);
+  const data = buildTemplateData(row);
+  const ext = String(file.name.split('.').pop() || '').toLowerCase();
+  const targets = targetXmlPathsForTemplate(zip, file.name);
+
+  if (!targets.length) throw new Error('差し込み対象XMLが見つかりません。');
+
+  targets.forEach(path => {
+    const entry = zip.file(path);
+    if (!entry) return;
+    const xml = entry.asText();
+    const replaced = replacePlaceholdersInXml(xml, data, ext);
+    zip.file(path, replaced);
   });
-  const mimeMap={
-    docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+  const mimeMap = {
+    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   };
-  const ext=String(file.name.split('.').pop()||'').toLowerCase();
-  const out=zip.generate({type:'blob',mimeType:mimeMap[ext]||'application/octet-stream'});
-  const a=document.createElement('a');
-  const url=URL.createObjectURL(out);
-  a.href=url;
-  a.download=`No${safeName(row?.[fullKeys.no])}_${safeName(row?.[fullKeys.title])}_${safeName(file.name)}`;
+
+  const out = zip.generate({
+    type: 'blob',
+    mimeType: mimeMap[ext] || 'application/octet-stream',
+    compression: 'DEFLATE'
+  });
+
+  const a = document.createElement('a');
+  const url = URL.createObjectURL(out);
+  a.href = url;
+  a.download = `No${safeName(row?.[fullKeys.no])}_${safeName(row?.[fullKeys.title])}_${safeName(file.name)}`;
   a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-  return {name:file.name,type:templateKind(file.name)};
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+  return { name: file.name, type: templateKind(file.name) };
 }
 async function mergeAllTemplates(){
   if(!selectedTemplates.length){setMergeStatus('テンプレートファイルがありません。');return;}
