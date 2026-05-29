@@ -926,32 +926,72 @@ function getRowByNo(no){return dataRows.find(r=>String(r[fullKeys.no]||'').trim(
 function buildTemplateData(row){
   const map={};
   currentHeaders.forEach(h=>map[h]=String(row?.[h]??''));
-  map['DATE_1']=String(row?.[fullKeys.date]??'');
-  map['DATE_2']=String(row?.[fullKeys.date2]??'');
-  map['DEADLINE_1']=String(row?.[fullKeys.deadline1]??'');
-  map['DEADLINE_2']=String(row?.[fullKeys.deadline2]??'');
-  map['DEADLINE_3']=String(row?.[fullKeys.deadline3]??'');
-  map['COHOST_1']=String(row?.[fullKeys.cohost]??'');
-  map['COHOST_2']=String(row?.[fullKeys.site]??'');
-  map['COHOST_3']=String(row?.[fullKeys.cohost3]??'');
-  map['YEAR_1']=String(row?.[fullKeys.year]??'');
-  map['DAY']=String(row?.[fullKeys.day]??'');
-  map['START_1']=String(row?.[fullKeys.start]??'');
-  map['END_1']=String(row?.[fullKeys.end]??'');
-  map['TIME_1']=String(row?.[fullKeys.roomOpen]??'');
-  map['TIME_2']=String(row?.[fullKeys.duration]??'');
-  map['TITLE']=String(row?.[fullKeys.title]??'');
-  map['SPEAKER']=String(row?.[fullKeys.speaker]??'');
-  map['SUBJECT_1']=String(row?.[fullKeys.subject]??'');
-  map['SUBJECT_2']=String(row?.[fullKeys.subject2]??'');
-  map['NAME']=String(row?.[fullKeys.name]??'');
-  map['PASSCODE']=String(row?.[fullKeys.passcode]??'');
-  map['zoom_url']=String(row?.[fullKeys.zoomUrl]??'');
-  map['SITE']=String(row?.[fullKeys.site]??'');
-  map['PURPOSE']=String(row?.[fullKeys.purpose]??'');
-  map['NO']=String(row?.[fullKeys.no]??'');
+
+  const aliasEntries = {
+    DATE_1: row?.[fullKeys.date] ?? '',
+    DATE_2: row?.[fullKeys.date2] ?? '',
+    DEADLINE_1: row?.[fullKeys.deadline1] ?? '',
+    DEADLINE_2: row?.[fullKeys.deadline2] ?? '',
+    DEADLINE_3: row?.[fullKeys.deadline3] ?? '',
+    DATA_deadline: row?.[fullKeys.dataDeadline] ?? '',
+    YEAR_1: row?.[fullKeys.year] ?? '',
+    DAY: row?.[fullKeys.day] ?? '',
+    START_1: row?.[fullKeys.start] ?? '',
+    END_1: row?.[fullKeys.end] ?? '',
+    TIME_1: row?.[fullKeys.roomOpen] ?? '',
+    TIME_2: row?.[fullKeys.duration] ?? '',
+    TITLE: row?.[fullKeys.title] ?? '',
+    SPEAKER: row?.[fullKeys.speaker] ?? '',
+    SUBJECT_1: row?.[fullKeys.subject] ?? '',
+    SUBJECT_2: row?.[fullKeys.subject2] ?? '',
+    NAME: row?.[fullKeys.name] ?? '',
+    COST: row?.[fullKeys.cost] ?? '',
+    PURPOSE: row?.[fullKeys.purpose] ?? '',
+    SITE: row?.[fullKeys.site] ?? '',
+    COHOST_1: row?.[fullKeys.cohost] ?? '',
+    COHOST_2: row?.[fullKeys.site] ?? '',
+    COHOST_3: row?.[fullKeys.cohost3] ?? '',
+    NO: row?.[fullKeys.no] ?? '',
+    PASSCODE: row?.[fullKeys.passcode] ?? '',
+    zoom_url: row?.[fullKeys.zoomUrl] ?? '',
+    ZOOM_URL: row?.[fullKeys.zoomUrl] ?? '',
+    url_1: row?.[fullKeys.hpUrl] ?? '',
+    URL_1: row?.[fullKeys.hpUrl] ?? '',
+    HP_URL: row?.[fullKeys.hpUrl] ?? '',
+    WEBINER_ID: row?.[fullKeys.zoomId] ?? '',
+    webiner_id: row?.[fullKeys.zoomId] ?? '',
+    Zoom_ID: row?.[fullKeys.zoomId] ?? '',
+    ZOOM_ID: row?.[fullKeys.zoomId] ?? '',
+    ID: row?.[fullKeys.zoomId] ?? ''
+  };
+
+  Object.entries(aliasEntries).forEach(([k,v])=>{
+    map[k] = String(v ?? '');
+  });
+
+  map[fullKeys.zoomId] = String(row?.[fullKeys.zoomId] ?? '');
+  map['Zoom_ID_WEBINER_ID'] = String(row?.[fullKeys.zoomId] ?? '');
+  map['WEBINER_ID'] = String(row?.[fullKeys.zoomId] ?? '');
+  map['Zoom_ID'] = String(row?.[fullKeys.zoomId] ?? '');
+  map['ZOOM_ID'] = String(row?.[fullKeys.zoomId] ?? '');
+
+  map[fullKeys.hpUrl] = String(row?.[fullKeys.hpUrl] ?? '');
+  map['HP_URL_url_1'] = String(row?.[fullKeys.hpUrl] ?? '');
+  map['url_1'] = String(row?.[fullKeys.hpUrl] ?? '');
+  map['URL_1'] = String(row?.[fullKeys.hpUrl] ?? '');
+
+  map[fullKeys.zoomUrl] = String(row?.[fullKeys.zoomUrl] ?? '');
+  map['zoom_url_zoom_url'] = String(row?.[fullKeys.zoomUrl] ?? '');
+  map['zoom_url'] = String(row?.[fullKeys.zoomUrl] ?? '');
+  map['ZOOM_URL'] = String(row?.[fullKeys.zoomUrl] ?? '');
+
+  map[fullKeys.passcode] = String(row?.[fullKeys.passcode] ?? '');
+  map['Zoom_パスコード_PASSCODE'] = String(row?.[fullKeys.passcode] ?? '');
+  map['PASSCODE'] = String(row?.[fullKeys.passcode] ?? '');
+
   return map;
 }
+
 function xmlEscape(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function replaceAcrossTextRuns(xml,key,value){
   const escapedValue=xmlEscape(value);
