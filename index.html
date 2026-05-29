@@ -1773,6 +1773,31 @@ function parseMonthDayText(v, yearText){
   const y=String(yearText||'').match(/(\d{4})/);
   return m&&y?new Date(`${y[1]}-${String(m[1]).padStart(2,'0')}-${String(m[2]).padStart(2,'0')}T00:00:00`):null;
 }
+function parseAlertDateByEvent(rawValue, eventDateRaw, yearText){
+  const raw=String(rawValue||'').trim();
+  if(!raw) return null;
+
+  const eventDate=parseShortJapaneseDate(eventDateRaw, yearText);
+  if(!eventDate) return null;
+
+  let target=null;
+
+  if(/\d{1,2}\/\d{1,2}/.test(raw) || /\d{1,2}月\d{1,2}日/.test(raw)){
+    target=parseMonthDayText(
+      raw.replace(/（.*?）/g,'').replace(/\(.*?\)/g,'').replace('月','/').replace('日',''),
+      yearText
+    );
+  }else{
+    return null;
+  }
+
+  if(!target) return null;
+
+  if(target > eventDate){
+    target.setFullYear(target.getFullYear()-1);
+  }
+  return target;
+}
 function daysBetween(a,b){
   const x=new Date(a.getFullYear(),a.getMonth(),a.getDate());
   const y=new Date(b.getFullYear(),b.getMonth(),b.getDate());
@@ -1782,18 +1807,34 @@ function collectDeadlineAlerts(){
   const today=new Date();
   const baseToday=new Date(today.getFullYear(),today.getMonth(),today.getDate());
   const items=[];
+
   dataRows.forEach(r=>{
     const year=r[fullKeys.year]||fields.year.value||'';
     const title=r[fullKeys.title]||'無題';
     const no=r[fullKeys.no]||'-';
-    const pushItem=(label,dateObj,raw)=>{if(!dateObj)return;const diff=daysBetween(baseToday,dateObj);if(diff<0||diff>7)return;items.push({no,title,label,raw:raw||fmtDate(dateObj),diff})};
-    pushItem('起案1',parseMonthDayText(r[fullKeys.k1],year),r[fullKeys.k1]);
-    pushItem('起案2',parseMonthDayText(r[fullKeys.k2],year),r[fullKeys.k2]);
-    pushItem('起案3',parseMonthDayText(r[fullKeys.k3],year),r[fullKeys.k3]);
-    pushItem('院外締切',parseShortJapaneseDate(String(r[fullKeys.deadline1]||'').replace(/（.*?）/,'').replace('月','/').replace('日',''),year),r[fullKeys.deadline1]);
-    pushItem('資料締切',parseMonthDayText(r[fullKeys.dataDeadline],year),r[fullKeys.dataDeadline]);
-    pushItem('配布資料DL締切',parseMonthDayText(r[fullKeys.deadline3],year),r[fullKeys.deadline3]);
+    const eventDateRaw=r[fullKeys.date];
+
+    const pushItem=(label,dateObj,raw)=>{
+      if(!dateObj) return;
+      const diff=daysBetween(baseToday,dateObj);
+      if(diff<0||diff>7) return;
+      items.push({
+        no,
+        title,
+        label,
+        raw:raw||fmtDate(dateObj),
+        diff
+      });
+    };
+
+    pushItem('起案1', parseAlertDateByEvent(r[fullKeys.k1], eventDateRaw, year), r[fullKeys.k1]);
+    pushItem('起案2', parseAlertDateByEvent(r[fullKeys.k2], eventDateRaw, year), r[fullKeys.k2]);
+    pushItem('起案3', parseAlertDateByEvent(r[fullKeys.k3], eventDateRaw, year), r[fullKeys.k3]);
+    pushItem('院外締切', parseAlertDateByEvent(String(r[fullKeys.deadline1]||'').replace(/\s*\d{1,2}:\d{2}.*/, ''), eventDateRaw, year), r[fullKeys.deadline1]);
+    pushItem('資料締切', parseAlertDateByEvent(r[fullKeys.dataDeadline], eventDateRaw, year), r[fullKeys.dataDeadline]);
+    pushItem('配布資料DL締切', parseAlertDateByEvent(r[fullKeys.deadline3], eventDateRaw, year), r[fullKeys.deadline3]);
   });
+
   items.sort((a,b)=>a.diff-b.diff||Number(a.no)-Number(b.no));
   return items;
 }
