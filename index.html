@@ -2054,7 +2054,8 @@ function downloadCsv(){
     fields:currentHeaders,
     data:rawRows.map(row=>currentHeaders.map(h=>row[h]??''))
   });
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const BOM = '\uFEFF';
+  const blob = new Blob([BOM, csv], { type:'text/csv;charset=utf-8;' });
   const a=document.createElement('a');
   const url=URL.createObjectURL(blob);
   a.href=url;
