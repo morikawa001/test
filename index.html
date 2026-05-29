@@ -605,9 +605,10 @@ input[readonly],textarea[readonly]{
       </div>
       <button class="btn" id="themeBtn">表示テーマ切替</button>
       <div class="file-pick">
-        <label for="csvFile">マスターCSV</label>
-        <input id="csvFile" type="file" accept=".csv,text/csv" />
-      </div>
+  <label for="csvFile">マスターCSV</label>
+  <input id="csvFile" type="file" accept=".csv,text/csv" />
+  <input id="csvFileName" value="選択されていません" readonly>
+</div>
       <div class="action-grid">
         <button class="btn" id="newDbBtn">新規DB作成</button>
         <button class="btn primary" id="openConfirmBtn" disabled>確認画面へ進む</button>
@@ -1051,7 +1052,8 @@ const fullKeys={
 
 const els={
   csvFile:document.getElementById('csvFile'),
-  newDbBtn:document.getElementById('newDbBtn'),
+　csvFileName:document.getElementById('csvFileName'),
+　newDbBtn:document.getElementById('newDbBtn'),
   recordSelect:document.getElementById('recordSelect'),
   openConfirmBtn:document.getElementById('openConfirmBtn'),
   appendBtn:document.getElementById('appendBtn'),
@@ -1420,13 +1422,20 @@ function createNewDatabase(){
 
 function loadCsv(e){
   const file=e.target.files?.[0];
-  if(!file){setStatus('CSVファイルが選択されていません。');return}
+  if(!file){
+    els.csvFileName.value='選択されていません';
+    setStatus('CSVが未選択です。');
+    return;
+  }
+
+  els.csvFileName.value=file.name;
+
   Papa.parse(file,{
     header:true,
     skipEmptyLines:false,
     encoding:'UTF-8',
     complete:({data,meta})=>{
-      currentHeaders=(meta?.fields?.length?meta.fields:[...DEFAULT_HEADERS]);
+      currentHeaders=meta?.fields?.length?meta.fields:[...DEFAULT_HEADERS];
       ensureAdditionalHeaders();
       rawRows=Array.isArray(data)?compactRawRows(data.map(r=>normalizeRowShape(r))):[];
       dataRows=buildDisplayRowsFromRaw(rawRows);
@@ -1439,7 +1448,8 @@ function loadCsv(e){
       els.recordSelect.disabled=dataRows.length===0;
       renderRecordOptions();
       setNextNo();
-      if(dataRows.length)prefillFromLast();else{
+      if(dataRows.length) prefillFromLast();
+      else{
         fields.no.value='1';
         fields.cohost.value=COHOST_OPTION_NONE;
         syncCohostFields();
@@ -1449,14 +1459,15 @@ function loadCsv(e){
       renderStats();
       recalcDraft();
       renderAlerts();
-      els.miniDbState.textContent='既存CSV読込済み';
-      els.miniDbText.textContent=dataRows.length?`既存データ ${dataRows.length} 件を読み込みました。`:'ヘッダーのみのCSVを読み込みました。';
+      els.miniDbState.textContent='CSV読込済';
+      els.miniDbText.textContent=dataRows.length?`${dataRows.length}件のCSVを読込済み`:'CSVに有効データがありません';
       renderMergeOptions();
-      setStatus(dataRows.length?`CSVを読み込みました。${dataRows.length}件を表示しています。`:'ヘッダーのみのCSVを読み込みました。');
+      setStatus(dataRows.length?`CSVを読み込みました。${dataRows.length}件です。`:'CSVを読み込みましたが有効行はありません。');
       e.target.value='';
     },
     error:(err)=>{
-      setStatus(`CSVの読込に失敗しました: ${err?.message||'不明なエラー'}`);
+      els.csvFileName.value='選択されていません';
+      setStatus(`CSV読込エラー: ${err?.message||err}`);
       e.target.value='';
     }
   });
