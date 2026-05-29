@@ -3,49 +3,52 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>臨床研究研修会 管制ダッシュボード / dual-theme control ui</title>
+<title>臨床研究研修会-dashboard / dual-theme control ui</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
 <style>
 :root,[data-theme="dark"]{
-  --bg:#040807;
-  --bg2:#07100d;
-  --panel:#091310;
-  --panel2:#0d1915;
-  --panel3:#10201a;
-  --line:#163328;
-  --line2:#24543f;
-  --line3:#3a8162;
-  --text:#b8ffd3;
-  --text-strong:#d8ffe7;
-  --muted:#75c79a;
-  --faint:#458161;
-  --green:#5bff9c;
-  --green2:#35ff86;
-  --green3:#a9ffca;
-  --cyan:#74e9d6;
+  --bg:#050807;
+  --bg2:#0a0f0d;
+  --panel:#0c1210;
+  --panel2:#111917;
+  --panel3:#17221e;
+  --line:#24332c;
+  --line2:#355046;
+  --line3:#52786a;
+  --text:#b8d8c8;
+  --text-strong:#d7f3e4;
+  --muted:#7fa392;
+  --faint:#50675d;
+  --green:#7dffb3;
+  --green2:#49d98d;
+  --green3:#baffd7;
+  --cyan:#89cfc0;
   --warn:#ffe680;
   --danger:#ff8fb1;
   --success:#72ffb3;
-  --shadow:0 18px 40px rgba(0,0,0,.34);
-  --glow:0 0 0 1px rgba(91,255,156,.08),0 0 24px rgba(53,255,134,.06);
+  --shadow:0 18px 40px rgba(0,0,0,.38);
+  --glow:0 0 0 1px rgba(125,255,179,.06),0 0 18px rgba(73,217,141,.04);
   --radius:18px;
   --radius-sm:12px;
-  --page-grid-line:rgba(91,255,156,.03);
-  --page-glow-a:rgba(53,255,134,.06);
-  --page-glow-b:rgba(116,233,214,.035);
-  --hero-title-shadow:0 0 12px rgba(91,255,156,.08);
-  --input-bg:rgba(2,8,6,.88);
-  --readonly-bg:rgba(10,20,16,.95);
-  --button-bg:rgba(6,14,11,.95);
-  --button-primary-bg:rgba(8,26,16,.98);
+  --page-grid-line:rgba(125,255,179,.025);
+  --page-glow-a:rgba(73,217,141,.05);
+  --page-glow-b:rgba(137,207,192,.03);
+  --hero-title-shadow:0 0 10px rgba(125,255,179,.06);
+  --input-bg:rgba(6,11,9,.94);
+  --readonly-bg:rgba(15,23,20,.96);
+  --button-bg:rgba(9,15,13,.96);
+  --button-primary-bg:rgba(15,34,25,.98);
+  --button-text:#f6fffa;
+  --button-hover-bg:rgba(23,34,30,.98);
+  --button-primary-hover-bg:rgba(24,52,38,.98);
   --progress-grad:linear-gradient(90deg,var(--green2),var(--green),var(--cyan));
-  --ring-track:rgba(91,255,156,.10);
-  --ring-dash:rgba(116,233,214,.10);
-  --ring-dots:rgba(91,255,156,.14);
-  --core-bg:rgba(4,12,9,.94);
-  --scanline-opacity:.07;
+  --ring-track:rgba(125,255,179,.09);
+  --ring-dash:rgba(137,207,192,.10);
+  --ring-dots:rgba(125,255,179,.12);
+  --core-bg:rgba(8,14,11,.96);
+  --scanline-opacity:.055;
 }
 
 [data-theme="light"]{
@@ -78,8 +81,11 @@
   --hero-title-shadow:none;
   --input-bg:#ffffff;
   --readonly-bg:#f7f6f3;
-  --button-bg:#ffffff;
-  --button-primary-bg:#2f2d28;
+  --button-bg:#111111;
+  --button-primary-bg:#111111;
+  --button-text:#ffffff;
+  --button-hover-bg:#000000;
+  --button-primary-hover-bg:#000000;
   --progress-grad:linear-gradient(90deg,#2eaadc,#2eaadc);
   --ring-track:#ece9e3;
   --ring-dash:#e4e1da;
@@ -190,8 +196,8 @@ input[readonly],textarea[readonly]{
   align-items:center;
   padding:6px 10px;
   border-radius:999px;
-  border:1px solid color-mix(in srgb, var(--green) 18%, var(--line));
-  background:color-mix(in srgb, var(--green) 5%, var(--panel2));
+  border:1px solid color-mix(in srgb, var(--green) 24%, var(--line));
+  background:color-mix(in srgb, var(--green) 7%, var(--panel2));
   color:var(--text-strong);
   font-size:.74rem;
   font-weight:900;
@@ -238,7 +244,6 @@ input[readonly],textarea[readonly]{
   margin-top:5px;
   font-size:1.38rem;
   color:var(--text-strong);
-  text-shadow:none;
 }
 
 .command-panel{
@@ -287,22 +292,22 @@ input[readonly],textarea[readonly]{
   border-radius:10px;
   border:1px solid var(--line2);
   background:var(--button-bg);
-  color:var(--text-strong);
+  color:var(--button-text);
   font-weight:800;
   letter-spacing:.03em;
-  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,box-shadow 150ms ease;
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,box-shadow 150ms ease,transform 150ms ease;
 }
 .btn:hover{
-  background:var(--panel3);
+  background:var(--button-hover-bg);
+  box-shadow:0 0 0 1px color-mix(in srgb, var(--green) 8%, transparent);
 }
 .btn.primary{
   background:var(--button-primary-bg);
-  border-color:var(--button-primary-bg);
-  color:#ffffff;
-  box-shadow:none;
+  border-color:color-mix(in srgb, var(--green) 18%, var(--line2));
+  color:var(--button-text);
 }
 .btn.primary:hover{
-  background:color-mix(in srgb, var(--button-primary-bg) 92%, white);
+  background:var(--button-primary-hover-bg);
 }
 .btn.small{min-height:38px;padding:0 12px;font-size:.84rem}
 .btn:disabled{opacity:.42;cursor:not-allowed}
@@ -314,13 +319,12 @@ input[readonly],textarea[readonly]{
   border:none;
   border-radius:8px;
   padding:8px 12px;
-  background:var(--panel3);
-  color:var(--text-strong);
+  background:var(--button-bg);
+  color:var(--button-text);
   font-weight:800;
   cursor:pointer;
 }
 
-/* ここまでの修正を維持：Template Injection のファイル選択ボタン */
 #templateFiles::file-selector-button{
   min-height:46px;
   padding:0 16px;
@@ -328,14 +332,14 @@ input[readonly],textarea[readonly]{
   border:1px solid var(--line2);
   border-radius:10px;
   background:var(--button-bg);
-  color:var(--text-strong);
+  color:var(--button-text);
   font-weight:800;
   letter-spacing:.03em;
   cursor:pointer;
   transition:background 150ms ease,color 150ms ease,border-color 150ms ease,box-shadow 150ms ease;
 }
 #templateFiles:hover::file-selector-button{
-  background:var(--panel3);
+  background:var(--button-hover-bg);
 }
 
 .action-grid{
@@ -400,7 +404,6 @@ input[readonly],textarea[readonly]{
   height:100%;
   width:0%;
   background:var(--progress-grad);
-  box-shadow:none;
 }
 
 .parameter-wrap{
@@ -422,7 +425,6 @@ input[readonly],textarea[readonly]{
   width:100%;
   height:100%;
   transform:rotate(-90deg);
-  filter:none;
 }
 .param-core{
   position:absolute;
@@ -433,7 +435,6 @@ input[readonly],textarea[readonly]{
   display:grid;
   place-items:center;
   text-align:center;
-  box-shadow:none;
 }
 .param-core small{
   display:block;
@@ -448,7 +449,6 @@ input[readonly],textarea[readonly]{
   color:var(--text-strong);
   line-height:1.05;
   font-weight:900;
-  text-shadow:none;
 }
 .param-core span{
   display:block;
@@ -499,14 +499,14 @@ input[readonly],textarea[readonly]{
   color:var(--text-strong);
   border:1px solid var(--line2);
 }
-.status.s2{background:#eef7f3;color:#0f7b6c;border:1px solid #d7eee5}
-.status.s3{background:#eef5fb;color:#2eaadc;border:1px solid #d7e8f7}
-.status.s1{background:#fff8e7;color:#b98900;border:1px solid #f2e3b4}
-.status.s4{background:#fff0ef;color:#d44c47;border:1px solid #f4d9d7}
-[data-theme="dark"] .status.s2{background:rgba(114,255,179,.08);color:var(--success);border:1px solid rgba(114,255,179,.16)}
-[data-theme="dark"] .status.s3{background:rgba(116,233,214,.08);color:var(--cyan);border:1px solid rgba(116,233,214,.15)}
+.status.s2{background:#edf8f3;color:#0f7b6c;border:1px solid #cfe8dc}
+.status.s3{background:#eef5ff;color:#1f6feb;border:1px solid #d9e6ff}
+.status.s1{background:#fff8e7;color:#b98900;border:1px solid #f4e2ad}
+.status.s4{background:#fff1f4;color:#d44c47;border:1px solid #f4d0d0}
+[data-theme="dark"] .status.s2{background:rgba(114,255,179,.08);color:var(--success);border:1px solid rgba(114,255,179,.15)}
+[data-theme="dark"] .status.s3{background:rgba(137,207,192,.08);color:var(--cyan);border:1px solid rgba(137,207,192,.15)}
 [data-theme="dark"] .status.s1{background:rgba(255,230,128,.08);color:var(--warn);border:1px solid rgba(255,230,128,.16)}
-[data-theme="dark"] .status.s4{background:rgba(255,143,177,.08);color:var(--danger);border:1px solid rgba(255,143,177,.15)}
+[data-theme="dark"] .status.s4{background:rgba(255,143,177,.08);color:var(--danger);border:1px solid rgba(255,143,177,.16)}
 
 .table-head,.table-row{
   display:grid;
@@ -555,7 +555,8 @@ input[readonly],textarea[readonly]{
   position:fixed;
   inset:0;
   pointer-events:none;
-  background:linear-gradient(to bottom, rgba(255,255,255,.02), rgba(255,255,255,0) 50%);
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,.014), rgba(255,255,255,0) 50%);
   background-size:100% 4px;
   opacity:var(--scanline-opacity);
   mix-blend-mode:screen;
@@ -613,8 +614,8 @@ input[readonly],textarea[readonly]{
       <div class="hero-head">
         <div class="id-block">
           <div class="kicker">Clinical Research Training Control</div>
-          <h1>臨床研究研修会 管制ダッシュボード</h1>
-          <p>ダークテーマは攻殻機動隊 / 押井守版寄りのグリーン端末調を維持し、ライトテーマは Notion 風の明るく読みやすい業務UIへ切り替わるようにしました。</p>
+          <h1>臨床研究研修会-dashboard</h1>
+          <p>ダークテーマはグリーン端末調、ライトテーマは Notion 風</p>
         </div>
         <div class="hero-stats">
           <div class="stat-box"><span>Records</span><b id="sumAllTop">0</b></div>
@@ -1325,7 +1326,6 @@ function buildTemplateData(row){
 
   return map;
 }
-
 function xmlEscape(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function replaceAcrossTextRuns(xml,key,value){
   const escapedValue=xmlEscape(value);
@@ -1642,7 +1642,6 @@ function calcDerivedFields(){
   fields.subject2.value=fields.subject.value;
 }
 
-/* 追加修正：Computed Schedule の 8項目を必ず右側カードへ同期 */
 function syncComputedScheduleCards(){
   els.dRoomOpen.textContent=fields.roomOpen.value||'-';
   els.dDuration.textContent=fields.duration.value||'-';
@@ -1920,7 +1919,7 @@ function renderConfirm(warns){
     els.confirmCount.textContent='0件';
     els.confirmWarn.textContent='0件';
     els.confirmState.textContent='待機';
-    els.checkList.innerHTML='<div class="list-row"><div><strong>次回研修会</strong><p>CSVを読み込むか、新規データベースを作成すると確認内容が表示されます。</p></div><div><span class="status s3">待機</span></div></div>';
+    els.checkList.innerHTML='<div class="list-row"><div><strong>次回研修会</strong><p>CSVを読み込んだ後に入力内容が表示されます。</p></div><div><span class="status s3">待機</span></div></div>';
     return;
   }
   const row=stagedRow||buildRow();
@@ -1930,77 +1929,80 @@ function renderConfirm(warns){
     row[fullKeys.checkHp]==='1'?'HP':'',
     row[fullKeys.checkK2]==='1'?'起案2':'',
     row[fullKeys.checkK3]==='1'?'起案3':''
-  ].filter(Boolean).join(' / ');
+  ].filter(Boolean).join(' / ')||'未チェック';
+
   els.confirmCount.textContent='1件';
-  els.confirmWarn.textContent=warns.length;
+  els.confirmWarn.textContent=`${warns.length}件`;
   els.confirmState.textContent=warns.length?'要確認':(saveMode==='update'?'上書き保存':'新規追加');
+
   els.checkList.innerHTML=`
     <div class="list-row">
-      <div><strong>${saveMode==='update'?'既存行を上書き保存':'新規行を追加保存'}</strong><p>No.${esc(row[fullKeys.no])} / ${esc(row[fullKeys.date]||'-')} / ${esc(row[fullKeys.title]||'-')} / ${esc(row[fullKeys.name]||'-')}</p></div>
-      <div><span class="status ${warns.length?'s3':'s2'}">${warns.length?'確認':(saveMode==='update'?'上書き':'追加')}</span></div>
+      <div><strong>${saveMode==='update'?'上書き対象':'追加予定'}</strong><p>No.${esc(row[fullKeys.no])} / ${esc(row[fullKeys.date]||'-')} / ${esc(row[fullKeys.title]||'-')} / ${esc(row[fullKeys.name]||'-')}</p></div>
+      <div><span class="status ${warns.length?'s4':'s2'}">${warns.length?'注意あり':(saveMode==='update'?'更新':'追加')}</span></div>
     </div>
     <div class="list-row">
-      <div><strong>自動計算項目</strong><p>DATE_1 ${esc(row[fullKeys.date]||'-')} / DATE_2 ${esc(row[fullKeys.date2]||'-')} / DEADLINE_1 ${esc(row[fullKeys.deadline1]||'-')}</p></div>
-      <div><span class="status s2">反映済み</span></div>
+      <div><strong>日程情報</strong><p>DATE_1 ${esc(row[fullKeys.date]||'-')} / DATE_2 ${esc(row[fullKeys.date2]||'-')} / DEADLINE_1 ${esc(row[fullKeys.deadline1]||'-')}</p></div>
+      <div><span class="status s2">確認済み</span></div>
     </div>
     <div class="list-row">
-      <div><strong>起案チェック状態</strong><p>${esc(checks||'未チェック')}</p></div>
-      <div><span class="status s2">保持対象</span></div>
+      <div><strong>チェック状況</strong><p>${esc(checks)}</p></div>
+      <div><span class="status s2">確認済み</span></div>
     </div>
-    ${warns.map(w=>`<div class="list-row"><div><strong>確認事項</strong><p>${esc(w)}</p></div><div><span class="status s4">保留</span></div></div>`).join('')}
+    ${warns.map(w=>`<div class="list-row"><div><strong>入力注意</strong><p>${esc(w)}</p></div><div><span class="status s4">要修正</span></div></div>`).join('')}
   `;
 }
-
 function renderResult(done=false){
   if(!currentHeaders.length){
     els.resultDone.textContent='0件';
     els.resultHold.textContent='0件';
     els.resultZip.textContent='0式';
-    els.folderView.innerHTML='<div class="list-row"><div><strong>更新CSV</strong><p>CSVを読み込むか、新規データベースを作成すると出力できます。</p></div><div><span class="status s3">待機</span></div></div>';
+    els.folderView.innerHTML='<div class="list-row"><div><strong>更新CSV</strong><p>まだ作成していません。</p></div><div><span class="status s3">待機</span></div></div>';
     return;
   }
   els.resultDone.textContent=done?'1件':'0件';
-  els.resultHold.textContent=done?'0件':String(validateDraft().length);
+  els.resultHold.textContent=done?'0件':`${validateDraft().length}件`;
   els.resultZip.textContent='1式';
-  const name=`${fields.date.value||'clinical-master'}_${safeName(fields.title.value||'updated')}.csv`;
+  const name=fields.date.value?`clinical-master_${safeName(fields.title.value||'updated')}.csv`:'clinical-master_updated.csv';
   els.folderView.innerHTML=`
     <div class="list-row">
-      <div><strong>${esc(name)}</strong><p>${done?(lastSaveMode==='update'?'同じNoの元行を上書きしたCSVです。':'新規追加したCSVです。'):'現在のマスターCSVをダウンロードできます。'}</p></div>
-      <button class="btn small primary" id="inlineDownloadBtn">ダウンロード</button>
+      <div><strong>${esc(name)}</strong><p>${done?(lastSaveMode==='update'?'既存Noを更新してCSV生成可能です。':'新規Noを追加してCSV生成可能です。'):'保存前の内容を保持しています。'}</p></div>
+      <div><button class="btn small primary" id="inlineDownloadBtn">CSVを出力</button></div>
     </div>
   `;
   const inlineBtn=document.getElementById('inlineDownloadBtn');
   if(inlineBtn) inlineBtn.addEventListener('click',downloadCsv);
 }
-
 function downloadCsv(){
-  if(!currentHeaders.length){setStatus('ダウンロード対象のマスターがありません。');return}
+  if(!currentHeaders.length){setStatus('先にCSVを読み込むか、新規データベースを作成してください。');return}
   rawRows=compactRawRows(rawRows);
-  const csv=Papa.unparse({fields:currentHeaders,data:rawRows.map(row=>currentHeaders.map(h=>row[h]??''))});
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const csv=Papa.unparse({
+    fields:currentHeaders,
+    data:rawRows.map(row=>currentHeaders.map(h=>row[h]??''))
+  });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const a=document.createElement('a');
   const url=URL.createObjectURL(blob);
   a.href=url;
-  a.download=`${fields.date.value||'clinical-master'}_${safeName(fields.title.value||'updated')}.csv`;
+  a.download=fields.date.value?`clinical-master_${safeName(fields.title.value||'updated')}.csv`:'clinical-master_updated.csv';
   a.click();
   URL.revokeObjectURL(url);
 }
-
 function setStatus(msg){els.statusBox.textContent=msg}
-function weekdayJa(iso){return iso?['日','月','火','水','木','金','土'][new Date(iso+'T00:00:00').getDay()]:''}
+
+function weekdayJa(iso){return iso?['日','月','火','水','木','金','土'][new Date(iso+'T00:00:00').getDay()] : ''}
 function addDays(d,days){const x=new Date(d);x.setDate(x.getDate()+days);return x}
 function fmtDate(d){return d?`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`:'-'}
 function fmtMonthDay(d){return d?`${d.getMonth()+1}/${d.getDate()}`:''}
 function formatMonthDayWeek(d){
-  if(!d)return'';
+  if(!d)return '';
   const w=['日','月','火','水','木','金','土'][d.getDay()];
-  return `${d.getMonth()+1}月${d.getDate()}日（${w}）`;
+  return `${d.getMonth()+1}/${d.getDate()}（${w}）`;
 }
 function parseShortJapaneseDate(v,yearText){
-  const m=String(v||'').match(/(\d{1,2})月\s*(\d{1,2})日|^(\d{1,2})\/(\d{1,2})$/);
+  const m=String(v||'').match(/(\d{1,2})[\/月](\d{1,2})/);
   const y=String(yearText||'').match(/(\d{4})/);
   if(!m||!y)return null;
-  const mm=m[1]||m[3],dd=m[2]||m[4];
+  const mm=m[1],dd=m[2];
   return new Date(`${y[1]}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}T00:00:00`);
 }
 function toIsoDateFromShortDate(v,yearText){
@@ -2009,17 +2011,17 @@ function toIsoDateFromShortDate(v,yearText){
 }
 function diffMin(a,b){
   const [ah,am]=a.split(':').map(Number),[bh,bm]=b.split(':').map(Number);
-  return (bh*60+bm)-(ah*60+am);
+  return bh*60+bm-ah*60-am;
 }
 function shiftTime(hhmm,diff){
   const mins=timeToMinutes(hhmm);
-  if(mins==null)return'';
+  if(mins===null)return '';
   const shifted=mins+diff;
-  const normalized=((shifted%1440)+1440)%1440;
+  const normalized=(shifted%1440+1440)%1440;
   return minutesToTime(normalized);
 }
 function timeToMinutes(hhmm){
-  const m=String(hhmm||'').match(/^(\d{2}):(\d{2})$/);
+  const m=String(hhmm||'').match(/(\d{1,2}):(\d{2})/);
   return m?Number(m[1])*60+Number(m[2]):null;
 }
 function minutesToTime(mins){
@@ -2033,15 +2035,15 @@ function formatDeadline1(isoDate){
   return `${base.getMonth()+1}月${base.getDate()}日（${week}）12:00`;
 }
 function normTime(v){
-  const m=String(v||'').match(/(\d{1,2}):(\d{2})/);
+  const m=String(v||'').match(/(\d{1,2}):?(\d{2})/);
   return m?`${m[1].padStart(2,'0')}:${m[2]}`:'';
 }
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function safeName(s){return String(s).replace(/[\\/:*?"<>|\s]+/g,'-')}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]))}
+function safeName(s){return String(s??'').replace(/[\\/:*?"<>|]+/g,'-')}
 function formatDate1Short(iso){
-  if(!iso)return'';
+  if(!iso)return '';
   const d=new Date(iso+'T00:00:00');
-  return `${d.getMonth()+1}月${d.getDate()}日`;
+  return `${d.getMonth()+1}/${d.getDate()}`;
 }
 
 syncCohostFields();
