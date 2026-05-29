@@ -1322,172 +1322,169 @@ function buildTemplateData(row){
     WEBINERID:row?.[fullKeys.zoomId]??'',
     webinerid:row?.[fullKeys.zoomId]??'',
     ZoomID:row?.[fullKeys.zoomId]??'',
-    ZOOMID:row?.[fullKeys.zoomId]??''
+    ZOOMID:row?.[fullKeys.zoomId]??'',
+
+    '年度_YEAR_1':row?.[fullKeys.year]??'',
+    '開催日_DATE_1':row?.[fullKeys.date]??'',
+    '曜日 _DAY':row?.[fullKeys.day]??'',
+    '曜日_DAY':row?.[fullKeys.day]??'',
+    '研修会開始_START_1':row?.[fullKeys.start]??'',
+    '研修会終了_END_1':row?.[fullKeys.end]??'',
+    'テーマ(標題)_TITLE':row?.[fullKeys.title]??'',
+    '担当講師_SPEAKER':row?.[fullKeys.speaker]??'',
+    '共催_COHOST_1':row?.[fullKeys.cohost]??'',
+    '実施':row?.[fullKeys.cohost]??'',
+    '時間':row?.[fullKeys.duration]??'',
+    '（分）':row?.[fullKeys.duration]??'',
+    '対象_SUBJECT_1':row?.[fullKeys.subject]??'',
+    '依頼状':row?.[fullKeys.k1]??'',
+    '提出':row?.[fullKeys.k2]??'',
+    'HP':row?.[fullKeys.hp]??'',
+    '準備':row?.[fullKeys.hp]??'',
+    '起案1開催DATE_KIAN_1':row?.[fullKeys.k1]??'',
+    'HP案内開始チラシ配布':row?.[fullKeys.hp]??'',
+    '起案2資料_DATE_KIAN_2':row?.[fullKeys.k2]??'',
+    '起案3受講証修了証_DATE_KIAN_3':row?.[fullKeys.k3]??'',
+    '謝金_COST':row?.[fullKeys.cost]??'',
+    '目的_PURPOSE':row?.[fullKeys.purpose]??'',
+    'メール用研修会開催日付_DATE_2':row?.[fullKeys.date2]??'',
+    '研修会入室開始時間_TIME_1':row?.[fullKeys.roomOpen]??'',
+    '時間（分）_TIME_2':row?.[fullKeys.duration]??'',
+    '〆切院外_DEADLINE_1':row?.[fullKeys.deadline1]??'',
+    '〆切時間院内_DEADLINE_2':row?.[fullKeys.deadline2]??'',
+    '配布資料DL〆切_DEADLINE_3':row?.[fullKeys.deadline3]??'',
+    '対象詳細_SUBJECT_2':row?.[fullKeys.subject2]??'',
+    'HP_URL_url_1':row?.[fullKeys.hpUrl]??'',
+    'Zoom_ID_WEBINER_ID':row?.[fullKeys.zoomId]??'',
+    'Zoom_パスコード_PASSCODE':row?.[fullKeys.passcode]??'',
+    '共催2（選択）COHOST_2':row?.[fullKeys.site]??'',
+    '共催3(選択）_COHOST_3':row?.[fullKeys.cohost3]??'',
+    '進行表導入_INTRO_1':row?.[fullKeys.intro1]??'',
+    '進行表研修会趣旨説明_INTRO_2':row?.[fullKeys.intro2]??'',
+    '進行表講師紹介_INTRO_3':row?.[fullKeys.intro3]??'',
+    '進行表クロージング（選択）_CLOSING_1':row?.[fullKeys.closing1]??'',
+    'zoom_url_zoom_url':row?.[fullKeys.zoomUrl]??'',
+    '名前_NAME':row?.[fullKeys.name]??'',
+    'オリエンテーションスライドヘッダー_HEAD_1':row?.[fullKeys.head1]??'',
+    '講義開始_START_TIME':row?.[fullKeys.lectureStart]??'',
+    '質疑応答締切_QA_DADLINE':row?.[fullKeys.qaDeadline]??'',
+    '質疑応答_QA_TIME':row?.[fullKeys.qaTime]??'',
+    '事前打合せ開始時間_PRE_MEETING':row?.[fullKeys.preMeeting]??'',
+    '講演場所_SITE':row?.[fullKeys.site]??'',
+    '講義資料提供の締切_DATA_deadline':row?.[fullKeys.dataDeadline]??''
   };
   Object.entries(aliasEntries).forEach(([k,v])=>map[k]=String(v??''));
+
   map[fullKeys.zoomId]=String(row?.[fullKeys.zoomId]??'');
   map['Zoom_ID_WEBINER_ID']=String(row?.[fullKeys.zoomId]??'');
   map['WEBINERID']=String(row?.[fullKeys.zoomId]??'');
   map['ZoomID']=String(row?.[fullKeys.zoomId]??'');
   map['ZOOMID']=String(row?.[fullKeys.zoomId]??'');
+
   map[fullKeys.hpUrl]=String(row?.[fullKeys.hpUrl]??'');
   map['HP_URL_url_1']=String(row?.[fullKeys.hpUrl]??'');
   map['url1']=String(row?.[fullKeys.hpUrl]??'');
   map['URL1']=String(row?.[fullKeys.hpUrl]??'');
+
   map[fullKeys.zoomUrl]=String(row?.[fullKeys.zoomUrl]??'');
   map['zoom_url_zoom_url']=String(row?.[fullKeys.zoomUrl]??'');
   map['zoomurl']=String(row?.[fullKeys.zoomUrl]??'');
   map['ZOOMURL']=String(row?.[fullKeys.zoomUrl]??'');
+
   map[fullKeys.passcode]=String(row?.[fullKeys.passcode]??'');
   map['Zoom_パスコード_PASSCODE']=String(row?.[fullKeys.passcode]??'');
   map['PASSCODE']=String(row?.[fullKeys.passcode]??'');
+
   map[fullKeys.head1]=String(row?.[fullKeys.head1]??'');
   map['HEAD1']=String(row?.[fullKeys.head1]??'');
+
   map[fullKeys.closing1]=String(row?.[fullKeys.closing1]??'');
   map['CLOSING1']=String(row?.[fullKeys.closing1]??'');
+
   map[fullKeys.lectureStart]=String(row?.[fullKeys.lectureStart]??'');
   map['STARTTIME']=String(row?.[fullKeys.lectureStart]??'');
+
   map[fullKeys.qaDeadline]=String(row?.[fullKeys.qaDeadline]??'');
   map['QADADLINE']=String(row?.[fullKeys.qaDeadline]??'');
+
   map[fullKeys.qaTime]=String(row?.[fullKeys.qaTime]??'');
   map['QATIME']=String(row?.[fullKeys.qaTime]??'');
+
   map[fullKeys.preMeeting]=String(row?.[fullKeys.preMeeting]??'');
   map['PREMEETING']=String(row?.[fullKeys.preMeeting]??'');
+
   return map;
 }
-// ── ① xmlEscape：特殊文字を確実にエスケープ ──
-function xmlEscape(s) {
-  return String(s ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
+function xmlEscape(s){
+  return String(s??'')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&apos;');
 }
-
-function escapeRegExp(s) {
-  return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function replaceAcrossTextRuns(xml,key,value){
+  const escapedValue=xmlEscape(value);
+  const escapedKey=String(key).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const chars=escapedKey.split('').join('(?:<[^>]+>|[^<>{}]){0,12}?');
+  const re=new RegExp(chars,'g');
+  return xml.replace(re,escapedValue);
 }
+function replacePlaceholdersInXml(xml,data){
+  let out=String(xml);
+  const entries=Object.entries(data)
+    .filter(([key])=>String(key).trim()!=='')
+    .sort((a,b)=>b[0].length-a[0].length);
 
-// ── ② ランを結合→置換→最後のノードだけに詰める ──
-function replaceInTextNodes(xml, data, textTagPattern) {
-  const TAG_RE = textTagPattern;
-  const chunks = [];
-  let lastIndex = 0;
+  entries.forEach(([key,val])=>{
+    const safeVal=xmlEscape(val);
+    out=out.split(String(key)).join(safeVal);
+  });
 
-  for (const m of xml.matchAll(TAG_RE)) {
-    // テキストノード前の生XML
-    chunks.push({ type: 'raw', val: xml.slice(lastIndex, m.index) });
-    chunks.push({ type: 'node', openTag: m[1], text: m[2] ?? '', closeTag: m[3], fullLen: m[0].length, offset: m.index });
-    lastIndex = m.index + m[0].length;
-  }
-  chunks.push({ type: 'raw', val: xml.slice(lastIndex) });
+  entries.forEach(([key,val])=>{
+    out=replaceAcrossTextRuns(out,key,val);
+  });
 
-  // ノードが無ければそのまま返す
-  const nodes = chunks.filter(c => c.type === 'node');
-  if (!nodes.length) return xml;
-
-  // 全テキストを結合
-  let combined = nodes.map(n => n.text).join('');
-
-  // 長いキーから順に置換
-  const entries = Object.entries(data).sort((a, b) => b[0].length - a[0].length);
-  for (const [key, val] of entries) {
-    if (!String(key).trim()) continue;
-    combined = combined.replace(
-      new RegExp(escapeRegExp(String(key)), 'g'),
-      String(val ?? '')
-    );
-  }
-
-  // 結合後テキストを先頭ノードに全部入れ、残りは空にする
-  let nodeIdx = 0;
-  for (const chunk of chunks) {
-    if (chunk.type !== 'node') continue;
-    chunk.newText = nodeIdx === 0 ? combined : '';
-    nodeIdx++;
-  }
-
-  // 再構築
-  return chunks.map(c =>
-    c.type === 'raw'
-      ? c.val
-      : `${c.openTag}${xmlEscape(c.newText)}${c.closeTag}`
-  ).join('');
-}
-
-// ── ③ ファイル種別ごとに正しいタグを指定 ──
-function replacePlaceholdersInXml(xml, data, kind) {
-  let out = String(xml);
-  if (kind === 'docx') {
-    out = replaceInTextNodes(out, data, /(<w:t\b[^>]*>)([\s\S]*?)(<\/w:t>)/g);
-  } else if (kind === 'pptx') {
-    out = replaceInTextNodes(out, data, /(<a:t\b[^>]*>)([\s\S]*?)(<\/a:t>)/g);
-  } else if (kind === 'xlsx') {
-    out = replaceInTextNodes(out, data, /(<t\b[^>]*>)([\s\S]*?)(<\/t>)/g);
-  }
   return out;
 }
-
-// ── ④ 対象XMLをドキュメント本文だけに絞る ──
-function targetXmlPathsForTemplate(zip, fileName) {
-  const ext = String(fileName.split('.').pop() || '').toLowerCase();
-  const names = Object.keys(zip.files);
-  if (ext === 'docx') {
-    return names.filter(n =>
-      /^word\/(document|header\d*|footer\d*)\.xml$/i.test(n)
-    );
-  }
-  if (ext === 'pptx') {
-    return names.filter(n =>
-      /^ppt\/(slides\/slide\d+|notesSlides\/notesSlide\d+)\.xml$/.test(n)
-    );
-  }
-  if (ext === 'xlsx') {
-    return names.filter(n =>
-      /^xl\/(sharedStrings|worksheets\/sheet\d+)\.xml$/.test(n)
-    );
-  }
+function templateKind(name){
+  const ext=String(name.split('.').pop()||'').toLowerCase();
+  return ext.toUpperCase();
+}
+function targetXmlPathsForTemplate(zip,fileName){
+  const ext=String(fileName.split('.').pop()||'').toLowerCase();
+  const names=Object.keys(zip.files);
+  if(ext==='docx') return names.filter(n=>/^word\/(document|header\d+|footer\d+)\.xml$/i.test(n));
+  if(ext==='pptx') return names.filter(n=>/^ppt\/(slides\/slide\d+|notesSlides\/notesSlide\d+)\.xml$/i.test(n));
+  if(ext==='xlsx') return names.filter(n=>/^xl\/(worksheets\/sheet\d+\.xml|sharedStrings\.xml)$/i.test(n));
   return [];
 }
-
-// ── ⑤ マージ本体（ext をそのまま渡す） ──
-async function mergeSingleTemplate(file, row) {
-  const arrayBuffer = await file.arrayBuffer();
-  const zip = new PizZip(arrayBuffer);
-  const data = buildTemplateData(row);
-  const ext = String(file.name.split('.').pop() || '').toLowerCase();
-  const targets = targetXmlPathsForTemplate(zip, file.name);
-
-  if (!targets.length) throw new Error('差し込み対象XMLが見つかりません。');
-
-  targets.forEach(path => {
-    const entry = zip.file(path);
-    if (!entry) return;
-    const xml = entry.asText();
-    const replaced = replacePlaceholdersInXml(xml, data, ext);
-    zip.file(path, replaced);
+async function mergeSingleTemplate(file,row){
+  const arrayBuffer=await file.arrayBuffer();
+  const zip=new PizZip(arrayBuffer);
+  const data=buildTemplateData(row);
+  const targets=targetXmlPathsForTemplate(zip,file.name);
+  if(!targets.length) throw new Error('XML target not found');
+  targets.forEach(path=>{
+    if(zip.file(path)){
+      const xml=zip.file(path).asText();
+      zip.file(path,replacePlaceholdersInXml(xml,data));
+    }
   });
-
-  const mimeMap = {
-    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  const mimeMap={
+    docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   };
-
-  const out = zip.generate({
-    type: 'blob',
-    mimeType: mimeMap[ext] || 'application/octet-stream',
-    compression: 'DEFLATE'
-  });
-
-  const a = document.createElement('a');
-  const url = URL.createObjectURL(out);
-  a.href = url;
-  a.download = `No${safeName(row?.[fullKeys.no])}_${safeName(row?.[fullKeys.title])}_${safeName(file.name)}`;
+  const ext=String(file.name.split('.').pop()||'').toLowerCase();
+  const out=zip.generate({type:'blob',mimeType:mimeMap[ext]||'application/octet-stream'});
+  const a=document.createElement('a');
+  const url=URL.createObjectURL(out);
+  a.href=url;
+  a.download=`No${safeName(row?.[fullKeys.no])}_${safeName(row?.[fullKeys.title])}_${safeName(file.name)}`;
   a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-  return { name: file.name, type: templateKind(file.name) };
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  return {name:file.name,type:templateKind(file.name)};
 }
 async function mergeAllTemplates(){
   if(!selectedTemplates.length){setMergeStatus('テンプレートファイルがありません。');return;}
