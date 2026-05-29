@@ -290,7 +290,7 @@ input[readonly],textarea[readonly]{
   color:var(--text-strong);
   font-weight:800;
   letter-spacing:.03em;
-  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,box-shadow 150ms ease;
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,box-shadow 150ms ease,opacity 150ms ease;
 }
 .btn:hover{
   background:var(--panel3);
@@ -577,12 +577,46 @@ input[readonly],textarea[readonly]{
   font-size:.86rem;
 }
 
+.field-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.field-head label{
+  margin:0;
+}
+.ai-row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.ai-status{
+  font-size:.82rem;
+  color:var(--muted);
+}
+.btn.ai{
+  min-height:38px;
+  padding:0 12px;
+  font-size:.84rem;
+  white-space:nowrap;
+}
+.btn.ai.loading{
+  opacity:.7;
+  pointer-events:none;
+}
+
 @media (max-width:1240px){
   .hero-grid,.main-grid,.dual-grid,.parameter-wrap{grid-template-columns:1fr}
 }
 @media (max-width:860px){
   .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.template-row,.alert-item,.schedule-card{
     grid-template-columns:1fr;
+  }
+  .field-head{
+    align-items:flex-start;
   }
 }
 </style>
@@ -666,7 +700,6 @@ input[readonly],textarea[readonly]{
           </div>
         </div>
       </div>
-
       <div class="param-meta">
         <div class="param-side"><div><span class="small-label">年度件数</span><p class="radar-note">現在年度に属する登録件数です。</p></div><b id="paramYearCount">0</b></div>
         <div class="param-side"><div><span class="small-label">開催済み</span><p class="radar-note">今日より前に開催済みの件数です。</p></div><b id="paramDoneCount">0</b></div>
@@ -745,9 +778,39 @@ input[readonly],textarea[readonly]{
         <div class="field full"><label>Zoom URL</label><input id="fZoomUrl" value="https://zoom.us/"></div>
         <div class="field full"><label>HP_URL_url_1</label><input id="fHpUrl" value=""></div>
         <div class="field full"><label>目的_PURPOSE</label><textarea id="fPurpose">本研修会では、臨床研究に必要な実務の基本をわかりやすく学びます。</textarea></div>
-        <div class="field full"><label>進行表導入_INTRO_1</label><textarea id="fIntro1">本日は臨床研究研修会にご参加いただきありがとうございます。</textarea></div>
-        <div class="field full"><label>趣旨説明_INTRO_2</label><textarea id="fIntro2">本研修会では、臨床研究を進めるうえで必要となる基本事項と実務上のポイントを共有します。</textarea></div>
-        <div class="field full"><label>講師紹介_INTRO_3</label><textarea id="fIntro3">本日の講師は、臨床研究支援に関する実務経験を有する専門家です。</textarea></div>
+
+        <div class="field full">
+          <div class="field-head">
+            <label for="fIntro1">進行表導入_INTRO_1</label>
+            <div class="ai-row">
+              <button type="button" class="btn ai" id="brushIntro1Btn">AIでブラッシュアップ</button>
+              <span class="ai-status" id="brushIntro1Status"></span>
+            </div>
+          </div>
+          <textarea id="fIntro1">本日は臨床研究研修会にご参加いただきありがとうございます。</textarea>
+        </div>
+
+        <div class="field full">
+          <div class="field-head">
+            <label for="fIntro2">趣旨説明_INTRO_2</label>
+            <div class="ai-row">
+              <button type="button" class="btn ai" id="brushIntro2Btn">AIでブラッシュアップ</button>
+              <span class="ai-status" id="brushIntro2Status"></span>
+            </div>
+          </div>
+          <textarea id="fIntro2">本研修会では、臨床研究を進めるうえで必要となる基本事項と実務上のポイントを共有します。</textarea>
+        </div>
+
+        <div class="field full">
+          <div class="field-head">
+            <label for="fIntro3">講師紹介_INTRO_3</label>
+            <div class="ai-row">
+              <button type="button" class="btn ai" id="brushIntro3Btn">AIでブラッシュアップ</button>
+              <span class="ai-status" id="brushIntro3Status"></span>
+            </div>
+          </div>
+          <textarea id="fIntro3">本日の講師は、臨床研究支援に関する実務経験を有する専門家です。</textarea>
+        </div>
       </div>
 
       <div class="control-row">
@@ -952,11 +1015,13 @@ input[readonly],textarea[readonly]{
 const root=document.documentElement;
 document.getElementById('themeBtn').addEventListener('click',()=>{root.setAttribute('data-theme',root.getAttribute('data-theme')==='dark'?'light':'dark')});
 
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwFGWXonRPSDqhToxurlrxmvb0oMydOdM18_2Jy5aQWDXP60o6bKjkjYYfu741dgkqB/exec";
+
 const DEFAULT_HEADERS=['起案行No','年度_YEAR_1','開催日_DATE_1','曜日 _DAY','研修会開始_START_1','研修会終了_END_1','研修会入室開始時間_TIME_1','時間（分）_TIME_2','〆切院外_DEADLINE_1','〆切時間院内_DEADLINE_2','配布資料DL〆切_DEADLINE_3','テーマ(標題)_TITLE','担当講師_SPEAKER','対象_SUBJECT_1','対象詳細_SUBJECT_2','講演場所_SITE','共催_COHOST_1','共催3(選択）_COHOST_3','起案1開催DATE_KIAN_1','起案2資料_DATE_KIAN_2','起案3受講証修了証_DATE_KIAN_3','HP案内開始チラシ配布','謝金_COST','目的_PURPOSE','メール用研修会開催日付_DATE_2','名前_NAME','Zoom_ID_WEBINER_ID','zoom_url_zoom_url','HP_URL_url_1','Zoom_パスコード_PASSCODE','進行表導入_INTRO_1','進行表研修会趣旨説明_INTRO_2','進行表講師紹介_INTRO_3','講義資料提供の締切_DATA_deadline','起案1チェック_CHECK_K1','HPチェック_CHECK_HP','起案2チェック_CHECK_K2','起案3チェック_CHECK_K3'];
 
 const fullKeys={no:'起案行No',year:'年度_YEAR_1',date:'開催日_DATE_1',day:'曜日 _DAY',start:'研修会開始_START_1',end:'研修会終了_END_1',roomOpen:'研修会入室開始時間_TIME_1',duration:'時間（分）_TIME_2',deadline1:'〆切院外_DEADLINE_1',deadline2:'〆切時間院内_DEADLINE_2',deadline3:'配布資料DL〆切_DEADLINE_3',title:'テーマ(標題)_TITLE',speaker:'担当講師_SPEAKER',subject:'対象_SUBJECT_1',subject2:'対象詳細_SUBJECT_2',site:'講演場所_SITE',cohost:'共催_COHOST_1',cohost3:'共催3(選択）_COHOST_3',k1:'起案1開催DATE_KIAN_1',k2:'起案2資料_DATE_KIAN_2',k3:'起案3受講証修了証_DATE_KIAN_3',hp:'HP案内開始チラシ配布',cost:'謝金_COST',purpose:'目的_PURPOSE',date2:'メール用研修会開催日付_DATE_2',name:'名前_NAME',zoomId:'Zoom_ID_WEBINER_ID',zoomUrl:'zoom_url_zoom_url',hpUrl:'HP_URL_url_1',passcode:'Zoom_パスコード_PASSCODE',intro1:'進行表導入_INTRO_1',intro2:'進行表研修会趣旨説明_INTRO_2',intro3:'進行表講師紹介_INTRO_3',dataDeadline:'講義資料提供の締切_DATA_deadline',checkK1:'起案1チェック_CHECK_K1',checkHp:'HPチェック_CHECK_HP',checkK2:'起案2チェック_CHECK_K2',checkK3:'起案3チェック_CHECK_K3'};
 
-const els={csvFile:document.getElementById('csvFile'),newDbBtn:document.getElementById('newDbBtn'),recordSelect:document.getElementById('recordSelect'),openConfirmBtn:document.getElementById('openConfirmBtn'),appendBtn:document.getElementById('appendBtn'),prefillBtn:document.getElementById('prefillBtn'),loadSelectedBtn:document.getElementById('loadSelectedBtn'),confirmAppendBtn:document.getElementById('confirmAppendBtn'),downloadBtn:document.getElementById('downloadBtn'),backBtn:document.getElementById('backBtn'),tableList:document.getElementById('tableList'),statusBox:document.getElementById('statusBox'),miniNext:document.getElementById('miniNext'),miniYearCount:document.getElementById('miniYearCount'),miniDbState:document.getElementById('miniDbState'),miniDbText:document.getElementById('miniDbText'),sumAll:document.getElementById('sumAll'),sumYear:document.getElementById('sumYear'),sumNext:document.getElementById('sumNext'),sumSoon:document.getElementById('sumSoon'),sumDone:document.getElementById('sumDone'),sumDraft:document.getElementById('sumDraft'),sumSubject:document.getElementById('sumSubject'),roadmapLabel:document.getElementById('roadmapLabel'),roadmapBar:document.getElementById('roadmapBar'),dK1:document.getElementById('dK1'),dK2:document.getElementById('dK2'),dHp:document.getElementById('dHp'),dK3:document.getElementById('dK3'),dRoomOpen:document.getElementById('dRoomOpen'),dDuration:document.getElementById('dDuration'),dDeadline1:document.getElementById('dDeadline1'),dDeadline2:document.getElementById('dDeadline2'),dDeadline3:document.getElementById('dDeadline3'),dDataDeadline:document.getElementById('dDataDeadline'),dDate2:document.getElementById('dDate2'),dSubject2:document.getElementById('dSubject2'),ckK1:document.getElementById('ckK1'),ckHp:document.getElementById('ckHp'),ckK2:document.getElementById('ckK2'),ckK3:document.getElementById('ckK3'),checkList:document.getElementById('checkList'),confirmCount:document.getElementById('confirmCount'),confirmWarn:document.getElementById('confirmWarn'),confirmState:document.getElementById('confirmState'),folderView:document.getElementById('folderView'),resultDone:document.getElementById('resultDone'),resultHold:document.getElementById('resultHold'),resultZip:document.getElementById('resultZip'),alertList:document.getElementById('alertList'),templateFiles:document.getElementById('templateFiles'),mergeRecordSelect:document.getElementById('mergeRecordSelect'),templateState:document.getElementById('templateState'),mergeAllBtn:document.getElementById('mergeAllBtn'),mergeStatusBox:document.getElementById('mergeStatusBox'),templateList:document.getElementById('templateList'),sumAllTop:document.getElementById('sumAllTop'),sumYearTop:document.getElementById('sumYearTop'),sumNextTop:document.getElementById('sumNextTop'),annualGauge:document.getElementById('annualGauge'),annualGaugeText:document.getElementById('annualGaugeText'),annualGaugeSub:document.getElementById('annualGaugeSub'),paramYearCount:document.getElementById('paramYearCount'),paramDoneCount:document.getElementById('paramDoneCount'),paramSoonCount:document.getElementById('paramSoonCount'),paramDraftCount:document.getElementById('paramDraftCount')};
+const els={csvFile:document.getElementById('csvFile'),newDbBtn:document.getElementById('newDbBtn'),recordSelect:document.getElementById('recordSelect'),openConfirmBtn:document.getElementById('openConfirmBtn'),appendBtn:document.getElementById('appendBtn'),prefillBtn:document.getElementById('prefillBtn'),loadSelectedBtn:document.getElementById('loadSelectedBtn'),confirmAppendBtn:document.getElementById('confirmAppendBtn'),downloadBtn:document.getElementById('downloadBtn'),backBtn:document.getElementById('backBtn'),tableList:document.getElementById('tableList'),statusBox:document.getElementById('statusBox'),miniNext:document.getElementById('miniNext'),miniYearCount:document.getElementById('miniYearCount'),miniDbState:document.getElementById('miniDbState'),miniDbText:document.getElementById('miniDbText'),sumAll:document.getElementById('sumAll'),sumYear:document.getElementById('sumYear'),sumNext:document.getElementById('sumNext'),sumSoon:document.getElementById('sumSoon'),sumDone:document.getElementById('sumDone'),sumDraft:document.getElementById('sumDraft'),sumSubject:document.getElementById('sumSubject'),roadmapLabel:document.getElementById('roadmapLabel'),roadmapBar:document.getElementById('roadmapBar'),dK1:document.getElementById('dK1'),dK2:document.getElementById('dK2'),dHp:document.getElementById('dHp'),dK3:document.getElementById('dK3'),dRoomOpen:document.getElementById('dRoomOpen'),dDuration:document.getElementById('dDuration'),dDeadline1:document.getElementById('dDeadline1'),dDeadline2:document.getElementById('dDeadline2'),dDeadline3:document.getElementById('dDeadline3'),dDataDeadline:document.getElementById('dDataDeadline'),dDate2:document.getElementById('dDate2'),dSubject2:document.getElementById('dSubject2'),ckK1:document.getElementById('ckK1'),ckHp:document.getElementById('ckHp'),ckK2:document.getElementById('ckK2'),ckK3:document.getElementById('ckK3'),checkList:document.getElementById('checkList'),confirmCount:document.getElementById('confirmCount'),confirmWarn:document.getElementById('confirmWarn'),confirmState:document.getElementById('confirmState'),folderView:document.getElementById('folderView'),resultDone:document.getElementById('resultDone'),resultHold:document.getElementById('resultHold'),resultZip:document.getElementById('resultZip'),alertList:document.getElementById('alertList'),templateFiles:document.getElementById('templateFiles'),mergeRecordSelect:document.getElementById('mergeRecordSelect'),templateState:document.getElementById('templateState'),mergeAllBtn:document.getElementById('mergeAllBtn'),mergeStatusBox:document.getElementById('mergeStatusBox'),templateList:document.getElementById('templateList'),sumAllTop:document.getElementById('sumAllTop'),sumYearTop:document.getElementById('sumYearTop'),sumNextTop:document.getElementById('sumNextTop'),annualGauge:document.getElementById('annualGauge'),annualGaugeText:document.getElementById('annualGaugeText'),annualGaugeSub:document.getElementById('annualGaugeSub'),paramYearCount:document.getElementById('paramYearCount'),paramDoneCount:document.getElementById('paramDoneCount'),paramSoonCount:document.getElementById('paramSoonCount'),paramDraftCount:document.getElementById('paramDraftCount'),brushIntro1Btn:document.getElementById('brushIntro1Btn'),brushIntro2Btn:document.getElementById('brushIntro2Btn'),brushIntro3Btn:document.getElementById('brushIntro3Btn'),brushIntro1Status:document.getElementById('brushIntro1Status'),brushIntro2Status:document.getElementById('brushIntro2Status'),brushIntro3Status:document.getElementById('brushIntro3Status')};
 
 const fields={no:document.getElementById('fNo'),year:document.getElementById('fYear'),date:document.getElementById('fDate'),day:document.getElementById('fDay'),date2:document.getElementById('fDate2'),name:document.getElementById('fName'),title:document.getElementById('fTitle'),speaker:document.getElementById('fSpeaker'),start:document.getElementById('fStart'),end:document.getElementById('fEnd'),roomOpen:document.getElementById('fRoomOpen'),duration:document.getElementById('fDuration'),deadline1:document.getElementById('fDeadline1'),deadline2:document.getElementById('fDeadline2'),deadline3:document.getElementById('fDeadline3'),dataDeadline:document.getElementById('fDataDeadline'),cost:document.getElementById('fCost'),subject:document.getElementById('fSubject'),subject2:document.getElementById('fSubject2'),site:document.getElementById('fSite'),cohost:document.getElementById('fCohost'),cohost3:document.getElementById('fCohost3'),zoomId:document.getElementById('fZoomId'),passcode:document.getElementById('fPasscode'),zoomUrl:document.getElementById('fZoomUrl'),hpUrl:document.getElementById('fHpUrl'),purpose:document.getElementById('fPurpose'),intro1:document.getElementById('fIntro1'),intro2:document.getElementById('fIntro2'),intro3:document.getElementById('fIntro3')};
 
@@ -977,6 +1042,10 @@ els.downloadBtn.addEventListener('click',downloadCsv);
 els.backBtn.addEventListener('click',()=>setStatus('入力内容を調整できます。必要なら項目を修正してください。'));
 [fields.no,fields.date,fields.name,fields.start,fields.end,fields.title,fields.speaker,fields.cost,fields.subject,fields.site,fields.cohost,fields.cohost3,fields.zoomId,fields.passcode,fields.zoomUrl,fields.hpUrl,fields.purpose,fields.intro1,fields.intro2,fields.intro3].forEach(el=>el.addEventListener('input',recalcDraft));
 [els.ckK1,els.ckHp,els.ckK2,els.ckK3].forEach(el=>el.addEventListener('change',recalcDraft));
+
+els.brushIntro1Btn.addEventListener('click',()=>runBrushup('intro1'));
+els.brushIntro2Btn.addEventListener('click',()=>runBrushup('intro2'));
+els.brushIntro3Btn.addEventListener('click',()=>runBrushup('intro3'));
 
 function setMergeStatus(msg){els.mergeStatusBox.textContent=msg}
 function setMergeState(){const hasTemplates=selectedTemplates.length>0;const hasNo=!!String(els.mergeRecordSelect.value||'').trim();els.templateState.value=`${selectedTemplates.length}件`;els.mergeAllBtn.disabled=!(hasTemplates&&hasNo)}
@@ -1249,6 +1318,7 @@ function prefillFromLast(){
   fields.intro2.value=last[fullKeys.intro2]||'本研修会では、臨床研究を進めるうえで必要となる基本事項と実務上のポイントを共有します。';
   fields.intro3.value=last[fullKeys.intro3]||'本日の講師は、臨床研究支援に関する実務経験を有する専門家です。';
   resetScheduleChecks();
+  clearBrushStatuses();
   recalcDraft();
 }
 function handleSelectRecord(){
@@ -1289,6 +1359,7 @@ function loadSelectedIntoForm(){
   fields.intro2.value=selectedRow[fullKeys.intro2]||'';
   fields.intro3.value=selectedRow[fullKeys.intro3]||'';
   applyScheduleChecksFromRow(selectedRow);
+  clearBrushStatuses();
   recalcDraft();
   setStatus(`No.${selectedRow[fullKeys.no]} を入力欄へ反映しました。保存すると同じNoを上書きします。`);
 }
@@ -1558,7 +1629,6 @@ function renderStats(){
   const ratio=total?Math.round((done/total)*100):0;
   els.roadmapLabel.textContent=`${done} / ${total}`;
   els.roadmapBar.style.width=`${ratio}%`;
-
   updateAnnualGauge(done,total,yearCount,soon,draftCount);
 }
 function renderConfirm(warns){
@@ -1646,6 +1716,238 @@ function formatDeadline1(isoDate){
 function normTime(v){const m=String(v||'').match(/(\d{1,2}):(\d{2})/);return m?`${m[1].padStart(2,'0')}:${m[2]}`:''}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function safeName(s){return String(s).replace(/[\\/:*?"<>|\s]+/g,'-')}
+
+function buildBrushupPrompt(info){
+  const focus = info.focusAreas && info.focusAreas.length ? info.focusAreas.join('、') : '進行表導入_INTRO_1の整理';
+  return `あなたは臨床研究研修会の司会者です。
+以下の講師情報をもとに、研修会の司会進行テキストを作成してください。
+
+【出力形式】以下のテンプレートの「」内を講師情報から読み取って埋め、完成文を出力してください。
+文末に引用先を表示しない
+演題名の「」以外は「」は削除
+
+＜開始アナウンス＞
+定刻となりましたので、2026年度　静岡がんセンター臨床研究研修会「演題名」を開始いたします。
+本日は、お忙しい中、ご参加まことにありがとうございます。
+
+今回の研修会は、研究者を対象とした内容となっております。
+本講演では、「講師所属・ただし静岡がんセンター所属の場合は所属の記載を省略」「講師役職と氏名」（「講師氏名のふりがな」）先生より、「目的文の内容を自然な話し言葉に変換し、語尾が『についてご解説いただきます。』で終わるよう文章全体を一文に整える。です・ます調で100文字以内」
+なお、本日は最後に質疑応答の時間を設けており、講師にご質問のある方は「研修終了時刻から20分前の時刻をXX時XX分の形式で記載」までにQ&A機能でご質問をお願いいたします。
+
+＜講師紹介＞
+「静岡がんセンター所属の講師の場合はこのブロック全体を省略する」
+「静岡がんセンター以外の所属の場合のみ以下を出力する」
+本日の講師「講師の姓」先生のご略歴をご紹介いたします。
+「講師の姓」先生は、「略歴を以下のルールで300文字以内にまとめる。
+・学歴→職歴→現職→委員会活動→論文・著書の順で記載する
+・敬称は～されました・～務められ・～現在に至るに統一する
+・西暦と和暦が混在している場合は西暦に統一する
+・同一機関の連続した職歴はできるだけ1文にまとめる
+・論文は代表的なものを1〜2件のみ記載する」
+・講師紹介は、文章の流れを意識して、視聴者が聞き取りやすいように、適宜、接続詞を入れる
+それでは「講師の姓」先生、どうぞよろしくお願いいたします。
+
+【条件】
+講師が静岡がんセンター所属の場合：所属の記載を省略し、講師紹介ブロックを丸ごと省略する
+講師が静岡がんセンター以外の所属の場合：所属を記載し、講師紹介ブロックを出力する
+「今回の研修は」の後の対象の記載は、情報にある研究者、研究支援者、倫理審査委員会委員のどれか１つのみ記載、（薬剤師、看護師等）や（医師、歯科医師等）も記載しない
+固有名詞・年号・役職名・論文タイトルは正確に保持する
+研修終了時刻の20分前を計算してXX時XX分の形式で記載する
+西暦と和暦が混在している場合は西暦に統一する
+読み上げに適した自然な日本語にする
+テンプレートの構造を必ず守る
+出力は完成文のみとし、余分な説明は不要
+
+【講師情報】
+別添もしくは貼り付けられたもの
+
+【今回ブラッシュアップしたい重点】
+${focus}
+
+Markdown形式で出力してください。`;
+}
+
+function getBrushupInfo(targetKey){
+  const focusMap={
+    intro1:['進行表導入_INTRO_1の整理','開始アナウンスを自然な口調にする'],
+    intro2:['趣旨説明_INTRO_2の改善','目的文を自然な話し言葉で整える'],
+    intro3:['講師紹介_INTRO_3の改善','講師紹介を読み上げやすく整える']
+  };
+  return {
+    targetKey,
+    focusAreas:focusMap[targetKey]||[],
+    targetText:fields[targetKey]?.value||'',
+    title:fields.title.value||'',
+    speaker:fields.speaker.value||'',
+    name:fields.name.value||'',
+    purpose:fields.purpose.value||'',
+    subject:fields.subject.value||'',
+    subject2:fields.subject2.value||'',
+    site:fields.site.value||'',
+    date:fields.date.value||'',
+    date2:fields.date2.value||'',
+    start:fields.start.value||'',
+    end:fields.end.value||'',
+    roomOpen:fields.roomOpen.value||'',
+    duration:fields.duration.value||'',
+    deadline1:fields.deadline1.value||'',
+    deadline2:fields.deadline2.value||'',
+    deadline3:fields.deadline3.value||'',
+    dataDeadline:fields.dataDeadline.value||'',
+    year:fields.year.value||'',
+    cohost:fields.cohost.value||'',
+    cohost3:fields.cohost3.value||'',
+    zoomId:fields.zoomId.value||'',
+    zoomUrl:fields.zoomUrl.value||'',
+    hpUrl:fields.hpUrl.value||'',
+    passcode:fields.passcode.value||''
+  };
+}
+
+function getBrushElements(targetKey){
+  const map={
+    intro1:{btn:els.brushIntro1Btn,status:els.brushIntro1Status,field:fields.intro1,label:'進行表導入_INTRO_1'},
+    intro2:{btn:els.brushIntro2Btn,status:els.brushIntro2Status,field:fields.intro2,label:'趣旨説明_INTRO_2'},
+    intro3:{btn:els.brushIntro3Btn,status:els.brushIntro3Status,field:fields.intro3,label:'講師紹介_INTRO_3'}
+  };
+  return map[targetKey];
+}
+
+function setBrushUi(targetKey,{loading=false,message=''}={}){
+  const refs=getBrushElements(targetKey);
+  if(!refs)return;
+  refs.btn.disabled=loading;
+  refs.btn.classList.toggle('loading',loading);
+  refs.btn.textContent=loading?'AIブラッシュアップ中...':'AIでブラッシュアップ';
+  refs.status.textContent=message||'';
+}
+
+function clearBrushStatuses(){
+  ['intro1','intro2','intro3'].forEach(key=>setBrushUi(key,{loading:false,message:''}));
+}
+
+function normalizeBrushupText(value){
+  return String(value??'')
+    .replace(/^```markdown\s*/i,'')
+    .replace(/^```\s*/i,'')
+    .replace(/\s*```$/,'')
+    .trim();
+}
+
+async function callBrushupApi(payload){
+  const res=await fetch(GAS_URL,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  });
+  if(!res.ok){
+    throw new Error(`HTTP ${res.status}`);
+  }
+  const text=await res.text();
+  let data=null;
+  try{
+    data=JSON.parse(text);
+  }catch{
+    data={result:text};
+  }
+  return data;
+}
+
+function extractBrushupResult(data){
+  if(typeof data==='string') return data;
+  if(data==null) return '';
+  const candidates=[
+    data.result,
+    data.output,
+    data.text,
+    data.content,
+    data.message,
+    data.reply,
+    data.answer,
+    data.data?.result,
+    data.data?.output,
+    data.data?.text,
+    data.data?.content
+  ];
+  const hit=candidates.find(v=>typeof v==='string'&&v.trim());
+  return hit?hit.trim():'';
+}
+
+async function runBrushup(targetKey){
+  const refs=getBrushElements(targetKey);
+  if(!refs)return;
+
+  const currentText=String(refs.field.value||'').trim();
+  if(!currentHeaders.length){
+    setStatus('先にCSVを読み込むか、新規データベースを作成してください。');
+    return;
+  }
+  if(!currentText){
+    setBrushUi(targetKey,{loading:false,message:'先に文章を入力してください'});
+    setStatus(`${refs.label} が未入力です。`);
+    return;
+  }
+
+  try{
+    setBrushUi(targetKey,{loading:true,message:'AIに送信中...'});
+    setStatus(`${refs.label} をAIでブラッシュアップしています。`);
+
+    const info=getBrushupInfo(targetKey);
+    const payload={
+      prompt:buildBrushupPrompt(info),
+      targetKey,
+      targetLabel:refs.label,
+      currentText:info.targetText,
+      fields:{
+        title:info.title,
+        speaker:info.speaker,
+        name:info.name,
+        purpose:info.purpose,
+        subject:info.subject,
+        subject2:info.subject2,
+        site:info.site,
+        date:info.date,
+        date2:info.date2,
+        start:info.start,
+        end:info.end,
+        roomOpen:info.roomOpen,
+        duration:info.duration,
+        deadline1:info.deadline1,
+        deadline2:info.deadline2,
+        deadline3:info.deadline3,
+        dataDeadline:info.dataDeadline,
+        year:info.year,
+        cohost:info.cohost,
+        cohost3:info.cohost3,
+        zoomId:info.zoomId,
+        zoomUrl:info.zoomUrl,
+        hpUrl:info.hpUrl,
+        passcode:info.passcode
+      },
+      focusAreas:info.focusAreas
+    };
+
+    const data=await callBrushupApi(payload);
+    const improved=normalizeBrushupText(extractBrushupResult(data));
+
+    if(!improved){
+      throw new Error('AIの応答本文を取得できませんでした');
+    }
+
+    refs.field.value=improved;
+    refs.field.dispatchEvent(new Event('input',{bubbles:true}));
+    setBrushUi(targetKey,{loading:false,message:'ブラッシュアップ完了'});
+    setStatus(`${refs.label} をAIで更新しました。`);
+  }catch(err){
+    console.error(err);
+    setBrushUi(targetKey,{loading:false,message:'失敗しました'});
+    setStatus(`${refs.label} のAIブラッシュアップに失敗しました: ${err?.message||'不明なエラー'}`);
+  }
+}
+
+function doBrushup() {
+  return runAI();
+}
 
 recalcDraft();
 renderTemplateList();
