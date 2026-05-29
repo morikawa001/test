@@ -738,6 +738,12 @@ input[readonly],textarea[readonly]{
         <div class="field"><label>院内〆切_DEADLINE_2</label><input id="fDeadline2" readonly></div>
         <div class="field"><label>資料DL_DEADLINE_3</label><input id="fDeadline3" readonly></div>
         <div class="field"><label>講義資料締切_DATA_deadline</label><input id="fDataDeadline" readonly></div>
+
+        <div class="field"><label>講義開始_START_TIME</label><input id="fLectureStart" type="time"></div>
+        <div class="field"><label>質疑応答締切_QA_DADLINE</label><input id="fQaDeadline"></div>
+        <div class="field"><label>質疑応答_QA_TIME</label><input id="fQaTime" type="time"></div>
+        <div class="field"><label>事前打合せ開始時間_PRE_MEETING</label><input id="fPreMeeting" type="time"></div>
+
         <div class="field"><label>謝金_COST</label><input id="fCost" value=""></div>
         <div class="field"><label>対象_SUBJECT_1</label>
           <select id="fSubject">
@@ -1012,6 +1018,10 @@ const DEFAULT_HEADERS=[
   '進行表研修会趣旨説明_INTRO_2',
   '進行表講師紹介_INTRO_3',
   '講義資料提供の締切_DATA_deadline',
+  '講義開始_START_TIME',
+  '質疑応答締切_QA_DADLINE',
+  '質疑応答_QA_TIME',
+  '事前打合せ開始時間_PRE_MEETING',
   '起案1チェック_CHECK_K1',
   'HPチェック_CHECK_HP',
   '起案2チェック_CHECK_K2',
@@ -1055,6 +1065,10 @@ const fullKeys={
   intro2:'進行表研修会趣旨説明_INTRO_2',
   intro3:'進行表講師紹介_INTRO_3',
   dataDeadline:'講義資料提供の締切_DATA_deadline',
+  lectureStart:'講義開始_START_TIME',
+  qaDeadline:'質疑応答締切_QA_DADLINE',
+  qaTime:'質疑応答_QA_TIME',
+  preMeeting:'事前打合せ開始時間_PRE_MEETING',
   checkK1:'起案1チェック_CHECK_K1',
   checkHp:'HPチェック_CHECK_HP',
   checkK2:'起案2チェック_CHECK_K2',
@@ -1147,6 +1161,10 @@ const fields={
   deadline2:document.getElementById('fDeadline2'),
   deadline3:document.getElementById('fDeadline3'),
   dataDeadline:document.getElementById('fDataDeadline'),
+  lectureStart:document.getElementById('fLectureStart'),
+  qaDeadline:document.getElementById('fQaDeadline'),
+  qaTime:document.getElementById('fQaTime'),
+  preMeeting:document.getElementById('fPreMeeting'),
   cost:document.getElementById('fCost'),
   subject:document.getElementById('fSubject'),
   subject2:document.getElementById('fSubject2'),
@@ -1193,7 +1211,8 @@ fields.subject.addEventListener('change',recalcDraft);
 [
   fields.no,fields.date,fields.name,fields.start,fields.end,fields.title,fields.speaker,fields.cost,
   fields.zoomId,fields.passcode,fields.zoomUrl,fields.hpUrl,
-  fields.purpose,fields.intro1,fields.intro2,fields.intro3
+  fields.purpose,fields.intro1,fields.intro2,fields.intro3,
+  fields.lectureStart,fields.qaDeadline,fields.qaTime,fields.preMeeting
 ].forEach(el=>el.addEventListener('input',recalcDraft));
 [fields.site].forEach(el=>el.addEventListener('change',recalcDraft));
 [els.ckK1,els.ckHp,els.ckK2,els.ckK3].forEach(el=>el.addEventListener('change',recalcDraft));
@@ -1291,7 +1310,11 @@ function buildTemplateData(row){
     WEBINER_ID: row?.[fullKeys.zoomId] ?? '',
     webiner_id: row?.[fullKeys.zoomId] ?? '',
     Zoom_ID: row?.[fullKeys.zoomId] ?? '',
-    ZOOM_ID: row?.[fullKeys.zoomId] ?? ''
+    ZOOM_ID: row?.[fullKeys.zoomId] ?? '',
+    START_TIME: row?.[fullKeys.lectureStart] ?? '',
+    QA_DADLINE: row?.[fullKeys.qaDeadline] ?? '',
+    QA_TIME: row?.[fullKeys.qaTime] ?? '',
+    PRE_MEETING: row?.[fullKeys.preMeeting] ?? ''
   };
 
   Object.entries(aliasEntries).forEach(([k,v])=>{
@@ -1487,6 +1510,7 @@ function ensureAdditionalHeaders(){
   [
     fullKeys.deadline3,fullKeys.cost,fullKeys.dataDeadline,fullKeys.date2,fullKeys.subject2,
     fullKeys.name,fullKeys.cohost3,fullKeys.head1,fullKeys.closing1,
+    fullKeys.lectureStart,fullKeys.qaDeadline,fullKeys.qaTime,fullKeys.preMeeting,
     fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK2,fullKeys.checkK3
   ].forEach(ensureHeader);
 }
@@ -1539,6 +1563,10 @@ function prefillFromLast(){
   fields.name.value=last[fullKeys.name]||'';
   fields.start.value=normTime(last[fullKeys.start])||'17:30';
   fields.end.value=normTime(last[fullKeys.end])||'19:00';
+  fields.lectureStart.value=normTime(last[fullKeys.lectureStart])||'';
+  fields.qaDeadline.value=last[fullKeys.qaDeadline]||'';
+  fields.qaTime.value=normTime(last[fullKeys.qaTime])||'';
+  fields.preMeeting.value=normTime(last[fullKeys.preMeeting])||'';
   fields.subject.value=last[fullKeys.subject]||'研究者';
   fields.site.value=last[fullKeys.site]||'Web会議室';
   const cohostValue=String(last[fullKeys.cohost]||'').trim()===COHOST_OPTION_TEAM?COHOST_OPTION_TEAM:COHOST_OPTION_NONE;
@@ -1582,6 +1610,10 @@ function loadSelectedIntoForm(){
   fields.deadline2.value=normTime(selectedRow[fullKeys.deadline2])||selectedRow[fullKeys.deadline2]||'';
   fields.deadline3.value=selectedRow[fullKeys.deadline3]||'';
   fields.dataDeadline.value=selectedRow[fullKeys.dataDeadline]||'';
+  fields.lectureStart.value=normTime(selectedRow[fullKeys.lectureStart])||selectedRow[fullKeys.lectureStart]||'';
+  fields.qaDeadline.value=selectedRow[fullKeys.qaDeadline]||'';
+  fields.qaTime.value=normTime(selectedRow[fullKeys.qaTime])||selectedRow[fullKeys.qaTime]||'';
+  fields.preMeeting.value=normTime(selectedRow[fullKeys.preMeeting])||selectedRow[fullKeys.preMeeting]||'';
   fields.cost.value=selectedRow[fullKeys.cost]||'';
   fields.subject.value=selectedRow[fullKeys.subject]||'研究者';
   fields.subject2.value=selectedRow[fullKeys.subject2]||'';
@@ -1619,29 +1651,33 @@ function recalcDraft(){
 }
 
 function calcDerivedFields(){
-  if(fields.start.value && fields.end.value){
-    fields.roomOpen.value=shiftTime(fields.start.value,-15);
-    const mins=diffMin(fields.start.value,fields.end.value);
-    fields.duration.value=mins>0?`${mins}分`:'';
-  }else{
-    fields.roomOpen.value='';
-    fields.duration.value='';
-  }
-  if(fields.date.value){
-    fields.date2.value=formatMonthDayWeek(new Date(fields.date.value+'T00:00:00'));
-    fields.deadline1.value=formatDeadline1(fields.date.value);
-  }else{
-    fields.date2.value='';
-    fields.deadline1.value='';
-  }
+  const start=fields.start.value;
+  const end=fields.end.value;
+  fields.roomOpen.value=start?shiftTime(start,-15):'';
+  fields.duration.value=(start&&end)?`${diffMin(start,end)}分`:'';
+  fields.date2.value=fields.date.value?formatMonthDayWeek(new Date(fields.date.value+'T00:00:00')):'';
+  fields.deadline1.value=fields.date.value?formatDeadline1(fields.date.value):'';
   fields.deadline2.value='17:00';
-  const base=fields.date.value?new Date(fields.date.value+'T00:00:00'):null;
-  const auto=calcAutoDates(base);
-  fields.deadline3.value=fmtMonthDay(auto.deadline3);
-  fields.dataDeadline.value=fmtMonthDay(auto.dataDeadline);
-  fields.subject2.value=fields.subject.value;
+  fields.deadline3.value=fields.date.value?fmtMonthDay(addDays(new Date(fields.date.value+'T00:00:00'),-2)):'';
+  fields.dataDeadline.value=fields.date.value?fmtMonthDay(addDays(new Date(fields.date.value+'T00:00:00'),-14)):'';
+  fields.subject2.value=getSubject2Text(fields.subject.value);
 }
-
+function getSubject2Text(v){
+  const s=String(v||'').trim();
+  if(s==='研究者') return '研究者';
+  if(s==='研究支援者') return '研究支援者';
+  if(s==='倫理審査委員会委員') return '倫理審査委員会委員';
+  return '';
+}
+function calcAutoDates(base){
+  if(!base) return {k1:null,k2:null,k3:null,hp:null};
+  return {
+    k1:addDays(base,-35),
+    hp:addDays(base,-28),
+    k2:addDays(base,-7),
+    k3:addDays(base,1)
+  };
+}
 function syncComputedScheduleCards(){
   els.dRoomOpen.textContent=fields.roomOpen.value||'-';
   els.dDuration.textContent=fields.duration.value||'-';
@@ -1652,58 +1688,23 @@ function syncComputedScheduleCards(){
   els.dDate2.textContent=fields.date2.value||'-';
   els.dSubject2.textContent=fields.subject2.value||'-';
 }
-
-function previousBusinessDay(d){
-  const x=new Date(d);
-  do{x.setDate(x.getDate()-1)}while([0,6].includes(x.getDay()));
-  return x;
-}
-function nextBusinessDay(d){
-  const x=new Date(d);
-  do{x.setDate(x.getDate()+1)}while([0,6].includes(x.getDay()));
-  return x;
-}
-function calcAutoDates(base){
-  if(!base) return {k1:null,k2:null,k3:null,hp:null,deadline3:null,dataDeadline:null};
-  const k1=addDays(base,-35);
-  const hp=addDays(base,-28);
-  const k2=addDays(base,-7);
-  const k3=nextBusinessDay(base);
-  const deadline3=addDays(base,-3);
-  const dataDeadline=previousBusinessDay(addDays(base,-8));
-  return {k1,hp,k2,k3,deadline3,dataDeadline};
-}
-
 function validateDraft(){
   const warns=[];
   if(!String(fields.no.value||'').trim()) warns.push('No が未入力です。');
-  if(!/^\d+$/.test(String(fields.no.value||'').trim())) warns.push('No は数字のみで入力してください。');
-  if(!fields.date.value) warns.push('開催日_DATE_1 が未入力です。');
-  if(!fields.title.value.trim()) warns.push('研修会タイトル_TITLE が未入力です。');
-  if(!fields.name.value.trim()) warns.push('名前_NAME が未入力です。');
-  if(!fields.speaker.value.trim()) warns.push('講師名_SPEAKER が未入力です。');
-  if(!(fields.start.value&&fields.end.value)) warns.push('開始_START_1 / 終了_END_1 を入力してください。');
+  if(!String(fields.date.value||'').trim()) warns.push('開催日_DATE_1 が未入力です。');
+  if(!String(fields.title.value||'').trim()) warns.push('テーマ(標題)_TITLE が未入力です。');
+  if(!String(fields.speaker.value||'').trim()) warns.push('担当講師_SPEAKER が未入力です。');
   return warns;
-}
-function stageDraft(){
-  const warns=validateDraft();
-  stagedRow=buildRow();
-  renderConfirm(warns);
-  renderResult();
-  if(warns.length){
-    setStatus(`確認画面に注意点を表示しました。${warns.join(' / ')}`);
-  }else{
-    setStatus('保存前確認を更新しました。この内容で保存できます。');
-  }
 }
 function buildRow(){
   ensureAdditionalHeaders();
   const row={};
   currentHeaders.forEach(h=>row[h]='');
-  const base=fields.date.value?new Date(fields.date.value+'T00:00:00'):null;
+
+  const base=fields.date.value?new Date(`${fields.date.value}T00:00:00`):null;
   const auto=calcAutoDates(base);
 
-  row[fullKeys.no]=String(fields.no.value||'').trim();
+  row[fullKeys.no]=String(fields.no.value).trim();
   row[fullKeys.year]=fields.year.value;
   row[fullKeys.date]=formatDate1Short(fields.date.value);
   row[fullKeys.day]=fields.day.value;
@@ -1721,15 +1722,15 @@ function buildRow(){
   row[fullKeys.subject]=fields.subject.value;
   row[fullKeys.subject2]=fields.subject2.value;
   row[fullKeys.site]=fields.site.value;
-  row[fullKeys.cohost]=fields.cohost.value||COHOST_OPTION_NONE;
-  row[fullKeys.cohost3]=String(fields.cohost.value||'').trim()===COHOST_OPTION_TEAM?COHOST3_TEXT_TEAM:'';
+  row[fullKeys.cohost]=fields.cohost.value || COHOST_OPTION_NONE;
+  row[fullKeys.cohost3]=String(fields.cohost.value).trim()===COHOST_OPTION_TEAM ? COHOST3_TEXT_TEAM : '';
   row[fullKeys.head1]=getHead1ValueByCohost(fields.cohost.value);
   row[fullKeys.closing1]=getClosingTextBySubject(fields.subject.value);
   row[fullKeys.k1]=fmtMonthDay(auto.k1);
   row[fullKeys.k2]=fmtMonthDay(auto.k2);
   row[fullKeys.k3]=fmtMonthDay(auto.k3);
   row[fullKeys.hp]=fmtMonthDay(auto.hp);
-  row[fullKeys.cost]=String(fields.cost.value||'').trim();
+  row[fullKeys.cost]=String(fields.cost.value).trim();
   row[fullKeys.purpose]=fields.purpose.value;
   row[fullKeys.zoomId]=fields.zoomId.value;
   row[fullKeys.zoomUrl]=fields.zoomUrl.value;
@@ -1739,47 +1740,51 @@ function buildRow(){
   row[fullKeys.intro2]=fields.intro2.value;
   row[fullKeys.intro3]=fields.intro3.value;
   row[fullKeys.dataDeadline]=fields.dataDeadline.value;
+  row[fullKeys.lectureStart]=fields.lectureStart.value;
+  row[fullKeys.qaDeadline]=fields.qaDeadline.value;
+  row[fullKeys.qaTime]=fields.qaTime.value;
+  row[fullKeys.preMeeting]=fields.preMeeting.value;
   row[fullKeys.checkK1]=boolToCsv(els.ckK1.checked);
   row[fullKeys.checkHp]=boolToCsv(els.ckHp.checked);
   row[fullKeys.checkK2]=boolToCsv(els.ckK2.checked);
   row[fullKeys.checkK3]=boolToCsv(els.ckK3.checked);
+
   return row;
 }
-
-function commitDraft(){
+function stageDraft(){
   if(!currentHeaders.length){setStatus('先にCSVを読み込むか、新規データベースを作成してください。');return}
   const warns=validateDraft();
-  if(warns.length){
-    renderConfirm(warns);
-    setStatus(`保存前に修正が必要です: ${warns.join(' / ')}`);
-    return;
-  }
   stagedRow=buildRow();
-  const no=String(stagedRow[fullKeys.no]||'').trim();
-  const rawIndex=getRawRowIndexByNo(no);
-  if(rawIndex>=0){rawRows[rawIndex]=normalizeRowShape(stagedRow);lastSaveMode='update'}
-  else{rawRows=compactRawRows(rawRows);rawRows.push(normalizeRowShape(stagedRow));lastSaveMode='insert'}
-  rawRows=compactRawRows(rawRows);
-  dataRows=buildDisplayRowsFromRaw(rawRows);
-  selectedRow=dataRows.find(r=>String(r[fullKeys.no]||'').trim()===no)||null;
-  renderRecordOptions();
-  renderTable();
-  setNextNo();
-  renderStats();
-  renderAlerts();
-  renderConfirm([]);
-  renderResult(true);
-  els.recordSelect.disabled=!dataRows.length;
-  els.loadSelectedBtn.disabled=!dataRows.length;
-  els.prefillBtn.disabled=!dataRows.length;
-  els.downloadBtn.disabled=false;
-  if(lastSaveMode==='insert') fields.no.value=String(dataRows.reduce((m,r)=>Math.max(m,Number(r[fullKeys.no]||0)),0)+1);
-  recalcDraft();
-  setStatus(lastSaveMode==='update'?`No.${no} の元行を上書き保存しました。新しい行は追加していません。`:`No.${no} を新規追加しました。`);
+  renderConfirm(warns);
+  renderResult();
+  setStatus(warns.length?'入力内容に確認事項があります。':'保存内容を確認できます。');
 }
-
 function getRawRowIndexByNo(no){
   return rawRows.findIndex(r=>String(r?.[fullKeys.no]||'').trim()===String(no||'').trim());
+}
+function commitDraft(){
+  if(!currentHeaders.length){setStatus('先にCSVを読み込むか、新規データベースを作成してください。');return}
+  const row=stagedRow||buildRow();
+  const idx=getRawRowIndexByNo(row[fullKeys.no]);
+  if(idx>=0){
+    rawRows[idx]=normalizeRowShape({...rawRows[idx],...row});
+    lastSaveMode='update';
+  }else{
+    rawRows.push(normalizeRowShape(row));
+    lastSaveMode='insert';
+  }
+  rawRows=compactRawRows(rawRows);
+  dataRows=buildDisplayRowsFromRaw(rawRows);
+  renderRecordOptions();
+  renderTable();
+  renderStats();
+  renderAlerts();
+  renderResult(true);
+  setNextNo();
+  els.prefillBtn.disabled=dataRows.length===0;
+  els.loadSelectedBtn.disabled=dataRows.length===0;
+  els.recordSelect.disabled=dataRows.length===0;
+  setStatus(lastSaveMode==='update'?'既存Noを更新しました。':'新規Noを追加しました。');
 }
 function renderRecordOptions(){
   const options=['<option value="">Noを選択して表示</option>'].concat(
@@ -1913,7 +1918,6 @@ function renderStats(){
   els.roadmapBar.style.width=`${ratio}%`;
   updateAnnualGauge(done,total,yearCount,soon,draftCount);
 }
-
 function renderConfirm(warns){
   if(!currentHeaders.length){
     els.confirmCount.textContent='0件';
@@ -1945,6 +1949,10 @@ function renderConfirm(warns){
       <div><span class="status s2">確認済み</span></div>
     </div>
     <div class="list-row">
+      <div><strong>追加時間項目</strong><p>START_TIME ${esc(row[fullKeys.lectureStart]||'-')} / QA_DADLINE ${esc(row[fullKeys.qaDeadline]||'-')} / QA_TIME ${esc(row[fullKeys.qaTime]||'-')} / PRE_MEETING ${esc(row[fullKeys.preMeeting]||'-')}</p></div>
+      <div><span class="status s2">確認済み</span></div>
+    </div>
+    <div class="list-row">
       <div><strong>チェック状況</strong><p>${esc(checks)}</p></div>
       <div><span class="status s2">確認済み</span></div>
     </div>
@@ -1973,32 +1981,19 @@ function renderResult(done=false){
   if(inlineBtn) inlineBtn.addEventListener('click',downloadCsv);
 }
 function downloadCsv(){
-  if(!currentHeaders.length){
-    setStatus('先にCSVを読み込むか、新規データベースを作成してください。');
-    return;
-  }
-
-  rawRows = compactRawRows(rawRows);
-
-  const csv = Papa.unparse({
-    fields: currentHeaders,
-    data: rawRows.map(row => currentHeaders.map(h => row[h] ?? ''))
+  if(!currentHeaders.length){setStatus('先にCSVを読み込むか、新規データベースを作成してください。');return}
+  rawRows=compactRawRows(rawRows);
+  const csv=Papa.unparse({
+    fields:currentHeaders,
+    data:rawRows.map(row=>currentHeaders.map(h=>row[h]??''))
   });
-
-  const blob = new Blob(
-    ['\uFEFF' + csv],
-    { type: 'text/csv;charset=utf-8;' }
-  );
-
-  const a = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  a.href = url;
-  a.download = fields.date.value
-    ? `clinical-master_${safeName(fields.title.value || 'updated')}.csv`
-    : 'clinical-master_updated.csv';
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');
+  const url=URL.createObjectURL(blob);
+  a.href=url;
+  a.download=fields.date.value?`clinical-master_${safeName(fields.title.value||'updated')}.csv`:'clinical-master_updated.csv';
   a.click();
-
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  URL.revokeObjectURL(url);
 }
 function setStatus(msg){els.statusBox.textContent=msg}
 
