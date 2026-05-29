@@ -313,24 +313,28 @@ input[readonly],textarea[readonly]{
 .btn:disabled{opacity:.42;cursor:not-allowed}
 
 .file-pick{display:grid;gap:6px}
-.file-pick input[type=file]{padding:9px 11px}
-.file-pick input[type=file]::file-selector-button{
-  margin-right:12px;
-  border:none;
-  border-radius:8px;
-  padding:8px 12px;
-  background:var(--button-bg);
-  color:var(--button-text);
-  font-weight:800;
-  cursor:pointer;
+
+/* file input 専用 */
+input[type="file"]{
+  appearance:auto;
+  -webkit-appearance:auto;
+  width:100%;
+  min-height:48px;
+  padding:8px 10px;
+  line-height:1.4;
+  color:var(--text-strong);
+  background:var(--input-bg);
+  border:1px solid var(--line2);
+  border-radius:12px;
+  overflow:hidden;
 }
 
-#templateFiles::file-selector-button{
-  min-height:46px;
-  padding:0 16px;
+input[type="file"]::file-selector-button{
   margin-right:12px;
   border:1px solid var(--line2);
   border-radius:10px;
+  min-height:40px;
+  padding:0 14px;
   background:var(--button-bg);
   color:var(--button-text);
   font-weight:800;
@@ -338,8 +342,31 @@ input[readonly],textarea[readonly]{
   cursor:pointer;
   transition:background 150ms ease,color 150ms ease,border-color 150ms ease,box-shadow 150ms ease;
 }
-#templateFiles:hover::file-selector-button{
+
+input[type="file"]:hover::file-selector-button{
   background:var(--button-hover-bg);
+}
+
+input[type="file"]::-webkit-file-upload-button{
+  margin-right:12px;
+  border:1px solid var(--line2);
+  border-radius:10px;
+  min-height:40px;
+  padding:0 14px;
+  background:var(--button-bg);
+  color:var(--button-text);
+  font-weight:800;
+  letter-spacing:.03em;
+  cursor:pointer;
+}
+
+/* ここが重要：templateFiles だけ通常 input の強い見た目にせず、
+   ブラウザ標準のファイル名表示領域を生かす */
+#templateFiles,
+#csvFile{
+  display:block;
+  white-space:nowrap;
+  text-overflow:ellipsis;
 }
 
 .action-grid{
@@ -938,7 +965,7 @@ input[readonly],textarea[readonly]{
     </div>
     <div class="master-grid">
       <div class="field full">
-        <label>テンプレートファイル</label>
+        <label for="templateFiles">テンプレートファイル</label>
         <input id="templateFiles" type="file" multiple accept=".docx,.pptx,.xlsx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       </div>
       <div class="field">
@@ -1979,8 +2006,7 @@ function downloadCsv(){
     fields:currentHeaders,
     data:rawRows.map(row=>currentHeaders.map(h=>row[h]??''))
   });
-  const bom='\uFEFF';
-  const blob=new Blob([bom,csv],{type:'text/csv;charset=utf-8;'});
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const a=document.createElement('a');
   const url=URL.createObjectURL(blob);
   a.href=url;
