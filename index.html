@@ -975,6 +975,7 @@ const DEFAULT_HEADERS=[
   '共催_COHOST_1',
   '共催3(選択）_COHOST_3',
   'オリエンテーションスライドヘッダー_HEAD_1',
+  '進行表クロージング（選択）_CLOSING_1',
   '起案1開催DATE_KIAN_1',
   '起案2資料_DATE_KIAN_2',
   '起案3受講証修了証_DATE_KIAN_3',
@@ -1017,6 +1018,7 @@ const fullKeys={
   cohost:'共催_COHOST_1',
   cohost3:'共催3(選択）_COHOST_3',
   head1:'オリエンテーションスライドヘッダー_HEAD_1',
+  closing1:'進行表クロージング（選択）_CLOSING_1',
   k1:'起案1開催DATE_KIAN_1',
   k2:'起案2資料_DATE_KIAN_2',
   k3:'起案3受講証修了証_DATE_KIAN_3',
@@ -1149,6 +1151,10 @@ const COHOST_OPTION_NONE='なし';
 const COHOST_OPTION_TEAM='企画人材班';
 const COHOST3_TEXT_TEAM='臨床腫瘍学コースとの共催';
 
+const CLOSING_TEXT_RESEARCHER='司会:（研究者） 本日の研修の受講証を希望する方は、終了後のアンケートよりお申込みください。 なお、受講証につきましては、研修会開始から質疑応答終了までの時間のうち3/4以上を聴講した方で、 希望される方に発行いたします。 また、本研修会の修了証書の発行につきまして、修了証書をご希望の方は、 今回を含め、研究者対象の研修会を3回以上受講した方のみ、お申込みいただけます。 対象の研修会を3回受講された方で、修了証の発行をご希望の方は、アンケートよりお申し込みください。 ＜スライド切り替え＞ 最後になりますが、受講者の皆様には、アンケートへのご回答、ご協力をお願いいたします。 ウェビナー退室後にアンケートが表示されますので、 ご回答後に送信ボタンを押して提出してください。 本日は、2026年度_静岡がんセンター臨床研究研修会にご参加いただき、どうもありがとうございました。 本ウェビナーはまもなく切断いたします。';
+const CLOSING_TEXT_SUPPORT='司会:（支援者） 本日の研修の受講証を希望する方は、終了後のアンケートよりお申込みください。 なお、受講証につきましては、研修会開始から質疑応答終了までの時間のうち3/4以上を聴講した方で、 希望される方に発行いたします。 また、本研修会の修了証書の発行につきまして、修了証書をご希望の方は、 今回を含め、研究支援者対象の研修会を3回以上受講した方のみ、お申込みいただけます。 対象の研修会を3回受講された方で、修了証の発行をご希望の方は、アンケートよりお申し込みください。 ＜スライド切り替え＞ 最後になりますが、受講者の皆様には、アンケートへのご回答、ご協力をお願いいたします。 ウェビナー退室後にアンケートが表示されますので、 ご回答後に送信ボタンを押して提出してください。 本日は、2026年度_静岡がんセンター臨床研究研修会にご参加いただき、どうもありがとうございました。 本ウェビナーはまもなく切断いたします。';
+const CLOSING_TEXT_COMMITTEE='司会:（委員会） 本日の研修の受講証を希望する方は、終了後のアンケートよりお申込みください。 なお、受講証につきましては、研修会開始から質疑応答終了までの時間のうち3/4以上を聴講した方で、 希望される方に発行いたします。 ＜スライド切り替え＞ 最後になりますが、受講者の皆様には、アンケートへのご回答、ご協力をお願いいたします。 ウェビナー退室後にアンケートが表示されますので、 ご回答後に送信ボタンを押して提出してください。 本日は、2026年度_静岡がんセンター臨床研究研修会にご参加いただき、どうもありがとうございました。 本ウェビナーはまもなく切断いたします。';
+
 els.csvFile.addEventListener('change',loadCsv);
 els.templateFiles.addEventListener('change',handleTemplateFiles);
 els.mergeRecordSelect.addEventListener('change',()=>setMergeState());
@@ -1163,16 +1169,24 @@ els.confirmAppendBtn.addEventListener('click',commitDraft);
 els.downloadBtn.addEventListener('click',downloadCsv);
 els.backBtn.addEventListener('click',()=>setStatus('入力内容を調整できます。必要なら項目を修正してください。'));
 fields.cohost.addEventListener('change',()=>{syncCohostFields();recalcDraft();});
+fields.subject.addEventListener('change',recalcDraft);
 [
   fields.no,fields.date,fields.name,fields.start,fields.end,fields.title,fields.speaker,fields.cost,
-  fields.subject,fields.site,fields.cohost3,fields.zoomId,fields.passcode,fields.zoomUrl,fields.hpUrl,
+  fields.zoomId,fields.passcode,fields.zoomUrl,fields.hpUrl,
   fields.purpose,fields.intro1,fields.intro2,fields.intro3
 ].forEach(el=>el.addEventListener('input',recalcDraft));
-[fields.subject,fields.site].forEach(el=>el.addEventListener('change',recalcDraft));
+[fields.site].forEach(el=>el.addEventListener('change',recalcDraft));
 [els.ckK1,els.ckHp,els.ckK2,els.ckK3].forEach(el=>el.addEventListener('change',recalcDraft));
 
 function getHead1ValueByCohost(cohostValue){
   return String(cohostValue||'').trim()===COHOST_OPTION_TEAM ? HEAD_TEXT_COHOST : HEAD_TEXT_DEFAULT;
+}
+function getClosingTextBySubject(subjectValue){
+  const v=String(subjectValue||'').trim();
+  if(v==='研究者') return CLOSING_TEXT_RESEARCHER;
+  if(v==='研究支援者') return CLOSING_TEXT_SUPPORT;
+  if(v==='倫理審査委員会委員') return CLOSING_TEXT_COMMITTEE;
+  return '';
 }
 function syncCohostFields(){
   const isTeam=String(fields.cohost.value||'').trim()===COHOST_OPTION_TEAM;
@@ -1214,6 +1228,7 @@ function buildTemplateData(row){
     COHOST_2: row?.[fullKeys.site] ?? '',
     COHOST_3: row?.[fullKeys.cohost3] ?? '',
     HEAD_1: row?.[fullKeys.head1] ?? '',
+    CLOSING_1: row?.[fullKeys.closing1] ?? '',
     NO: row?.[fullKeys.no] ?? '',
     PASSCODE: row?.[fullKeys.passcode] ?? '',
     zoom_url: row?.[fullKeys.zoomUrl] ?? '',
@@ -1253,6 +1268,9 @@ function buildTemplateData(row){
 
   map[fullKeys.head1] = String(row?.[fullKeys.head1] ?? '');
   map['オリエンテーションスライドヘッダー_HEAD_1'] = String(row?.[fullKeys.head1] ?? '');
+
+  map[fullKeys.closing1] = String(row?.[fullKeys.closing1] ?? '');
+  map['進行表クロージング（選択）_CLOSING_1'] = String(row?.[fullKeys.closing1] ?? '');
 
   return map;
 }
@@ -1406,8 +1424,8 @@ function ensureAdditionalHeaders(){
   ensureCheckHeaders();
   [
     fullKeys.deadline3,fullKeys.cost,fullKeys.dataDeadline,fullKeys.date2,fullKeys.subject2,
-    fullKeys.name,fullKeys.cohost3,fullKeys.head1,fullKeys.checkK1,fullKeys.checkHp,
-    fullKeys.checkK2,fullKeys.checkK3
+    fullKeys.name,fullKeys.cohost3,fullKeys.head1,fullKeys.closing1,
+    fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK2,fullKeys.checkK3
   ].forEach(ensureHeader);
 }
 function normalizeRowShape(row){const out={};currentHeaders.forEach(h=>out[h]=row?.[h]??'');return out}
@@ -1622,6 +1640,7 @@ function buildRow(){
   row[fullKeys.cohost]=fields.cohost.value||COHOST_OPTION_NONE;
   row[fullKeys.cohost3]=String(fields.cohost.value||'').trim()===COHOST_OPTION_TEAM?COHOST3_TEXT_TEAM:'';
   row[fullKeys.head1]=getHead1ValueByCohost(fields.cohost.value);
+  row[fullKeys.closing1]=getClosingTextBySubject(fields.subject.value);
   row[fullKeys.k1]=fmtMonthDay(auto.k1);
   row[fullKeys.k2]=fmtMonthDay(auto.k2);
   row[fullKeys.k3]=fmtMonthDay(auto.k3);
