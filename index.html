@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>臨床研究研修会 管制ダッシュボード / OSHII GREEN SHELL UI</title>
+<title>臨床研究研修会 管制ダッシュボード / dual-theme control ui</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
@@ -32,70 +32,104 @@
   --glow:0 0 0 1px rgba(91,255,156,.08),0 0 24px rgba(53,255,134,.06);
   --radius:18px;
   --radius-sm:12px;
+  --page-grid-line:rgba(91,255,156,.03);
+  --page-glow-a:rgba(53,255,134,.06);
+  --page-glow-b:rgba(116,233,214,.035);
+  --hero-title-shadow:0 0 12px rgba(91,255,156,.08);
+  --input-bg:rgba(2,8,6,.88);
+  --readonly-bg:rgba(10,20,16,.95);
+  --button-bg:rgba(6,14,11,.95);
+  --button-primary-bg:rgba(8,26,16,.98);
+  --progress-grad:linear-gradient(90deg,var(--green2),var(--green),var(--cyan));
+  --ring-track:rgba(91,255,156,.10);
+  --ring-dash:rgba(116,233,214,.10);
+  --ring-dots:rgba(91,255,156,.14);
+  --core-bg:rgba(4,12,9,.94);
+  --scanline-opacity:.07;
 }
+
 [data-theme="light"]{
-  --bg:#eefcf4;
-  --bg2:#e4f8ec;
-  --panel:#f7fff9;
-  --panel2:#edf9f1;
-  --panel3:#def2e5;
-  --line:#9cc9b1;
-  --line2:#74b08e;
-  --line3:#4f946e;
-  --text:#113020;
-  --text-strong:#0b2518;
-  --muted:#35684c;
-  --faint:#648b75;
-  --green:#118f46;
-  --green2:#0aa03f;
-  --green3:#0e7238;
-  --cyan:#147f73;
-  --warn:#8c7500;
-  --danger:#a84a67;
-  --success:#0a8b58;
-  --shadow:0 12px 28px rgba(10,40,25,.08);
-  --glow:0 0 0 1px rgba(17,143,70,.05),0 0 16px rgba(17,143,70,.05);
+  --bg:#ffffff;
+  --bg2:#f7f6f3;
+  --panel:#ffffff;
+  --panel2:#fbfaf8;
+  --panel3:#f3f2ef;
+  --line:#e8e5df;
+  --line2:#d9d5ce;
+  --line3:#c9c4bc;
+  --text:#37352f;
+  --text-strong:#2f2d28;
+  --muted:rgba(55,53,47,.7);
+  --faint:rgba(55,53,47,.48);
+  --green:#2eaadc;
+  --green2:#2eaadc;
+  --green3:#1f6feb;
+  --cyan:#0f7b6c;
+  --warn:#b98900;
+  --danger:#d44c47;
+  --success:#0f7b6c;
+  --shadow:0 1px 2px rgba(15,23,42,.04),0 6px 18px rgba(15,23,42,.03);
+  --glow:none;
+  --radius:14px;
+  --radius-sm:10px;
+  --page-grid-line:rgba(0,0,0,0);
+  --page-glow-a:rgba(0,0,0,0);
+  --page-glow-b:rgba(0,0,0,0);
+  --hero-title-shadow:none;
+  --input-bg:#ffffff;
+  --readonly-bg:#f7f6f3;
+  --button-bg:#ffffff;
+  --button-primary-bg:#2f2d28;
+  --progress-grad:linear-gradient(90deg,#2eaadc,#2eaadc);
+  --ring-track:#ece9e3;
+  --ring-dash:#e4e1da;
+  --ring-dots:#ddd8cf;
+  --core-bg:#ffffff;
+  --scanline-opacity:0;
 }
+
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{
   min-height:100%;
   background:
-    linear-gradient(rgba(91,255,156,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(91,255,156,.03) 1px, transparent 1px),
-    radial-gradient(circle at 12% 0%, rgba(53,255,134,.06), transparent 26%),
-    radial-gradient(circle at 100% 20%, rgba(116,233,214,.035), transparent 20%),
+    linear-gradient(var(--page-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--page-grid-line) 1px, transparent 1px),
+    radial-gradient(circle at 12% 0%, var(--page-glow-a), transparent 26%),
+    radial-gradient(circle at 100% 20%, var(--page-glow-b), transparent 20%),
     var(--bg);
   background-size:24px 24px,24px 24px,auto,auto,auto;
   color:var(--text);
-  font-family:'Satoshi','Inter',sans-serif;
-  letter-spacing:.03em;
+  font-family:'Satoshi','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  letter-spacing:.01em;
   text-rendering:optimizeLegibility;
 }
 body{line-height:1.55}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer;border:none;background:none}
+
 input,select,textarea{
   width:100%;
-  background:rgba(2,8,6,.88);
+  background:var(--input-bg);
   border:1px solid var(--line2);
   color:var(--text-strong);
   border-radius:12px;
   min-height:48px;
   padding:12px 14px;
   font-size:1rem;
-  letter-spacing:.03em;
+  letter-spacing:.01em;
 }
 input::placeholder,textarea::placeholder{color:var(--faint)}
 textarea{min-height:102px;resize:vertical}
 input:focus,select:focus,textarea:focus{
   outline:none;
   border-color:var(--green);
-  box-shadow:0 0 0 3px rgba(91,255,156,.12),0 0 14px rgba(53,255,134,.08);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--green) 14%, transparent);
 }
 input[readonly],textarea[readonly]{
-  background:rgba(10,20,16,.95);
-  color:var(--green3);
+  background:var(--readonly-bg);
+  color:var(--text-strong);
 }
+
 .wrap{
   max-width:1580px;
   margin:0 auto;
@@ -103,17 +137,24 @@ input[readonly],textarea[readonly]{
   display:grid;
   gap:18px;
 }
+
 .panel,.hero-panel{
   position:relative;
   overflow:hidden;
   background:
-    linear-gradient(180deg, rgba(91,255,156,.035), transparent 32%),
-    linear-gradient(90deg, rgba(91,255,156,.025), transparent 42%),
+    linear-gradient(180deg, color-mix(in srgb, var(--green) 3%, transparent), transparent 32%),
+    linear-gradient(90deg, color-mix(in srgb, var(--green) 2%, transparent), transparent 42%),
     var(--panel);
   border:1px solid var(--line);
   border-radius:var(--radius);
   box-shadow:var(--shadow),var(--glow);
 }
+
+[data-theme="light"] .panel,
+[data-theme="light"] .hero-panel{
+  background:var(--panel);
+}
+
 .panel::before,.hero-panel::before{
   content:"";
   position:absolute;
@@ -121,9 +162,16 @@ input[readonly],textarea[readonly]{
   pointer-events:none;
   background:
     linear-gradient(180deg, rgba(255,255,255,.015), transparent 40%),
-    linear-gradient(90deg, transparent, rgba(91,255,156,.035), transparent);
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--green) 3%, transparent), transparent);
   opacity:.8;
 }
+
+[data-theme="light"] .panel::before,
+[data-theme="light"] .hero-panel::before{
+  background:none;
+  opacity:0;
+}
+
 .hero-grid{
   display:grid;
   grid-template-columns:1.35fr .95fr;
@@ -142,9 +190,9 @@ input[readonly],textarea[readonly]{
   align-items:center;
   padding:6px 10px;
   border-radius:999px;
-  border:1px solid rgba(91,255,156,.18);
-  background:rgba(91,255,156,.05);
-  color:var(--green3);
+  border:1px solid color-mix(in srgb, var(--green) 18%, var(--line));
+  background:color-mix(in srgb, var(--green) 5%, var(--panel2));
+  color:var(--text-strong);
   font-size:.74rem;
   font-weight:900;
   letter-spacing:.18em;
@@ -155,9 +203,9 @@ input[readonly],textarea[readonly]{
   font-size:clamp(1.7rem,1.2rem + 1.8vw,2.8rem);
   line-height:1.12;
   font-weight:900;
-  letter-spacing:.1em;
+  letter-spacing:.06em;
   color:var(--text-strong);
-  text-shadow:0 0 12px rgba(91,255,156,.08);
+  text-shadow:var(--hero-title-shadow);
 }
 .id-block p{
   max-width:76ch;
@@ -170,27 +218,29 @@ input[readonly],textarea[readonly]{
   gap:10px;
   min-width:390px;
 }
+
 .stat-box,.mini-box,.summary-box,.date-card,.status-box,.hint-box,.table-row,.template-row,.alert-item,.list-row,.param-side{
   background:var(--panel2);
   border:1px solid var(--line);
-  border-radius:14px;
+  border-radius:12px;
 }
 .stat-box,.mini-box,.summary-box,.date-card,.param-side{padding:13px 14px}
 .stat-box span,.mini-box span,.summary-box span,.small-label,.field label{
   display:block;
   color:var(--muted);
   font-size:.74rem;
-  letter-spacing:.18em;
+  letter-spacing:.14em;
   text-transform:uppercase;
-  font-weight:900;
+  font-weight:800;
 }
 .stat-box b,.summary-box b,.mini-box b{
   display:block;
   margin-top:5px;
   font-size:1.38rem;
-  color:var(--green3);
-  text-shadow:0 0 10px rgba(91,255,156,.09);
+  color:var(--text-strong);
+  text-shadow:none;
 }
+
 .command-panel{
   padding:18px;
   display:grid;
@@ -213,7 +263,7 @@ input[readonly],textarea[readonly]{
 .panel-head h2{
   font-size:1.02rem;
   font-weight:900;
-  letter-spacing:.16em;
+  letter-spacing:.14em;
   text-transform:uppercase;
   color:var(--text-strong);
 }
@@ -227,31 +277,36 @@ input[readonly],textarea[readonly]{
   right:14px;
   font-size:.67rem;
   color:var(--faint);
-  letter-spacing:.2em;
+  letter-spacing:.18em;
   text-transform:uppercase;
 }
+
 .btn{
   min-height:46px;
   padding:0 16px;
-  border-radius:12px;
+  border-radius:10px;
   border:1px solid var(--line2);
-  background:
-    linear-gradient(180deg, rgba(91,255,156,.04), rgba(255,255,255,0)),
-    rgba(6,14,11,.95);
+  background:var(--button-bg);
   color:var(--text-strong);
-  font-weight:900;
-  letter-spacing:.06em;
+  font-weight:800;
+  letter-spacing:.03em;
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,box-shadow 150ms ease;
+}
+.btn:hover{
+  background:var(--panel3);
 }
 .btn.primary{
-  background:
-    linear-gradient(180deg, rgba(91,255,156,.12), rgba(53,255,134,.05)),
-    rgba(8,26,16,.98);
-  border-color:rgba(91,255,156,.42);
-  color:var(--green3);
-  box-shadow:0 0 0 1px rgba(91,255,156,.06) inset,0 0 18px rgba(53,255,134,.07);
+  background:var(--button-primary-bg);
+  border-color:var(--button-primary-bg);
+  color:#ffffff;
+  box-shadow:none;
+}
+.btn.primary:hover{
+  background:color-mix(in srgb, var(--button-primary-bg) 92%, white);
 }
 .btn.small{min-height:38px;padding:0 12px;font-size:.84rem}
 .btn:disabled{opacity:.42;cursor:not-allowed}
+
 .file-pick{display:grid;gap:6px}
 .file-pick input[type=file]{padding:9px 11px}
 .file-pick input[type=file]::file-selector-button{
@@ -259,11 +314,12 @@ input[readonly],textarea[readonly]{
   border:none;
   border-radius:8px;
   padding:8px 12px;
-  background:var(--green2);
-  color:#02210f;
-  font-weight:900;
+  background:var(--panel3);
+  color:var(--text-strong);
+  font-weight:800;
   cursor:pointer;
 }
+
 .action-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -307,7 +363,7 @@ input[readonly],textarea[readonly]{
 .date-card b{
   display:block;
   margin-top:5px;
-  color:var(--green3);
+  color:var(--text-strong);
   font-size:1.02rem;
 }
 .summary-grid{
@@ -319,15 +375,16 @@ input[readonly],textarea[readonly]{
   height:14px;
   border-radius:999px;
   border:1px solid var(--line);
-  background:rgba(2,8,6,.92);
+  background:var(--bg2);
   overflow:hidden;
 }
 .progress-bar{
   height:100%;
   width:0%;
-  background:linear-gradient(90deg,var(--green2),var(--green),var(--cyan));
-  box-shadow:0 0 16px rgba(91,255,156,.12);
+  background:var(--progress-grad);
+  box-shadow:none;
 }
+
 .parameter-wrap{
   display:grid;
   grid-template-columns:360px 1fr;
@@ -347,20 +404,18 @@ input[readonly],textarea[readonly]{
   width:100%;
   height:100%;
   transform:rotate(-90deg);
-  filter:drop-shadow(0 0 10px rgba(91,255,156,.07));
+  filter:none;
 }
 .param-core{
   position:absolute;
   inset:18%;
   border-radius:50%;
-  border:1px solid rgba(91,255,156,.2);
-  background:
-    radial-gradient(circle at center, rgba(91,255,156,.08), rgba(91,255,156,.02) 55%, transparent 70%),
-    rgba(4,12,9,.94);
+  border:1px solid var(--line);
+  background:var(--core-bg);
   display:grid;
   place-items:center;
   text-align:center;
-  box-shadow:0 0 24px rgba(53,255,134,.06) inset;
+  box-shadow:none;
 }
 .param-core small{
   display:block;
@@ -372,14 +427,14 @@ input[readonly],textarea[readonly]{
 .param-core strong{
   display:block;
   font-size:2.55rem;
-  color:var(--green3);
+  color:var(--text-strong);
   line-height:1.05;
   font-weight:900;
-  text-shadow:0 0 12px rgba(91,255,156,.11);
+  text-shadow:none;
 }
 .param-core span{
   display:block;
-  color:var(--cyan);
+  color:var(--muted);
   font-size:.95rem;
   margin-top:4px;
 }
@@ -395,12 +450,13 @@ input[readonly],textarea[readonly]{
 }
 .param-side b{
   font-size:1.22rem;
-  color:var(--green3);
+  color:var(--text-strong);
 }
 .radar-note{
   color:var(--muted);
   font-size:.92rem;
 }
+
 .alert-wrap,.template-list,.table-list,.confirm-list,.folder-list{display:grid;gap:10px}
 .alert-item{
   padding:13px 14px;
@@ -417,18 +473,24 @@ input[readonly],textarea[readonly]{
   padding:4px 10px;
   border-radius:999px;
   font-size:.79rem;
-  font-weight:900;
-  letter-spacing:.07em;
+  font-weight:800;
+  letter-spacing:.05em;
 }
 .alert-tag,.badge{
-  background:rgba(91,255,156,.08);
-  color:var(--green3);
-  border:1px solid rgba(91,255,156,.16);
+  background:var(--panel3);
+  color:var(--text-strong);
+  border:1px solid var(--line2);
 }
-.status.s2{background:rgba(114,255,179,.08);color:var(--success);border:1px solid rgba(114,255,179,.16)}
-.status.s3{background:rgba(116,233,214,.08);color:var(--cyan);border:1px solid rgba(116,233,214,.15)}
-.status.s1{background:rgba(255,230,128,.08);color:var(--warn);border:1px solid rgba(255,230,128,.16)}
-.status.s4{background:rgba(255,143,177,.08);color:var(--danger);border:1px solid rgba(255,143,177,.15)}
+.status.s2{background:#eef7f3;color:var(--success);border:1px solid #d7eee5}
+.status.s3{background:#eef5fb;color:var(--green);border:1px solid #d7e8f7}
+.status.s1{background:#fff8e7;color:var(--warn);border:1px solid #f2e3b4}
+.status.s4{background:#fff0ef;color:var(--danger);border:1px solid #f4d9d7}
+
+[data-theme="dark"] .status.s2{background:rgba(114,255,179,.08);color:var(--success);border:1px solid rgba(114,255,179,.16)}
+[data-theme="dark"] .status.s3{background:rgba(116,233,214,.08);color:var(--cyan);border:1px solid rgba(116,233,214,.15)}
+[data-theme="dark"] .status.s1{background:rgba(255,230,128,.08);color:var(--warn);border:1px solid rgba(255,230,128,.16)}
+[data-theme="dark"] .status.s4{background:rgba(255,143,177,.08);color:var(--danger);border:1px solid rgba(255,143,177,.15)}
+
 .table-head,.table-row{
   display:grid;
   grid-template-columns:90px 140px 1.2fr 1fr 140px 110px;
@@ -439,7 +501,7 @@ input[readonly],textarea[readonly]{
   padding:0 6px 6px;
   color:var(--muted);
   font-size:.76rem;
-  letter-spacing:.16em;
+  letter-spacing:.12em;
   text-transform:uppercase;
 }
 .table-row{padding:14px}
@@ -478,9 +540,10 @@ input[readonly],textarea[readonly]{
   pointer-events:none;
   background:linear-gradient(to bottom, rgba(255,255,255,.02), rgba(255,255,255,0) 50%);
   background-size:100% 4px;
-  opacity:.07;
+  opacity:var(--scanline-opacity);
   mix-blend-mode:screen;
 }
+
 @media (max-width:1240px){
   .hero-grid,.main-grid,.dual-grid,.parameter-wrap{grid-template-columns:1fr}
 }
@@ -496,12 +559,12 @@ input[readonly],textarea[readonly]{
 <div class="wrap">
   <section class="hero-grid">
     <section class="hero-panel">
-      <div class="corner-label">Oshii Film Tone / Shell Terminal Display</div>
+      <div class="corner-label">Dual Theme Control UI</div>
       <div class="hero-head">
         <div class="id-block">
-          <div class="kicker">Ghost Shell / Clinical Research Training Control</div>
+          <div class="kicker">Clinical Research Training Control</div>
           <h1>臨床研究研修会 管制ダッシュボード</h1>
-          <p>押井守版の暗い都市感と、旧来のグリーン端末の可読性を合わせた表示に変更しました。文字は明るいグリーン基調にし、見出し・本文・補助ラベルの階層差を強めています。</p>
+          <p>ダークテーマは攻殻機動隊 / 押井守版寄りのグリーン端末調を維持し、ライトテーマは Notion 風の明るく読みやすい業務UIへ切り替わるようにしました。</p>
         </div>
         <div class="hero-stats">
           <div class="stat-box"><span>Records</span><b id="sumAllTop">0</b></div>
@@ -516,7 +579,7 @@ input[readonly],textarea[readonly]{
       <div class="panel-head">
         <div>
           <h2>Quick Operation</h2>
-          <p>主要操作を右上に固定し、端末画面のように即アクセスできる構成です。</p>
+          <p>テーマ切替を含む主要操作を右上に集約しています。</p>
         </div>
       </div>
       <button class="btn" id="themeBtn">表示テーマ切替</button>
@@ -544,21 +607,21 @@ input[readonly],textarea[readonly]{
     <div class="panel-head">
       <div>
         <h2>Annual Plan Parameter</h2>
-        <p>年間計画の進み具合を、映画版寄りの暗いグリーンHUD風リングで表示します。</p>
+        <p>年間計画の進み具合を、ダーク時はHUD風、ライト時は落ち着いた業務UI風リングで表示します。</p>
       </div>
     </div>
     <div class="parameter-wrap">
       <div class="param-gauge">
         <svg class="param-svg" viewBox="0 0 240 240" aria-hidden="true">
-          <circle cx="120" cy="120" r="92" fill="none" stroke="rgba(91,255,156,.10)" stroke-width="10"></circle>
-          <circle cx="120" cy="120" r="72" fill="none" stroke="rgba(116,233,214,.10)" stroke-width="3" stroke-dasharray="3 7"></circle>
+          <circle cx="120" cy="120" r="92" fill="none" stroke="var(--ring-track)" stroke-width="10"></circle>
+          <circle cx="120" cy="120" r="72" fill="none" stroke="var(--ring-dash)" stroke-width="3" stroke-dasharray="3 7"></circle>
           <circle cx="120" cy="120" r="92" fill="none" stroke="url(#progressGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="578" stroke-dashoffset="578" id="annualGauge"></circle>
-          <circle cx="120" cy="120" r="108" fill="none" stroke="rgba(91,255,156,.14)" stroke-width="1" stroke-dasharray="1 9"></circle>
+          <circle cx="120" cy="120" r="108" fill="none" stroke="var(--ring-dots)" stroke-width="1" stroke-dasharray="1 9"></circle>
           <defs>
             <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#35ff86"></stop>
-              <stop offset="60%" stop-color="#5bff9c"></stop>
-              <stop offset="100%" stop-color="#74e9d6"></stop>
+              <stop offset="0%" stop-color="var(--green2)"></stop>
+              <stop offset="60%" stop-color="var(--green)"></stop>
+              <stop offset="100%" stop-color="var(--cyan)"></stop>
             </linearGradient>
           </defs>
         </svg>
@@ -603,7 +666,7 @@ input[readonly],textarea[readonly]{
       <div class="panel-head">
         <div>
           <h2>Entry Console</h2>
-          <p>文字の視認性を優先し、フォーム面は暗く、入力文字は明るいグリーンで統一しています。</p>
+          <p>ダークでは電子端末風、ライトでは Notion 風の落ち着いた視認性重視フォームになります。</p>
         </div>
         <button class="btn" id="loadSelectedBtn" disabled>選択Noを反映</button>
       </div>
@@ -685,7 +748,7 @@ input[readonly],textarea[readonly]{
           <div class="date-card"><span>DATE_2</span><b id="dDate2">-</b></div>
           <div class="date-card"><span>SUBJECT_2</span><b id="dSubject2">-</b></div>
         </div>
-        <div class="hint-box">旧来のグリーン端末は文字の鮮明さで広く使われており、その特性を意識して高コントラスト化しています。</div>
+        <div class="hint-box">ライトテーマでは、Notion風に色数を抑え、コントラストと余白で読みやすさを確保しています。</div>
       </section>
 
       <section class="panel">
