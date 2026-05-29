@@ -941,7 +941,7 @@ input[readonly],textarea[readonly]{
     </section>
   </section>
 
-  <section class="panel">
+ <section class="panel">
     <div class="corner-label">Template Merge</div>
     <div class="panel-head">
       <div>
@@ -984,19 +984,17 @@ input[readonly],textarea[readonly]{
 
 <script>
 const root=document.documentElement;
-document.getElementById('themeBtn').addEventListener('click',()=>{root.setAttribute('data-theme',root.getAttribute('data-theme')==='dark'?'light':'dark')});
+document.getElementById('themeBtn').addEventListener('click',()=>{
+  root.setAttribute('data-theme',root.getAttribute('data-theme')==='dark'?'light':'dark');
+});
 
 const DEFAULT_HEADERS=[
   '起案行No',
   '年度_YEAR_1',
   '開催日_DATE_1',
   '曜日 _DAY',
-  '講義開始_START_TIME',
   '研修会開始_START_1',
   '研修会終了_END_1',
-  '質疑応答締切_QA_DADLINE',
-  '質疑応答_QA_TIME',
-  '事前打合せ開始時間_PRE_MEETING',
   '研修会入室開始時間_TIME_1',
   '時間（分）_TIME_2',
   '〆切院外_DEADLINE_1',
@@ -1027,6 +1025,10 @@ const DEFAULT_HEADERS=[
   '進行表研修会趣旨説明_INTRO_2',
   '進行表講師紹介_INTRO_3',
   '講義資料提供の締切_DATA_deadline',
+  '講義開始_START_TIME',
+  '質疑応答締切_QA_DADLINE',
+  '質疑応答_QA_TIME',
+  '事前打合せ開始時間_PRE_MEETING',
   '起案1チェック_CHECK_K1',
   'HPチェック_CHECK_HP',
   '起案2チェック_CHECK_K2',
@@ -1038,12 +1040,8 @@ const fullKeys={
   year:'年度_YEAR_1',
   date:'開催日_DATE_1',
   day:'曜日 _DAY',
-  lectureStart:'講義開始_START_TIME',
   start:'研修会開始_START_1',
   end:'研修会終了_END_1',
-  qaDeadline:'質疑応答締切_QA_DADLINE',
-  qaTime:'質疑応答_QA_TIME',
-  preMeeting:'事前打合せ開始時間_PRE_MEETING',
   roomOpen:'研修会入室開始時間_TIME_1',
   duration:'時間（分）_TIME_2',
   deadline1:'〆切院外_DEADLINE_1',
@@ -1074,6 +1072,10 @@ const fullKeys={
   intro2:'進行表研修会趣旨説明_INTRO_2',
   intro3:'進行表講師紹介_INTRO_3',
   dataDeadline:'講義資料提供の締切_DATA_deadline',
+  lectureStart:'講義開始_START_TIME',
+  qaDeadline:'質疑応答締切_QA_DADLINE',
+  qaTime:'質疑応答_QA_TIME',
+  preMeeting:'事前打合せ開始時間_PRE_MEETING',
   checkK1:'起案1チェック_CHECK_K1',
   checkHp:'HPチェック_CHECK_HP',
   checkK2:'起案2チェック_CHECK_K2',
