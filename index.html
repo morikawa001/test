@@ -296,7 +296,14 @@ input[readonly],textarea[readonly]{
 .btn:disabled{opacity:.42;cursor:not-allowed}
 .file-pick{display:grid;gap:6px}
 .file-pick input[type=file]{padding:9px 11px}
-.file-pick input[type=file]::file-selector-button{
+.file-pick input[type=file],
+#templateFiles{
+  padding:9px 11px;
+}
+.file-pick input[type=file]::file-selector-button,
+.file-pick input[type=file]::-webkit-file-upload-button,
+#templateFiles::file-selector-button,
+#templateFiles::-webkit-file-upload-button{
   margin-right:12px;
   border:none;
   border-radius:8px;
