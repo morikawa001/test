@@ -320,6 +320,24 @@ input[readonly],textarea[readonly]{
   cursor:pointer;
 }
 
+/* Template Injection のファイル選択ボタンだけ既存ボタン風に統一 */
+#templateFiles::file-selector-button{
+  min-height:46px;
+  padding:0 16px;
+  margin-right:12px;
+  border:1px solid var(--line2);
+  border-radius:10px;
+  background:var(--button-bg);
+  color:var(--text-strong);
+  font-weight:800;
+  letter-spacing:.03em;
+  cursor:pointer;
+  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,box-shadow 150ms ease;
+}
+#templateFiles:hover::file-selector-button{
+  background:var(--panel3);
+}
+
 .action-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -485,7 +503,6 @@ input[readonly],textarea[readonly]{
 .status.s3{background:#eef5fb;color:#2eaadc;border:1px solid #d7e8f7}
 .status.s1{background:#fff8e7;color:#b98900;border:1px solid #f2e3b4}
 .status.s4{background:#fff0ef;color:#d44c47;border:1px solid #f4d9d7}
-
 [data-theme="dark"] .status.s2{background:rgba(114,255,179,.08);color:var(--success);border:1px solid rgba(114,255,179,.16)}
 [data-theme="dark"] .status.s3{background:rgba(116,233,214,.08);color:var(--cyan);border:1px solid rgba(116,233,214,.15)}
 [data-theme="dark"] .status.s1{background:rgba(255,230,128,.08);color:var(--warn);border:1px solid rgba(255,230,128,.16)}
@@ -1600,116 +1617,77 @@ function recalcDraft(){
 }
 
 function calcDerivedFields(){
-  const start=fields.start.value,end=fields.end.value,date=fields.date.value;
-  const roomOpen=start?shiftTime(start,-5):'';
-  const duration=(start&&end)?String(diffMin(start,end)):'';
-  const deadline2=start?shiftTime(start,-60):'';
-  const deadline1=date?formatDeadline1(date):'';
-  const deadline3=date?formatMonthDayWeek(nextBusinessDate(addDays(new Date(date+'T00:00:00'),1))):'';
-  const dataDeadline=date?formatMonthDayWeek(addDays(new Date(date+'T00:00:00'),-7)):'';
-  const date2=date?formatDate2(date):'';
-  const subject2=subjectDetail(fields.subject.value);
-  syncCohostFields();
-
-  fields.roomOpen.value=roomOpen;
-  fields.duration.value=duration&&Number(duration)>=0?duration:'';
-  fields.deadline1.value=deadline1;
-  fields.deadline2.value=deadline2;
-  fields.deadline3.value=deadline3;
-  fields.dataDeadline.value=dataDeadline;
-  fields.date2.value=date2;
-  fields.subject2.value=subject2;
-
-  els.dRoomOpen.textContent=roomOpen||'-';
-  els.dDuration.textContent=duration&&Number(duration)>=0?`${duration}分`:'-';
-  els.dDeadline1.textContent=deadline1||'-';
-  els.dDeadline2.textContent=deadline2||'-';
-  els.dDeadline3.textContent=deadline3||'-';
-  els.dDataDeadline.textContent=dataDeadline||'-';
-  els.dDate2.textContent=date2||'-';
-  els.dSubject2.textContent=subject2||'-';
+  if(fields.start.value && fields.end.value){
+    fields.roomOpen.value=shiftTime(fields.start.value,-15);
+    const mins=diffMin(fields.start.value,fields.end.value);
+    fields.duration.value=mins>0?`${mins}分`:'';
+  }else{
+    fields.roomOpen.value='';
+    fields.duration.value='';
+  }
+  if(fields.date.value){
+    fields.date2.value=formatMonthDayWeek(new Date(fields.date.value+'T00:00:00'));
+    fields.deadline1.value=formatDeadline1(fields.date.value);
+  }else{
+    fields.date2.value='';
+    fields.deadline1.value='';
+  }
+  fields.deadline2.value='17:00';
+  const base=fields.date.value?new Date(fields.date.value+'T00:00:00'):null;
+  const auto=calcAutoDates(base);
+  fields.deadline3.value=fmtMonthDay(auto.deadline3);
+  fields.dataDeadline.value=fmtMonthDay(auto.dataDeadline);
+  fields.subject2.value=fields.subject.value;
 }
-
+function previousBusinessDay(d){
+  const x=new Date(d);
+  do{x.setDate(x.getDate()-1)}while([0,6].includes(x.getDay()));
+  return x;
+}
+function nextBusinessDay(d){
+  const x=new Date(d);
+  do{x.setDate(x.getDate()+1)}while([0,6].includes(x.getDay()));
+  return x;
+}
 function calcAutoDates(base){
-  return {
-    k1:base?addDays(base,-35):null,
-    hp:base?addDays(base,-28):null,
-    k2:base?addDays(base,-7):null,
-    k3:nextBusinessMondayRule(base)
-  };
-}
-function nextBusinessMondayRule(base){
-  if(!base)return null;
-  const nextDay=addDays(base,1);
-  const day=nextDay.getDay();
-  if(day===6)return addDays(base,3);
-  if(day===0)return addDays(base,2);
-  return nextDay;
-}
-function nextBusinessDate(date){
-  let d=new Date(date);
-  while(isHolidayOrWeekend(d)) d=addDays(d,1);
-  return d;
-}
-function isHolidayOrWeekend(d){
-  const day=d.getDay();
-  return day===0||day===6||isJapaneseHoliday(d);
-}
-function isJapaneseHoliday(date){
-  const y=date.getFullYear(),m=date.getMonth()+1,d=date.getDate();
-  const fixed=[`1-1`,`2-11`,`2-23`,`4-29`,`5-3`,`5-4`,`5-5`,`8-11`,`11-3`,`11-23`];
-  if(fixed.includes(`${m}-${d}`))return true;
-  const nthMonday=(month,n)=>{
-    let count=0;
-    for(let i=1;i<=31;i++){
-      const dt=new Date(y,month-1,i);
-      if(dt.getMonth()!==month-1)break;
-      if(dt.getDay()===1){count++;if(count===n)return i}
-    }
-    return null;
-  };
-  if((m===1&&d===nthMonday(1,2))||(m===7&&d===nthMonday(7,3))||(m===9&&d===nthMonday(9,3))||(m===10&&d===nthMonday(10,2)))return true;
-  const vernal=Math.floor(20.8431+0.242194*(y-1980))-Math.floor((y-1980)/4);
-  const autumn=Math.floor(23.2488+0.242194*(y-1980))-Math.floor((y-1980)/4);
-  if((m===3&&d===vernal)||(m===9&&d===autumn))return true;
-  return false;
-}
-function formatDate2(iso){const [y,m,d]=iso.split('-');return `${Number(m)}/${Number(d)}`}
-function formatDate1Short(iso){const [y,m,d]=iso.split('-');return `${Number(m)}月${Number(d)}日`}
-function subjectDetail(v){
-  if(v==='研究者')return '（医師・歯科医師等）';
-  if(v==='研究支援者')return '（薬剤師・看護師等）';
-  return '';
+  if(!base) return {k1:null,k2:null,k3:null,hp:null,deadline3:null,dataDeadline:null};
+  const k1=addDays(base,-35);
+  const hp=addDays(base,-28);
+  const k2=addDays(base,-7);
+  const k3=nextBusinessDay(base);
+  const deadline3=addDays(base,-3);
+  const dataDeadline=previousBusinessDay(addDays(base,-8));
+  return {k1,hp,k2,k3,deadline3,dataDeadline};
 }
 
 function validateDraft(){
   const warns=[];
-  if(!String(fields.no.value||'').trim())warns.push('Noが未入力です');
-  if(!/^\d+$/.test(String(fields.no.value||'').trim()))warns.push('Noは整数で入力してください');
-  if(!fields.date.value)warns.push('開催日が未入力です');
-  if(!fields.title.value.trim())warns.push('タイトルが未入力です');
-  if(!fields.speaker.value.trim())warns.push('講師名が未入力です');
-  if(!fields.start.value||!fields.end.value)warns.push('開始/終了時間が未入力です');
-  if(fields.start.value&&fields.end.value&&diffMin(fields.start.value,fields.end.value)<=0)warns.push('終了時間は開始時間より後にしてください');
-  if(fields.zoomUrl.value&&!/^https?:\/\//.test(fields.zoomUrl.value))warns.push('Zoom URL は http/https で始めてください');
-  if(fields.hpUrl.value&&!/^https?:\/\//.test(fields.hpUrl.value))warns.push('HP_URL_url_1 は http/https で始めてください');
-  if(fields.cost.value&&isNaN(Number(String(fields.cost.value).replace(/,/g,''))))warns.push('謝金_COST は数値で入力してください');
+  if(!String(fields.no.value||'').trim()) warns.push('No が未入力です。');
+  if(!/^\d+$/.test(String(fields.no.value||'').trim())) warns.push('No は数字のみで入力してください。');
+  if(!fields.date.value) warns.push('開催日_DATE_1 が未入力です。');
+  if(!fields.title.value.trim()) warns.push('研修会タイトル_TITLE が未入力です。');
+  if(!fields.name.value.trim()) warns.push('名前_NAME が未入力です。');
+  if(!fields.speaker.value.trim()) warns.push('講師名_SPEAKER が未入力です。');
+  if(!(fields.start.value&&fields.end.value)) warns.push('開始_START_1 / 終了_END_1 を入力してください。');
   return warns;
 }
-
 function stageDraft(){
-  if(!currentHeaders.length){setStatus('先にCSVを読み込むか、新規データベースを作成してください。');return}
+  const warns=validateDraft();
   stagedRow=buildRow();
-  lastSaveMode=getRawRowIndexByNo(stagedRow[fullKeys.no])>=0?'update':'insert';
-  renderConfirm(validateDraft());
-  setStatus(lastSaveMode==='update'?`No.${stagedRow[fullKeys.no]} は既存行を上書き保存します。`:`No.${stagedRow[fullKeys.no]} は新規行として追加保存します。`);
+  renderConfirm(warns);
+  renderResult();
+  if(warns.length){
+    setStatus(`確認画面に注意点を表示しました。${warns.join(' / ')}`);
+  }else{
+    setStatus('保存前確認を更新しました。この内容で保存できます。');
+  }
 }
-
 function buildRow(){
-  const base=fields.date.value?new Date(fields.date.value+'T00:00:00'):null;
-  const auto=calcAutoDates(base);
+  ensureAdditionalHeaders();
   const row={};
   currentHeaders.forEach(h=>row[h]='');
+  const base=fields.date.value?new Date(fields.date.value+'T00:00:00'):null;
+  const auto=calcAutoDates(base);
 
   row[fullKeys.no]=String(fields.no.value||'').trim();
   row[fullKeys.year]=fields.year.value;
@@ -1937,7 +1915,6 @@ function renderConfirm(warns){
     row[fullKeys.checkK2]==='1'?'起案2':'',
     row[fullKeys.checkK3]==='1'?'起案3':''
   ].filter(Boolean).join(' / ');
-
   els.confirmCount.textContent='1件';
   els.confirmWarn.textContent=warns.length;
   els.confirmState.textContent=warns.length?'要確認':(saveMode==='update'?'上書き保存':'新規追加');
@@ -2045,6 +2022,11 @@ function normTime(v){
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function safeName(s){return String(s).replace(/[\\/:*?"<>|\s]+/g,'-')}
+function formatDate1Short(iso){
+  if(!iso)return'';
+  const d=new Date(iso+'T00:00:00');
+  return `${d.getMonth()+1}月${d.getDate()}日`;
+}
 
 syncCohostFields();
 recalcDraft();
