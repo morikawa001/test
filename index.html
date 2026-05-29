@@ -219,13 +219,13 @@ input[readonly],textarea[readonly]{
   min-width:390px;
 }
 
-.stat-box,.mini-box,.summary-box,.date-card,.status-box,.hint-box,.table-row,.template-row,.alert-item,.list-row,.param-side{
+.stat-box,.mini-box,.summary-box,.date-card,.status-box,.hint-box,.table-row,.template-row,.alert-item,.list-row,.param-side,.schedule-card{
   background:var(--panel2);
   border:1px solid var(--line);
   border-radius:12px;
 }
-.stat-box,.mini-box,.summary-box,.date-card,.param-side{padding:13px 14px}
-.stat-box span,.mini-box span,.summary-box span,.small-label,.field label{
+.stat-box,.mini-box,.summary-box,.date-card,.param-side,.schedule-card{padding:13px 14px}
+.stat-box span,.mini-box span,.summary-box span,.small-label,.field label,.schedule-label{
   display:block;
   color:var(--muted);
   font-size:.74rem;
@@ -457,6 +457,42 @@ input[readonly],textarea[readonly]{
   font-size:.92rem;
 }
 
+.schedule-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.schedule-card{
+  display:grid;
+  gap:10px;
+}
+.schedule-value{
+  display:block;
+  color:var(--text-strong);
+  font-size:1.02rem;
+  font-weight:800;
+}
+.schedule-check{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:var(--text-strong);
+  font-size:.92rem;
+  font-weight:700;
+}
+.schedule-check input{
+  width:20px;
+  height:20px;
+  min-height:auto;
+  padding:0;
+  accent-color:var(--green);
+  border-radius:6px;
+}
+.schedule-check span{
+  color:var(--muted);
+  font-weight:700;
+}
+
 .alert-wrap,.template-list,.table-list,.confirm-list,.folder-list{display:grid;gap:10px}
 .alert-item{
   padding:13px 14px;
@@ -548,7 +584,7 @@ input[readonly],textarea[readonly]{
   .hero-grid,.main-grid,.dual-grid,.parameter-wrap{grid-template-columns:1fr}
 }
 @media (max-width:860px){
-  .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.template-row,.alert-item{
+  .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.template-row,.alert-item,.schedule-grid{
     grid-template-columns:1fr;
   }
 }
@@ -597,7 +633,7 @@ input[readonly],textarea[readonly]{
       <div class="mini-grid">
         <div class="mini-box"><span>Database</span><b id="miniDbState">CSV未読込</b><p id="miniDbText">CSVまたは新規DBを選択してください</p></div>
         <div class="mini-box"><span>Next</span><b id="miniNext">-</b><p>次回採番候補</p></div>
-        <div class="mini-box"><span>Year Count</span><b id="miniYearCount">0件</b><p>record数と同数を表示します</p></div>
+        <div class="mini-box"><span>Year Count</span><b id="miniYearCount">0件</b><p>当年度登録件数</p></div>
       </div>
     </section>
   </section>
@@ -731,14 +767,35 @@ input[readonly],textarea[readonly]{
         <div class="panel-head">
           <div>
             <h2>Computed Schedule</h2>
-            <p>派生値を右側に固定表示し、入力中でも常に読み取れるようにしています。</p>
+            <p>起案1・HP公開・起案2・起案3は完了チェックを保持し、保存時にCSVへ反映します。</p>
           </div>
         </div>
-        <div class="auto-grid">
-          <div class="date-card"><span>起案1</span><b id="dK1">-</b></div>
-          <div class="date-card"><span>HP公開</span><b id="dHp">-</b></div>
-          <div class="date-card"><span>起案2</span><b id="dK2">-</b></div>
-          <div class="date-card"><span>起案3</span><b id="dK3">-</b></div>
+
+        <div class="schedule-grid">
+          <div class="schedule-card">
+            <span class="schedule-label">起案1</span>
+            <b class="schedule-value" id="dK1">-</b>
+            <label class="schedule-check"><input type="checkbox" id="cK1"><span>完了</span></label>
+          </div>
+
+          <div class="schedule-card">
+            <span class="schedule-label">HP公開</span>
+            <b class="schedule-value" id="dHp">-</b>
+            <label class="schedule-check"><input type="checkbox" id="cHp"><span>完了</span></label>
+          </div>
+
+          <div class="schedule-card">
+            <span class="schedule-label">起案2</span>
+            <b class="schedule-value" id="dK2">-</b>
+            <label class="schedule-check"><input type="checkbox" id="cK2"><span>完了</span></label>
+          </div>
+
+          <div class="schedule-card">
+            <span class="schedule-label">起案3</span>
+            <b class="schedule-value" id="dK3">-</b>
+            <label class="schedule-check"><input type="checkbox" id="cK3"><span>完了</span></label>
+          </div>
+
           <div class="date-card"><span>入室</span><b id="dRoomOpen">-</b></div>
           <div class="date-card"><span>所要時間</span><b id="dDuration">-</b></div>
           <div class="date-card"><span>DEADLINE_1</span><b id="dDeadline1">-</b></div>
@@ -748,7 +805,8 @@ input[readonly],textarea[readonly]{
           <div class="date-card"><span>DATE_2</span><b id="dDate2">-</b></div>
           <div class="date-card"><span>SUBJECT_2</span><b id="dSubject2">-</b></div>
         </div>
-        <div class="hint-box">ライトテーマでは、Notion風に色数を抑え、コントラストと余白で読みやすさを確保しています。</div>
+
+        <div class="hint-box">保存するボタンを押したタイミングで、チェック状態もCSVへ書き込みます。</div>
       </section>
 
       <section class="panel">
@@ -891,13 +949,26 @@ input[readonly],textarea[readonly]{
 const root=document.documentElement;
 document.getElementById('themeBtn').addEventListener('click',()=>{root.setAttribute('data-theme',root.getAttribute('data-theme')==='dark'?'light':'dark')});
 
-const DEFAULT_HEADERS=['起案行No','年度_YEAR_1','開催日_DATE_1','曜日 _DAY','研修会開始_START_1','研修会終了_END_1','研修会入室開始時間_TIME_1','時間（分）_TIME_2','〆切院外_DEADLINE_1','〆切時間院内_DEADLINE_2','配布資料DL〆切_DEADLINE_3','テーマ(標題)_TITLE','担当講師_SPEAKER','対象_SUBJECT_1','対象詳細_SUBJECT_2','講演場所_SITE','共催_COHOST_1','共催3(選択）_COHOST_3','起案1開催DATE_KIAN_1','起案2資料_DATE_KIAN_2','起案3受講証修了証_DATE_KIAN_3','HP案内開始チラシ配布','謝金_COST','目的_PURPOSE','メール用研修会開催日付_DATE_2','名前_NAME','Zoom_ID_WEBINER_ID','zoom_url_zoom_url','HP_URL_url_1','Zoom_パスコード_PASSCODE','進行表導入_INTRO_1','進行表研修会趣旨説明_INTRO_2','進行表講師紹介_INTRO_3','講義資料提供の締切_DATA_deadline'];
+const DEFAULT_HEADERS=[
+  '起案行No','年度_YEAR_1','開催日_DATE_1','曜日 _DAY','研修会開始_START_1','研修会終了_END_1','研修会入室開始時間_TIME_1','時間（分）_TIME_2','〆切院外_DEADLINE_1','〆切時間院内_DEADLINE_2','配布資料DL〆切_DEADLINE_3','テーマ(標題)_TITLE','担当講師_SPEAKER','対象_SUBJECT_1','対象詳細_SUBJECT_2','講演場所_SITE','共催_COHOST_1','共催3(選択）_COHOST_3','起案1開催DATE_KIAN_1','起案2資料_DATE_KIAN_2','起案3受講証修了証_DATE_KIAN_3','HP案内開始チラシ配布','謝金_COST','目的_PURPOSE','メール用研修会開催日付_DATE_2','名前_NAME','Zoom_ID_WEBINER_ID','zoom_url_zoom_url','HP_URL_url_1','Zoom_パスコード_PASSCODE','進行表導入_INTRO_1','進行表研修会趣旨説明_INTRO_2','進行表講師紹介_INTRO_3','講義資料提供の締切_DATA_deadline',
+  '起案1完了_CHECK_KIAN_1','HP公開完了_CHECK_HP','起案2完了_CHECK_KIAN_2','起案3完了_CHECK_KIAN_3'
+];
 
-const fullKeys={no:'起案行No',year:'年度_YEAR_1',date:'開催日_DATE_1',day:'曜日 _DAY',start:'研修会開始_START_1',end:'研修会終了_END_1',roomOpen:'研修会入室開始時間_TIME_1',duration:'時間（分）_TIME_2',deadline1:'〆切院外_DEADLINE_1',deadline2:'〆切時間院内_DEADLINE_2',deadline3:'配布資料DL〆切_DEADLINE_3',title:'テーマ(標題)_TITLE',speaker:'担当講師_SPEAKER',subject:'対象_SUBJECT_1',subject2:'対象詳細_SUBJECT_2',site:'講演場所_SITE',cohost:'共催_COHOST_1',cohost3:'共催3(選択）_COHOST_3',k1:'起案1開催DATE_KIAN_1',k2:'起案2資料_DATE_KIAN_2',k3:'起案3受講証修了証_DATE_KIAN_3',hp:'HP案内開始チラシ配布',cost:'謝金_COST',purpose:'目的_PURPOSE',date2:'メール用研修会開催日付_DATE_2',name:'名前_NAME',zoomId:'Zoom_ID_WEBINER_ID',zoomUrl:'zoom_url_zoom_url',hpUrl:'HP_URL_url_1',passcode:'Zoom_パスコード_PASSCODE',intro1:'進行表導入_INTRO_1',intro2:'進行表研修会趣旨説明_INTRO_2',intro3:'進行表講師紹介_INTRO_3',dataDeadline:'講義資料提供の締切_DATA_deadline'};
+const fullKeys={
+  no:'起案行No',year:'年度_YEAR_1',date:'開催日_DATE_1',day:'曜日 _DAY',start:'研修会開始_START_1',end:'研修会終了_END_1',roomOpen:'研修会入室開始時間_TIME_1',duration:'時間（分）_TIME_2',deadline1:'〆切院外_DEADLINE_1',deadline2:'〆切時間院内_DEADLINE_2',deadline3:'配布資料DL〆切_DEADLINE_3',title:'テーマ(標題)_TITLE',speaker:'担当講師_SPEAKER',subject:'対象_SUBJECT_1',subject2:'対象詳細_SUBJECT_2',site:'講演場所_SITE',cohost:'共催_COHOST_1',cohost3:'共催3(選択）_COHOST_3',k1:'起案1開催DATE_KIAN_1',k2:'起案2資料_DATE_KIAN_2',k3:'起案3受講証修了証_DATE_KIAN_3',hp:'HP案内開始チラシ配布',cost:'謝金_COST',purpose:'目的_PURPOSE',date2:'メール用研修会開催日付_DATE_2',name:'名前_NAME',zoomId:'Zoom_ID_WEBINER_ID',zoomUrl:'zoom_url_zoom_url',hpUrl:'HP_URL_url_1',passcode:'Zoom_パスコード_PASSCODE',intro1:'進行表導入_INTRO_1',intro2:'進行表研修会趣旨説明_INTRO_2',intro3:'進行表講師紹介_INTRO_3',dataDeadline:'講義資料提供の締切_DATA_deadline',
+  checkK1:'起案1完了_CHECK_KIAN_1',checkHp:'HP公開完了_CHECK_HP',checkK2:'起案2完了_CHECK_KIAN_2',checkK3:'起案3完了_CHECK_KIAN_3'
+};
 
 const els={csvFile:document.getElementById('csvFile'),newDbBtn:document.getElementById('newDbBtn'),recordSelect:document.getElementById('recordSelect'),openConfirmBtn:document.getElementById('openConfirmBtn'),appendBtn:document.getElementById('appendBtn'),prefillBtn:document.getElementById('prefillBtn'),loadSelectedBtn:document.getElementById('loadSelectedBtn'),confirmAppendBtn:document.getElementById('confirmAppendBtn'),downloadBtn:document.getElementById('downloadBtn'),backBtn:document.getElementById('backBtn'),tableList:document.getElementById('tableList'),statusBox:document.getElementById('statusBox'),miniNext:document.getElementById('miniNext'),miniYearCount:document.getElementById('miniYearCount'),miniDbState:document.getElementById('miniDbState'),miniDbText:document.getElementById('miniDbText'),sumAll:document.getElementById('sumAll'),sumYear:document.getElementById('sumYear'),sumNext:document.getElementById('sumNext'),sumSoon:document.getElementById('sumSoon'),sumDone:document.getElementById('sumDone'),sumDraft:document.getElementById('sumDraft'),sumSubject:document.getElementById('sumSubject'),roadmapLabel:document.getElementById('roadmapLabel'),roadmapBar:document.getElementById('roadmapBar'),dK1:document.getElementById('dK1'),dK2:document.getElementById('dK2'),dHp:document.getElementById('dHp'),dK3:document.getElementById('dK3'),dRoomOpen:document.getElementById('dRoomOpen'),dDuration:document.getElementById('dDuration'),dDeadline1:document.getElementById('dDeadline1'),dDeadline2:document.getElementById('dDeadline2'),dDeadline3:document.getElementById('dDeadline3'),dDataDeadline:document.getElementById('dDataDeadline'),dDate2:document.getElementById('dDate2'),dSubject2:document.getElementById('dSubject2'),checkList:document.getElementById('checkList'),confirmCount:document.getElementById('confirmCount'),confirmWarn:document.getElementById('confirmWarn'),confirmState:document.getElementById('confirmState'),folderView:document.getElementById('folderView'),resultDone:document.getElementById('resultDone'),resultHold:document.getElementById('resultHold'),resultZip:document.getElementById('resultZip'),alertList:document.getElementById('alertList'),templateFiles:document.getElementById('templateFiles'),mergeRecordSelect:document.getElementById('mergeRecordSelect'),templateState:document.getElementById('templateState'),mergeAllBtn:document.getElementById('mergeAllBtn'),mergeStatusBox:document.getElementById('mergeStatusBox'),templateList:document.getElementById('templateList'),sumAllTop:document.getElementById('sumAllTop'),sumYearTop:document.getElementById('sumYearTop'),sumNextTop:document.getElementById('sumNextTop'),annualGauge:document.getElementById('annualGauge'),annualGaugeText:document.getElementById('annualGaugeText'),annualGaugeSub:document.getElementById('annualGaugeSub'),paramYearCount:document.getElementById('paramYearCount'),paramDoneCount:document.getElementById('paramDoneCount'),paramSoonCount:document.getElementById('paramSoonCount'),paramDraftCount:document.getElementById('paramDraftCount')};
 
 const fields={no:document.getElementById('fNo'),year:document.getElementById('fYear'),date:document.getElementById('fDate'),day:document.getElementById('fDay'),date2:document.getElementById('fDate2'),name:document.getElementById('fName'),title:document.getElementById('fTitle'),speaker:document.getElementById('fSpeaker'),start:document.getElementById('fStart'),end:document.getElementById('fEnd'),roomOpen:document.getElementById('fRoomOpen'),duration:document.getElementById('fDuration'),deadline1:document.getElementById('fDeadline1'),deadline2:document.getElementById('fDeadline2'),deadline3:document.getElementById('fDeadline3'),dataDeadline:document.getElementById('fDataDeadline'),cost:document.getElementById('fCost'),subject:document.getElementById('fSubject'),subject2:document.getElementById('fSubject2'),site:document.getElementById('fSite'),cohost:document.getElementById('fCohost'),cohost3:document.getElementById('fCohost3'),zoomId:document.getElementById('fZoomId'),passcode:document.getElementById('fPasscode'),zoomUrl:document.getElementById('fZoomUrl'),hpUrl:document.getElementById('fHpUrl'),purpose:document.getElementById('fPurpose'),intro1:document.getElementById('fIntro1'),intro2:document.getElementById('fIntro2'),intro3:document.getElementById('fIntro3')};
+
+const checks={
+  k1:document.getElementById('cK1'),
+  hp:document.getElementById('cHp'),
+  k2:document.getElementById('cK2'),
+  k3:document.getElementById('cK3')
+};
 
 let currentHeaders=[],rawRows=[],dataRows=[],selectedRow=null,stagedRow=null,lastSaveMode='',selectedTemplates=[];
 
@@ -909,12 +980,19 @@ els.newDbBtn.addEventListener('click',createNewDatabase);
 els.recordSelect.addEventListener('change',handleSelectRecord);
 els.loadSelectedBtn.addEventListener('click',loadSelectedIntoForm);
 els.prefillBtn.addEventListener('click',prefillFromLast);
-els.appendBtn.addEventListener('click',stageDraft);
+els.appendBtn.addEventListener('click',commitDraft);
 els.openConfirmBtn.addEventListener('click',stageDraft);
 els.confirmAppendBtn.addEventListener('click',commitDraft);
 els.downloadBtn.addEventListener('click',downloadCsv);
 els.backBtn.addEventListener('click',()=>setStatus('入力内容を調整できます。必要なら項目を修正してください。'));
-[fields.no,fields.date,fields.name,fields.start,fields.end,fields.title,fields.speaker,fields.cost,fields.subject,fields.site,fields.cohost,fields.cohost3,fields.zoomId,fields.passcode,fields.zoomUrl,fields.hpUrl,fields.purpose,fields.intro1,fields.intro2,fields.intro3].forEach(el=>el.addEventListener('input',recalcDraft));
+
+[
+  fields.no,fields.date,fields.name,fields.start,fields.end,fields.title,fields.speaker,fields.cost,fields.subject,fields.site,
+  fields.cohost,fields.cohost3,fields.zoomId,fields.passcode,fields.zoomUrl,fields.hpUrl,fields.purpose,
+  fields.intro1,fields.intro2,fields.intro3
+].forEach(el=>el.addEventListener('input',recalcDraft));
+
+Object.values(checks).forEach(el=>el.addEventListener('change',recalcDraft));
 
 function setMergeStatus(msg){els.mergeStatusBox.textContent=msg}
 function setMergeState(){const hasTemplates=selectedTemplates.length>0;const hasNo=!!String(els.mergeRecordSelect.value||'').trim();els.templateState.value=`${selectedTemplates.length}件`;els.mergeAllBtn.disabled=!(hasTemplates&&hasNo)}
@@ -964,30 +1042,23 @@ function buildTemplateData(row){
     ZOOM_ID: row?.[fullKeys.zoomId] ?? ''
   };
 
-  Object.entries(aliasEntries).forEach(([k,v])=>{
-    map[k] = String(v ?? '');
-  });
-
-  map[fullKeys.zoomId] = String(row?.[fullKeys.zoomId] ?? '');
-  map['Zoom_ID_WEBINER_ID'] = String(row?.[fullKeys.zoomId] ?? '');
-  map['WEBINER_ID'] = String(row?.[fullKeys.zoomId] ?? '');
-  map['Zoom_ID'] = String(row?.[fullKeys.zoomId] ?? '');
-  map['ZOOM_ID'] = String(row?.[fullKeys.zoomId] ?? '');
-
-  map[fullKeys.hpUrl] = String(row?.[fullKeys.hpUrl] ?? '');
-  map['HP_URL_url_1'] = String(row?.[fullKeys.hpUrl] ?? '');
-  map['url_1'] = String(row?.[fullKeys.hpUrl] ?? '');
-  map['URL_1'] = String(row?.[fullKeys.hpUrl] ?? '');
-
-  map[fullKeys.zoomUrl] = String(row?.[fullKeys.zoomUrl] ?? '');
-  map['zoom_url_zoom_url'] = String(row?.[fullKeys.zoomUrl] ?? '');
-  map['zoom_url'] = String(row?.[fullKeys.zoomUrl] ?? '');
-  map['ZOOM_URL'] = String(row?.[fullKeys.zoomUrl] ?? '');
-
-  map[fullKeys.passcode] = String(row?.[fullKeys.passcode] ?? '');
-  map['Zoom_パスコード_PASSCODE'] = String(row?.[fullKeys.passcode] ?? '');
-  map['PASSCODE'] = String(row?.[fullKeys.passcode] ?? '');
-
+  Object.entries(aliasEntries).forEach(([k,v])=>{map[k]=String(v??'')});
+  map[fullKeys.zoomId]=String(row?.[fullKeys.zoomId]??'');
+  map['Zoom_ID_WEBINER_ID']=String(row?.[fullKeys.zoomId]??'');
+  map['WEBINER_ID']=String(row?.[fullKeys.zoomId]??'');
+  map['Zoom_ID']=String(row?.[fullKeys.zoomId]??'');
+  map['ZOOM_ID']=String(row?.[fullKeys.zoomId]??'');
+  map[fullKeys.hpUrl]=String(row?.[fullKeys.hpUrl]??'');
+  map['HP_URL_url_1']=String(row?.[fullKeys.hpUrl]??'');
+  map['url_1']=String(row?.[fullKeys.hpUrl]??'');
+  map['URL_1']=String(row?.[fullKeys.hpUrl]??'');
+  map[fullKeys.zoomUrl]=String(row?.[fullKeys.zoomUrl]??'');
+  map['zoom_url_zoom_url']=String(row?.[fullKeys.zoomUrl]??'');
+  map['zoom_url']=String(row?.[fullKeys.zoomUrl]??'');
+  map['ZOOM_URL']=String(row?.[fullKeys.zoomUrl]??'');
+  map[fullKeys.passcode]=String(row?.[fullKeys.passcode]??'');
+  map['Zoom_パスコード_PASSCODE']=String(row?.[fullKeys.passcode]??'');
+  map['PASSCODE']=String(row?.[fullKeys.passcode]??'');
   return map;
 }
 
@@ -1070,6 +1141,7 @@ function createNewDatabase(){
   stagedRow=null;
   lastSaveMode='';
   fields.no.value='1';
+  clearScheduleChecks();
   els.recordSelect.innerHTML='<option value="">Noを選択して表示</option>';
   els.recordSelect.disabled=true;
   els.prefillBtn.disabled=true;
@@ -1097,7 +1169,10 @@ function loadCsv(e){
     encoding:'UTF-8',
     complete:({data,meta})=>{
       currentHeaders=(meta?.fields?.length?meta.fields:[...DEFAULT_HEADERS]);
-      [fullKeys.deadline3,fullKeys.cost,fullKeys.dataDeadline,fullKeys.date2,fullKeys.subject2,fullKeys.name,fullKeys.cohost3].forEach(ensureHeader);
+      [
+        fullKeys.deadline3,fullKeys.cost,fullKeys.dataDeadline,fullKeys.date2,fullKeys.subject2,fullKeys.name,fullKeys.cohost3,
+        fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK2,fullKeys.checkK3
+      ].forEach(ensureHeader);
       rawRows=Array.isArray(data)?compactRawRows(data.map(r=>normalizeRowShape(r))):[];
       dataRows=buildDisplayRowsFromRaw(rawRows);
       els.appendBtn.disabled=false;
@@ -1109,7 +1184,7 @@ function loadCsv(e){
       els.recordSelect.disabled=dataRows.length===0;
       renderRecordOptions();
       setNextNo();
-      if(dataRows.length)prefillFromLast();else fields.no.value='1';
+      if(dataRows.length)prefillFromLast();else {fields.no.value='1';clearScheduleChecks();}
       renderTable();
       renderStats();
       recalcDraft();
@@ -1165,6 +1240,7 @@ function prefillFromLast(){
   fields.intro1.value=last[fullKeys.intro1]||'本日は臨床研究研修会にご参加いただきありがとうございます。';
   fields.intro2.value=last[fullKeys.intro2]||'本研修会では、臨床研究を進めるうえで必要となる基本事項と実務上のポイントを共有します。';
   fields.intro3.value=last[fullKeys.intro3]||'本日の講師は、臨床研究支援に関する実務経験を有する専門家です。';
+  clearScheduleChecks();
   recalcDraft();
 }
 function handleSelectRecord(){
@@ -1204,9 +1280,22 @@ function loadSelectedIntoForm(){
   fields.intro1.value=selectedRow[fullKeys.intro1]||'';
   fields.intro2.value=selectedRow[fullKeys.intro2]||'';
   fields.intro3.value=selectedRow[fullKeys.intro3]||'';
+  checks.k1.checked=toBool(selectedRow[fullKeys.checkK1]);
+  checks.hp.checked=toBool(selectedRow[fullKeys.checkHp]);
+  checks.k2.checked=toBool(selectedRow[fullKeys.checkK2]);
+  checks.k3.checked=toBool(selectedRow[fullKeys.checkK3]);
   recalcDraft();
-  setStatus(`No.${selectedRow[fullKeys.no]} を入力欄へ反映しました。保存すると同じNoを上書きします。`);
+  setStatus(`No.${selectedRow[fullKeys.no]} を入力欄へ反映しました。保存すると同じNoを上書きし、チェック状態も更新します。`);
 }
+function clearScheduleChecks(){
+  checks.k1.checked=false;
+  checks.hp.checked=false;
+  checks.k2.checked=false;
+  checks.k3.checked=false;
+}
+function boolToCsv(v){return v?'1':'0'}
+function toBool(v){return ['1','true','TRUE','yes','YES','済','完了'].includes(String(v??'').trim())}
+
 function recalcDraft(){
   fields.day.value=weekdayJa(fields.date.value);
   calcDerivedFields();
@@ -1325,6 +1414,10 @@ function buildRow(){
   row[fullKeys.intro2]=fields.intro2.value;
   row[fullKeys.intro3]=fields.intro3.value;
   row[fullKeys.dataDeadline]=fields.dataDeadline.value;
+  row[fullKeys.checkK1]=boolToCsv(checks.k1.checked);
+  row[fullKeys.checkHp]=boolToCsv(checks.hp.checked);
+  row[fullKeys.checkK2]=boolToCsv(checks.k2.checked);
+  row[fullKeys.checkK3]=boolToCsv(checks.k3.checked);
   return row;
 }
 function commitDraft(){
@@ -1350,8 +1443,11 @@ function commitDraft(){
   els.loadSelectedBtn.disabled=!dataRows.length;
   els.prefillBtn.disabled=!dataRows.length;
   els.downloadBtn.disabled=false;
-  if(lastSaveMode==='insert')fields.no.value=String(dataRows.reduce((m,r)=>Math.max(m,Number(r[fullKeys.no]||0)),0)+1);
-  setStatus(lastSaveMode==='update'?`No.${no} の元行を上書き保存しました。新しい行は追加していません。`:`No.${no} を新規追加しました。`);
+  if(lastSaveMode==='insert'){
+    fields.no.value=String(dataRows.reduce((m,r)=>Math.max(m,Number(r[fullKeys.no]||0)),0)+1);
+    clearScheduleChecks();
+  }
+  setStatus(lastSaveMode==='update'?`No.${no} の元行を上書き保存しました。チェック状態もCSVへ保存済みです。`:`No.${no} を新規追加しました。チェック状態もCSVへ保存済みです。`);
 }
 function getRawRowIndexByNo(no){return rawRows.findIndex(r=>String(r?.[fullKeys.no]||'').trim()===String(no||'').trim())}
 function renderRecordOptions(){
@@ -1368,7 +1464,10 @@ function renderTable(){
     els.tableList.innerHTML='<div class="table-row"><div>-</div><div>-</div><div>現在は空のマスターです。最初の1件を登録してください。</div><div>-</div><div>-</div><div>-</div></div>';
     return;
   }
-  els.tableList.innerHTML=dataRows.map(r=>`<div class="table-row"><div><span class="badge">${esc(r[fullKeys.no]||'')}</span></div><div>${esc(r[fullKeys.date]||'-')}</div><div><strong>${esc(r[fullKeys.title]||'-')}</strong></div><div><p>${esc(r[fullKeys.speaker]||'-')}</p></div><div>${esc(r[fullKeys.subject]||'-')}</div><div>${esc(r[fullKeys.k1]||'-')}</div></div>`).join('');
+  els.tableList.innerHTML=dataRows.map(r=>{
+    const k1Mark=toBool(r[fullKeys.checkK1])?'✓ ':'';
+    return `<div class="table-row"><div><span class="badge">${esc(r[fullKeys.no]||'')}</span></div><div>${esc(r[fullKeys.date]||'-')}</div><div><strong>${esc(r[fullKeys.title]||'-')}</strong></div><div><p>${esc(r[fullKeys.speaker]||'-')}</p></div><div>${esc(r[fullKeys.subject]||'-')}</div><div>${esc(k1Mark)}${esc(r[fullKeys.k1]||'-')}</div></div>`;
+  }).join('');
 }
 function parseMonthDayText(v, yearText){
   const m=String(v||'').match(/(\d{1,2})\/(\d{1,2})/);
@@ -1389,9 +1488,10 @@ function collectDeadlineAlerts(){
     const title=r[fullKeys.title]||'無題';
     const no=r[fullKeys.no]||'-';
     const pushItem=(label,dateObj,raw)=>{if(!dateObj)return;const diff=daysBetween(baseToday,dateObj);if(diff<0||diff>7)return;items.push({no,title,label,raw:raw||fmtDate(dateObj),diff})};
-    pushItem('起案1',parseMonthDayText(r[fullKeys.k1],year),r[fullKeys.k1]);
-    pushItem('起案2',parseMonthDayText(r[fullKeys.k2],year),r[fullKeys.k2]);
-    pushItem('起案3',parseMonthDayText(r[fullKeys.k3],year),r[fullKeys.k3]);
+    if(!toBool(r[fullKeys.checkK1]))pushItem('起案1',parseMonthDayText(r[fullKeys.k1],year),r[fullKeys.k1]);
+    if(!toBool(r[fullKeys.checkHp]))pushItem('HP公開',parseMonthDayText(r[fullKeys.hp],year),r[fullKeys.hp]);
+    if(!toBool(r[fullKeys.checkK2]))pushItem('起案2',parseMonthDayText(r[fullKeys.k2],year),r[fullKeys.k2]);
+    if(!toBool(r[fullKeys.checkK3]))pushItem('起案3',parseMonthDayText(r[fullKeys.k3],year),r[fullKeys.k3]);
     pushItem('院外締切',parseShortJapaneseDate(String(r[fullKeys.deadline1]||'').replace(/（.*?）/,'').replace('月','/').replace('日',''),year),r[fullKeys.deadline1]);
     pushItem('資料締切',parseMonthDayText(r[fullKeys.dataDeadline],year),r[fullKeys.dataDeadline]);
     pushItem('配布資料DL締切',parseMonthDayText(r[fullKeys.deadline3],year),r[fullKeys.deadline3]);
@@ -1425,7 +1525,9 @@ function updateAnnualGauge(done,total,yearCount,soon,draftCount){
 }
 function renderStats(){
   const total=dataRows.length;
-  const yearCount=total;
+  const years=dataRows.map(r=>String(r[fullKeys.year]||'').trim()).filter(Boolean).sort();
+  const latestYear=years.slice(-1)[0]||String(fields.year.value||'').trim();
+  const yearCount=latestYear?dataRows.filter(r=>String(r[fullKeys.year]||'').trim()===latestYear).length:0;
   const today=new Date();
   const today0=new Date(today.getFullYear(),today.getMonth(),today.getDate());
   const soon=dataRows.filter(r=>{const d=parseShortJapaneseDate(r[fullKeys.date],r[fullKeys.year]);if(!d)return false;const diff=(d-today0)/86400000;return diff>=0&&diff<=30}).length;
@@ -1459,10 +1561,16 @@ function renderConfirm(warns){
   }
   const row=stagedRow||buildRow();
   const saveMode=getRawRowIndexByNo(row[fullKeys.no])>=0?'update':'insert';
+  const checkedNames=[
+    row[fullKeys.checkK1]==='1'?'起案1':'',
+    row[fullKeys.checkHp]==='1'?'HP公開':'',
+    row[fullKeys.checkK2]==='1'?'起案2':'',
+    row[fullKeys.checkK3]==='1'?'起案3':''
+  ].filter(Boolean).join(' / ') || 'なし';
   els.confirmCount.textContent='1件';
   els.confirmWarn.textContent=warns.length;
   els.confirmState.textContent=warns.length?'要確認':(saveMode==='update'?'上書き保存':'新規追加');
-  els.checkList.innerHTML=`<div class="list-row"><div><strong>${saveMode==='update'?'既存行を上書き保存':'新規行を追加保存'}</strong><p>No.${esc(row[fullKeys.no])} / ${esc(row[fullKeys.date]||'-')} / ${esc(row[fullKeys.title]||'-')} / ${esc(row[fullKeys.name]||'-')}</p></div><div><span class="status ${warns.length?'s3':'s2'}">${warns.length?'確認':(saveMode==='update'?'上書き':'追加')}</span></div></div><div class="list-row"><div><strong>自動計算項目</strong><p>DATE_1 ${esc(row[fullKeys.date]||'-')} / DATE_2 ${esc(row[fullKeys.date2]||'-')} / DEADLINE_1 ${esc(row[fullKeys.deadline1]||'-')}</p></div><div><span class="status s2">反映済み</span></div></div>${warns.map(w=>`<div class="list-row"><div><strong>確認事項</strong><p>${esc(w)}</p></div><div><span class="status s4">保留</span></div></div>`).join('')}`;
+  els.checkList.innerHTML=`<div class="list-row"><div><strong>${saveMode==='update'?'既存行を上書き保存':'新規行を追加保存'}</strong><p>No.${esc(row[fullKeys.no])} / ${esc(row[fullKeys.date]||'-')} / ${esc(row[fullKeys.title]||'-')} / ${esc(row[fullKeys.name]||'-')}</p></div><div><span class="status ${warns.length?'s3':'s2'}">${warns.length?'確認':(saveMode==='update'?'上書き':'追加')}</span></div></div><div class="list-row"><div><strong>進捗チェック</strong><p>${esc(checkedNames)}</p></div><div><span class="status s2">反映対象</span></div></div><div class="list-row"><div><strong>自動計算項目</strong><p>DATE_1 ${esc(row[fullKeys.date]||'-')} / DATE_2 ${esc(row[fullKeys.date2]||'-')} / DEADLINE_1 ${esc(row[fullKeys.deadline1]||'-')}</p></div><div><span class="status s2">反映済み</span></div></div>${warns.map(w=>`<div class="list-row"><div><strong>確認事項</strong><p>${esc(w)}</p></div><div><span class="status s4">保留</span></div></div>`).join('')}`;
 }
 function renderResult(done=false){
   if(!currentHeaders.length){
