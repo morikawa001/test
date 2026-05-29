@@ -313,48 +313,16 @@ input[readonly],textarea[readonly]{
 .btn:disabled{opacity:.42;cursor:not-allowed}
 
 .file-pick{display:grid;gap:6px}
-.file-pick input[type=file]{display:none}
-.file-picker{
-  display:grid;
-  grid-template-columns:auto 1fr;
-  gap:10px;
-  align-items:center;
-}
-.file-trigger{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:46px;
-  padding:0 16px;
-  border-radius:10px;
-  border:1px solid var(--line2);
+.file-pick input[type=file]{padding:9px 11px}
+.file-pick input[type=file]::file-selector-button{
+  margin-right:12px;
+  border:none;
+  border-radius:8px;
+  padding:8px 12px;
   background:var(--button-bg);
   color:var(--button-text);
   font-weight:800;
-  letter-spacing:.03em;
   cursor:pointer;
-  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,box-shadow 150ms ease;
-}
-.file-trigger:hover{
-  background:var(--button-hover-bg);
-  box-shadow:0 0 0 1px color-mix(in srgb, var(--green) 8%, transparent);
-}
-.file-name{
-  min-height:46px;
-  display:flex;
-  align-items:center;
-  padding:0 14px;
-  border:1px solid var(--line2);
-  border-radius:10px;
-  background:var(--input-bg);
-  color:var(--muted);
-  overflow:hidden;
-  white-space:nowrap;
-  text-overflow:ellipsis;
-}
-.file-name.has-file{
-  color:var(--text-strong);
-  font-weight:700;
 }
 
 #templateFiles::file-selector-button{
@@ -631,7 +599,7 @@ input[readonly],textarea[readonly]{
   .hero-grid,.main-grid,.dual-grid,.parameter-wrap{grid-template-columns:1fr}
 }
 @media (max-width:860px){
-  .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.template-row,.alert-item,.schedule-card,.file-picker{
+  .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.template-row,.alert-item,.schedule-card{
     grid-template-columns:1fr;
   }
 }
@@ -669,10 +637,6 @@ input[readonly],textarea[readonly]{
       <div class="file-pick">
         <label for="csvFile">マスターCSV</label>
         <input id="csvFile" type="file" accept=".csv,text/csv" />
-        <div class="file-picker">
-          <label for="csvFile" class="file-trigger">ファイルを選択</label>
-          <div class="file-name" id="csvFileName">選択されていません</div>
-        </div>
       </div>
       <div class="action-grid">
         <button class="btn" id="newDbBtn">新規DB作成</button>
@@ -1099,7 +1063,6 @@ const fullKeys={
 
 const els={
   csvFile:document.getElementById('csvFile'),
-  csvFileName:document.getElementById('csvFileName'),
   newDbBtn:document.getElementById('newDbBtn'),
   recordSelect:document.getElementById('recordSelect'),
   openConfirmBtn:document.getElementById('openConfirmBtn'),
@@ -1210,7 +1173,7 @@ const COHOST3_TEXT_TEAM='臨床腫瘍学コースとの共催';
 
 const CLOSING_TEXT_RESEARCHER='司会:（研究者） 本日の研修の受講証を希望する方は、終了後のアンケートよりお申込みください。 なお、受講証につきましては、研修会開始から質疑応答終了までの時間のうち3/4以上を聴講した方で、 希望される方に発行いたします。 また、本研修会の修了証書の発行につきまして、修了証書をご希望の方は、 今回を含め、研究者対象の研修会を3回以上受講した方のみ、お申込みいただけます。 対象の研修会を3回受講された方で、修了証の発行をご希望の方は、アンケートよりお申し込みください。 ＜スライド切り替え＞ 最後になりますが、受講者の皆様には、アンケートへのご回答、ご協力をお願いいたします。 ウェビナー退室後にアンケートが表示されますので、 ご回答後に送信ボタンを押して提出してください。 本日は、2026年度_静岡がんセンター臨床研究研修会にご参加いただき、どうもありがとうございました。 本ウェビナーはまもなく切断いたします。';
 const CLOSING_TEXT_SUPPORT='司会:（支援者） 本日の研修の受講証を希望する方は、終了後のアンケートよりお申込みください。 なお、受講証につきましては、研修会開始から質疑応答終了までの時間のうち3/4以上を聴講した方で、 希望される方に発行いたします。 また、本研修会の修了証書の発行につきまして、修了証書をご希望の方は、 今回を含め、研究支援者対象の研修会を3回以上受講した方のみ、お申込みいただけます。 対象の研修会を3回受講された方で、修了証の発行をご希望の方は、アンケートよりお申し込みください。 ＜スライド切り替え＞ 最後になりますが、受講者の皆様には、アンケートへのご回答、ご協力をお願いいたします。 ウェビナー退室後にアンケートが表示されますので、 ご回答後に送信ボタンを押して提出してください。 本日は、2026年度_静岡がんセンター臨床研究研修会にご参加いただき、どうもありがとうございました。 本ウェビナーはまもなく切断いたします。';
-const CLOSING_TEXT_COMMITTEE='司会:（委員会） 本日の研修の受講証を希望する方は、終了後のアンケートよりお申込みください。 なお、受講証につきましては、研修会開始から質疑応答終了までの時間のうち3/4以上を聴講した方で、 希望される方に発行いたします。 ＜スライド切り替え＞ 最後になりますが、受講者の皆様には、アンケートへのご回答、ご協力をお願いいたします。 ウェビナー退室後にアンケートが表示されますので、 ご回答後に送信ボタンを押して提出してください。 本日は、2026年度_静岡がんセンター臨床研究研修会にご参加いただき、どうもありがとうございました。 本ウェビナーはまもなく切断いたします.';
+const CLOSING_TEXT_COMMITTEE='司会:（委員会） 本日の研修の受講証を希望する方は、終了後のアンケートよりお申込みください。 なお、受講証につきましては、研修会開始から質疑応答終了までの時間のうち3/4以上を聴講した方で、 希望される方に発行いたします。 ＜スライド切り替え＞ 最後になりますが、受講者の皆様には、アンケートへのご回答、ご協力をお願いいたします。 ウェビナー退室後にアンケートが表示されますので、 ご回答後に送信ボタンを押して提出してください。 本日は、2026年度_静岡がんセンター臨床研究研修会にご参加いただき、どうもありがとうございました。 本ウェビナーはまもなく切断いたします。';
 
 els.csvFile.addEventListener('change',loadCsv);
 els.templateFiles.addEventListener('change',handleTemplateFiles);
@@ -1234,17 +1197,6 @@ fields.subject.addEventListener('change',recalcDraft);
 ].forEach(el=>el.addEventListener('input',recalcDraft));
 [fields.site].forEach(el=>el.addEventListener('change',recalcDraft));
 [els.ckK1,els.ckHp,els.ckK2,els.ckK3].forEach(el=>el.addEventListener('change',recalcDraft));
-
-function updateCsvFileName(file){
-  if(!els.csvFileName)return;
-  if(file){
-    els.csvFileName.textContent=file.name;
-    els.csvFileName.classList.add('has-file');
-  }else{
-    els.csvFileName.textContent='選択されていません';
-    els.csvFileName.classList.remove('has-file');
-  }
-}
 
 function getHead1ValueByCohost(cohostValue){
   return String(cohostValue||'').trim()===COHOST_OPTION_TEAM ? HEAD_TEXT_COHOST : HEAD_TEXT_DEFAULT;
@@ -1481,12 +1433,10 @@ function createNewDatabase(){
   renderAlerts();
   renderMergeOptions();
   setStatus('空のマスターCSVを新規作成しました。');
-  updateCsvFileName(null);
 }
 
 function loadCsv(e){
   const file=e.target.files?.[0];
-  updateCsvFileName(file||null);
   if(!file){setStatus('CSVファイルが選択されていません。');return}
   Papa.parse(file,{
     header:true,
@@ -1521,10 +1471,10 @@ function loadCsv(e){
       els.miniDbText.textContent=dataRows.length?`既存データ ${dataRows.length} 件を読み込みました。`:'ヘッダーのみのCSVを読み込みました。';
       renderMergeOptions();
       setStatus(dataRows.length?`CSVを読み込みました。${dataRows.length}件を表示しています。`:'ヘッダーのみのCSVを読み込みました。');
+      e.target.value='';
     },
     error:(err)=>{
       setStatus(`CSVの読込に失敗しました: ${err?.message||'不明なエラー'}`);
-      updateCsvFileName(null);
       e.target.value='';
     }
   });
@@ -2029,7 +1979,8 @@ function downloadCsv(){
     fields:currentHeaders,
     data:rawRows.map(row=>currentHeaders.map(h=>row[h]??''))
   });
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const bom='\uFEFF';
+  const blob=new Blob([bom,csv],{type:'text/csv;charset=utf-8;'});
   const a=document.createElement('a');
   const url=URL.createObjectURL(blob);
   a.href=url;
@@ -2099,7 +2050,6 @@ function formatDate1Short(iso){
 syncCohostFields();
 recalcDraft();
 renderTemplateList();
-updateCsvFileName(null);
 </script>
 </body>
 </html>
