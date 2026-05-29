@@ -320,7 +320,7 @@ input[readonly],textarea[readonly]{
   cursor:pointer;
 }
 
-/* Template Injection のファイル選択ボタンだけ既存ボタン風に統一 */
+/* ここまでの修正を維持：Template Injection のファイル選択ボタン */
 #templateFiles::file-selector-button{
   min-height:46px;
   padding:0 16px;
@@ -1599,6 +1599,7 @@ function loadSelectedIntoForm(){
   fields.intro3.value=selectedRow[fullKeys.intro3]||'';
   applyScheduleChecksFromRow(selectedRow);
   recalcDraft();
+  syncComputedScheduleCards();
   setStatus(`No.${selectedRow[fullKeys.no]} を入力欄へ反映しました。保存すると同じNoを上書きします。`);
 }
 
@@ -1611,6 +1612,7 @@ function recalcDraft(){
   els.dK2.textContent=fmtDate(auto.k2);
   els.dHp.textContent=fmtDate(auto.hp);
   els.dK3.textContent=fmtDate(auto.k3);
+  syncComputedScheduleCards();
   renderConfirm(validateDraft());
   renderResult();
   renderStats();
@@ -1639,6 +1641,19 @@ function calcDerivedFields(){
   fields.dataDeadline.value=fmtMonthDay(auto.dataDeadline);
   fields.subject2.value=fields.subject.value;
 }
+
+/* 追加修正：Computed Schedule の 8項目を必ず右側カードへ同期 */
+function syncComputedScheduleCards(){
+  els.dRoomOpen.textContent=fields.roomOpen.value||'-';
+  els.dDuration.textContent=fields.duration.value||'-';
+  els.dDeadline1.textContent=fields.deadline1.value||'-';
+  els.dDeadline2.textContent=fields.deadline2.value||'-';
+  els.dDeadline3.textContent=fields.deadline3.value||'-';
+  els.dDataDeadline.textContent=fields.dataDeadline.value||'-';
+  els.dDate2.textContent=fields.date2.value||'-';
+  els.dSubject2.textContent=fields.subject2.value||'-';
+}
+
 function previousBusinessDay(d){
   const x=new Date(d);
   do{x.setDate(x.getDate()-1)}while([0,6].includes(x.getDay()));
@@ -1760,6 +1775,7 @@ function commitDraft(){
   els.prefillBtn.disabled=!dataRows.length;
   els.downloadBtn.disabled=false;
   if(lastSaveMode==='insert') fields.no.value=String(dataRows.reduce((m,r)=>Math.max(m,Number(r[fullKeys.no]||0)),0)+1);
+  recalcDraft();
   setStatus(lastSaveMode==='update'?`No.${no} の元行を上書き保存しました。新しい行は追加していません。`:`No.${no} を新規追加しました。`);
 }
 
