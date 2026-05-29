@@ -1355,7 +1355,8 @@ function buildTemplateData(row){
   map['PREMEETING']=String(row?.[fullKeys.preMeeting]??'');
   return map;
 }
-function xmlEscape(s){
+// ── ① xmlEscape：特殊文字を確実にエスケープ ──
+function xmlEscape(s) {
   return String(s ?? '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -1364,56 +1365,60 @@ function xmlEscape(s){
     .replace(/'/g, '&apos;');
 }
 
-function escapeRegExp(s){
+function escapeRegExp(s) {
   return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function replaceInTextNodes(xml, data, textTagPattern){
-  const matches = [];
-  xml.replace(textTagPattern, (full, openTag, text, closeTag, offset) => {
-    matches.push({
-      full,
-      openTag,
-      text: text || '',
-      closeTag,
-      offset,
-      length: full.length
-    });
-    return full;
-  });
+// ── ② ランを結合→置換→最後のノードだけに詰める ──
+function replaceInTextNodes(xml, data, textTagPattern) {
+  const TAG_RE = textTagPattern;
+  const chunks = [];
+  let lastIndex = 0;
 
-  if (!matches.length) return xml;
+  for (const m of xml.matchAll(TAG_RE)) {
+    // テキストノード前の生XML
+    chunks.push({ type: 'raw', val: xml.slice(lastIndex, m.index) });
+    chunks.push({ type: 'node', openTag: m[1], text: m[2] ?? '', closeTag: m[3], fullLen: m[0].length, offset: m.index });
+    lastIndex = m.index + m[0].length;
+  }
+  chunks.push({ type: 'raw', val: xml.slice(lastIndex) });
 
-  let combined = matches.map(m => m.text).join('');
+  // ノードが無ければそのまま返す
+  const nodes = chunks.filter(c => c.type === 'node');
+  if (!nodes.length) return xml;
+
+  // 全テキストを結合
+  let combined = nodes.map(n => n.text).join('');
+
+  // 長いキーから順に置換
   const entries = Object.entries(data).sort((a, b) => b[0].length - a[0].length);
-
   for (const [key, val] of entries) {
-    combined = combined.replace(new RegExp(escapeRegExp(String(key)), 'g'), String(val ?? ''));
+    if (!String(key).trim()) continue;
+    combined = combined.replace(
+      new RegExp(escapeRegExp(String(key)), 'g'),
+      String(val ?? '')
+    );
   }
 
-  let cursor = 0;
-  const replacedParts = matches.map((m, idx) => {
-    const originalLen = m.text.length;
-    const isLast = idx === matches.length - 1;
-    const slice = isLast ? combined.slice(cursor) : combined.slice(cursor, cursor + originalLen);
-    cursor += originalLen;
-    return `${m.openTag}${xmlEscape(slice)}${m.closeTag}`;
-  });
+  // 結合後テキストを先頭ノードに全部入れ、残りは空にする
+  let nodeIdx = 0;
+  for (const chunk of chunks) {
+    if (chunk.type !== 'node') continue;
+    chunk.newText = nodeIdx === 0 ? combined : '';
+    nodeIdx++;
+  }
 
-  let out = '';
-  let lastIndex = 0;
-  matches.forEach((m, idx) => {
-    out += xml.slice(lastIndex, m.offset);
-    out += replacedParts[idx];
-    lastIndex = m.offset + m.length;
-  });
-  out += xml.slice(lastIndex);
-  return out;
+  // 再構築
+  return chunks.map(c =>
+    c.type === 'raw'
+      ? c.val
+      : `${c.openTag}${xmlEscape(c.newText)}${c.closeTag}`
+  ).join('');
 }
 
-function replacePlaceholdersInXml(xml, data, kind){
+// ── ③ ファイル種別ごとに正しいタグを指定 ──
+function replacePlaceholdersInXml(xml, data, kind) {
   let out = String(xml);
-
   if (kind === 'docx') {
     out = replaceInTextNodes(out, data, /(<w:t\b[^>]*>)([\s\S]*?)(<\/w:t>)/g);
   } else if (kind === 'pptx') {
@@ -1421,36 +1426,33 @@ function replacePlaceholdersInXml(xml, data, kind){
   } else if (kind === 'xlsx') {
     out = replaceInTextNodes(out, data, /(<t\b[^>]*>)([\s\S]*?)(<\/t>)/g);
   }
-
   return out;
 }
 
-function targetXmlPathsForTemplate(zip, fileName){
+// ── ④ 対象XMLをドキュメント本文だけに絞る ──
+function targetXmlPathsForTemplate(zip, fileName) {
   const ext = String(fileName.split('.').pop() || '').toLowerCase();
   const names = Object.keys(zip.files);
-
   if (ext === 'docx') {
     return names.filter(n =>
       /^word\/(document|header\d*|footer\d*)\.xml$/i.test(n)
     );
   }
-
   if (ext === 'pptx') {
     return names.filter(n =>
-      /^ppt\/(slides\/slide\d+\.xml|notesSlides\/notesSlide\d+\.xml)$/.test(n)
+      /^ppt\/(slides\/slide\d+|notesSlides\/notesSlide\d+)\.xml$/.test(n)
     );
   }
-
   if (ext === 'xlsx') {
     return names.filter(n =>
-      /^xl\/(sharedStrings\.xml|worksheets\/sheet\d+\.xml)$/.test(n)
+      /^xl\/(sharedStrings|worksheets\/sheet\d+)\.xml$/.test(n)
     );
   }
-
   return [];
 }
 
-async function mergeSingleTemplate(file, row){
+// ── ⑤ マージ本体（ext をそのまま渡す） ──
+async function mergeSingleTemplate(file, row) {
   const arrayBuffer = await file.arrayBuffer();
   const zip = new PizZip(arrayBuffer);
   const data = buildTemplateData(row);
@@ -1485,7 +1487,6 @@ async function mergeSingleTemplate(file, row){
   a.download = `No${safeName(row?.[fullKeys.no])}_${safeName(row?.[fullKeys.title])}_${safeName(file.name)}`;
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-
   return { name: file.name, type: templateKind(file.name) };
 }
 async function mergeAllTemplates(){
