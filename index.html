@@ -307,9 +307,19 @@ input[readonly],textarea[readonly]{
 .btn.small{min-height:38px;padding:0 12px;font-size:.84rem}
 .btn:disabled{opacity:.42;cursor:not-allowed}
 
-.file-pick{display:grid;gap:6px}
-.file-pick input[type=file]{padding:9px 11px}
-.file-pick input[type=file]::file-selector-button{
+.file-pick,
+.file-pick-inline{
+  display:grid;
+  gap:6px;
+}
+
+.file-pick input[type=file],
+.file-pick-inline input[type=file]{
+  padding:9px 11px;
+}
+
+.file-pick input[type=file]::file-selector-button,
+.file-pick-inline input[type=file]::file-selector-button{
   margin-right:12px;
   border:none;
   border-radius:8px;
@@ -318,39 +328,6 @@ input[readonly],textarea[readonly]{
   color:var(--text-strong);
   font-weight:800;
   cursor:pointer;
-}
-
-.template-file-pick{
-  display:grid;
-  gap:8px;
-}
-.template-file-native{
-  position:absolute;
-  width:1px;
-  height:1px;
-  padding:0;
-  margin:-1px;
-  overflow:hidden;
-  clip:rect(0,0,0,0);
-  white-space:nowrap;
-  border:0;
-}
-.template-file-trigger{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:100%;
-  text-align:center;
-  text-decoration:none;
-}
-.template-file-trigger:focus-visible{
-  outline:none;
-  border-color:var(--green);
-  box-shadow:0 0 0 3px color-mix(in srgb, var(--green) 14%, transparent);
-}
-.template-file-caption{
-  color:var(--muted);
-  font-size:.9rem;
 }
 
 .action-grid{
@@ -952,18 +929,9 @@ input[readonly],textarea[readonly]{
       </div>
     </div>
     <div class="master-grid">
-      <div class="field full">
+      <div class="field full file-pick-inline">
         <label>テンプレートファイル</label>
-        <div class="template-file-pick">
-          <input
-            id="templateFiles"
-            class="template-file-native"
-            type="file"
-            multiple
-            accept=".docx,.pptx,.xlsx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-          <label for="templateFiles" class="btn template-file-trigger">ファイルを選択</label>
-          <div class="template-file-caption" id="templateFileCaption">pptx / xlsx / docx を複数まとめて選択できます。</div>
-        </div>
+        <input id="templateFiles" type="file" multiple accept=".docx,.pptx,.xlsx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       </div>
       <div class="field">
         <label>差し込み対象No</label>
@@ -1135,7 +1103,6 @@ const els={
   resultZip:document.getElementById('resultZip'),
   alertList:document.getElementById('alertList'),
   templateFiles:document.getElementById('templateFiles'),
-  templateFileCaption:document.getElementById('templateFileCaption'),
   mergeRecordSelect:document.getElementById('mergeRecordSelect'),
   templateState:document.getElementById('templateState'),
   mergeAllBtn:document.getElementById('mergeAllBtn'),
@@ -1239,24 +1206,7 @@ function setMergeStatus(msg){els.mergeStatusBox.textContent=msg}
 function setMergeState(){const hasTemplates=selectedTemplates.length>0;const hasNo=!!String(els.mergeRecordSelect.value||'').trim();els.templateState.value=`${selectedTemplates.length}件`;els.mergeAllBtn.disabled=!(hasTemplates&&hasNo)}
 function renderMergeOptions(){const options=['<option value="">Noを選択して差し込み</option>'].concat(dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`));els.mergeRecordSelect.innerHTML=options.join('');els.mergeRecordSelect.disabled=!dataRows.length;setMergeState()}
 function renderTemplateList(){if(!selectedTemplates.length){els.templateList.innerHTML='<div class="template-row"><div><strong>テンプレート未選択</strong><p>pptx / xlsx / docx を複数まとめて選択できます。</p></div><div><span class="status s3">待機</span></div><div class="mono">-</div><div class="mono">-</div></div>';return}els.templateList.innerHTML=selectedTemplates.map(file=>`<div class="template-row"><div><strong>${esc(file.name)}</strong><p>${esc(file.type||'application/octet-stream')}</p></div><div><span class="status s2">読込済み</span></div><div class="mono">${esc(templateKind(file.name))}</div><div class="mono">${Math.round((file.size||0)/1024)} KB</div></div>`).join('')}
-function updateTemplateCaption(){
-  if(!selectedTemplates.length){
-    els.templateFileCaption.textContent='pptx / xlsx / docx を複数まとめて選択できます。';
-    return;
-  }
-  if(selectedTemplates.length===1){
-    els.templateFileCaption.textContent=`選択中: ${selectedTemplates[0].name}`;
-    return;
-  }
-  els.templateFileCaption.textContent=`${selectedTemplates.length}件のテンプレートを選択中`;
-}
-function handleTemplateFiles(e){
-  selectedTemplates=Array.from(e.target.files||[]).filter(f=>/\.(docx|pptx|xlsx)$/i.test(f.name));
-  renderTemplateList();
-  updateTemplateCaption();
-  setMergeState();
-  setMergeStatus(selectedTemplates.length?`${selectedTemplates.length}件のテンプレートを読み込みました。差し込み対象Noを選ぶと一括出力できます。`:'テンプレートファイルが未選択です。')
-}
+function handleTemplateFiles(e){selectedTemplates=Array.from(e.target.files||[]).filter(f=>/\.(docx|pptx|xlsx)$/i.test(f.name));renderTemplateList();setMergeState();setMergeStatus(selectedTemplates.length?`${selectedTemplates.length}件のテンプレートを読み込みました。差し込み対象Noを選ぶと一括出力できます。`:'テンプレートファイルが未選択です。')}
 function getRowByNo(no){return dataRows.find(r=>String(r[fullKeys.no]||'').trim()===String(no||'').trim())||null}
 
 function buildTemplateData(row){
@@ -1954,7 +1904,6 @@ function safeName(s){return String(s).replace(/[\\/:*?"<>|\s]+/g,'-')}
 syncCohostFields();
 recalcDraft();
 renderTemplateList();
-updateTemplateCaption();
 </script>
 </body>
 </html>
