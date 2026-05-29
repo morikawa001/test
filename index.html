@@ -1734,9 +1734,9 @@ function formatDate1Short(iso){
   return `${Number(m)}/${Number(d)}`;
 }
 function subjectDetail(v){
-  if(v==='研究支援者') return '研究支援に関わる担当者向け';
-  if(v==='倫理審査委員会委員') return '倫理審査委員会委員向け';
-  return '研究者向け';
+  if(v==='研究支援者') return '薬剤師・看護師等';
+  if(v==='倫理審査委員会委員') return ' ';
+  return '医師・歯科医師等';
 }
 function validateDraft(){
   const warns=[];
