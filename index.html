@@ -1973,19 +1973,32 @@ function renderResult(done=false){
   if(inlineBtn) inlineBtn.addEventListener('click',downloadCsv);
 }
 function downloadCsv(){
-  if(!currentHeaders.length){setStatus('先にCSVを読み込むか、新規データベースを作成してください。');return}
-  rawRows=compactRawRows(rawRows);
-  const csv=Papa.unparse({
-    fields:currentHeaders,
-    data:rawRows.map(row=>currentHeaders.map(h=>row[h]??''))
+  if(!currentHeaders.length){
+    setStatus('先にCSVを読み込むか、新規データベースを作成してください。');
+    return;
+  }
+
+  rawRows = compactRawRows(rawRows);
+
+  const csv = Papa.unparse({
+    fields: currentHeaders,
+    data: rawRows.map(row => currentHeaders.map(h => row[h] ?? ''))
   });
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  const a=document.createElement('a');
-  const url=URL.createObjectURL(blob);
-  a.href=url;
-  a.download=fields.date.value?`clinical-master_${safeName(fields.title.value||'updated')}.csv`:'clinical-master_updated.csv';
+
+  const blob = new Blob(
+    ['\uFEFF' + csv],
+    { type: 'text/csv;charset=utf-8;' }
+  );
+
+  const a = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  a.href = url;
+  a.download = fields.date.value
+    ? `clinical-master_${safeName(fields.title.value || 'updated')}.csv`
+    : 'clinical-master_updated.csv';
   a.click();
-  URL.revokeObjectURL(url);
+
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 function setStatus(msg){els.statusBox.textContent=msg}
 
