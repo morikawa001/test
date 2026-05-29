@@ -666,7 +666,6 @@ input[readonly],textarea[readonly]{
           </div>
         </div>
       </div>
-
       <div class="param-meta">
         <div class="param-side"><div><span class="small-label">年度件数</span><p class="radar-note">現在年度に属する登録件数です。</p></div><b id="paramYearCount">0</b></div>
         <div class="param-side"><div><span class="small-label">開催済み</span><p class="radar-note">今日より前に開催済みの件数です。</p></div><b id="paramDoneCount">0</b></div>
@@ -738,8 +737,13 @@ input[readonly],textarea[readonly]{
             <option>ハイブリッド</option>
           </select>
         </div>
-        <div class="field"><label>共催_COHOST_1</label><input id="fCohost" value="-"></div>
-        <div class="field"><label>共催3_COHOST_3</label><input id="fCohost3" value=""></div>
+        <div class="field"><label>共催_COHOST_1</label>
+          <select id="fCohost">
+            <option value="なし">なし</option>
+            <option value="企画人材班">企画人材班</option>
+          </select>
+        </div>
+        <div class="field"><label>共催3_COHOST_3</label><input id="fCohost3" readonly></div>
         <div class="field"><label>Zoom ID</label><input id="fZoomId" value=""></div>
         <div class="field"><label>パスコード_PASSCODE</label><input id="fPasscode" value=""></div>
         <div class="field full"><label>Zoom URL</label><input id="fZoomUrl" value="https://zoom.us/"></div>
@@ -914,7 +918,6 @@ input[readonly],textarea[readonly]{
         <p>pptx / xlsx / docx を複数同時読込し、選択Noのデータで一括差し込みします。</p>
       </div>
     </div>
-
     <div class="master-grid">
       <div class="field full">
         <label>テンプレートファイル</label>
@@ -952,15 +955,199 @@ input[readonly],textarea[readonly]{
 const root=document.documentElement;
 document.getElementById('themeBtn').addEventListener('click',()=>{root.setAttribute('data-theme',root.getAttribute('data-theme')==='dark'?'light':'dark')});
 
-const DEFAULT_HEADERS=['起案行No','年度_YEAR_1','開催日_DATE_1','曜日 _DAY','研修会開始_START_1','研修会終了_END_1','研修会入室開始時間_TIME_1','時間（分）_TIME_2','〆切院外_DEADLINE_1','〆切時間院内_DEADLINE_2','配布資料DL〆切_DEADLINE_3','テーマ(標題)_TITLE','担当講師_SPEAKER','対象_SUBJECT_1','対象詳細_SUBJECT_2','講演場所_SITE','共催_COHOST_1','共催3(選択）_COHOST_3','起案1開催DATE_KIAN_1','起案2資料_DATE_KIAN_2','起案3受講証修了証_DATE_KIAN_3','HP案内開始チラシ配布','謝金_COST','目的_PURPOSE','メール用研修会開催日付_DATE_2','名前_NAME','Zoom_ID_WEBINER_ID','zoom_url_zoom_url','HP_URL_url_1','Zoom_パスコード_PASSCODE','進行表導入_INTRO_1','進行表研修会趣旨説明_INTRO_2','進行表講師紹介_INTRO_3','講義資料提供の締切_DATA_deadline','起案1チェック_CHECK_K1','HPチェック_CHECK_HP','起案2チェック_CHECK_K2','起案3チェック_CHECK_K3'];
+const DEFAULT_HEADERS=[
+  '起案行No',
+  '年度_YEAR_1',
+  '開催日_DATE_1',
+  '曜日 _DAY',
+  '研修会開始_START_1',
+  '研修会終了_END_1',
+  '研修会入室開始時間_TIME_1',
+  '時間（分）_TIME_2',
+  '〆切院外_DEADLINE_1',
+  '〆切時間院内_DEADLINE_2',
+  '配布資料DL〆切_DEADLINE_3',
+  'テーマ(標題)_TITLE',
+  '担当講師_SPEAKER',
+  '対象_SUBJECT_1',
+  '対象詳細_SUBJECT_2',
+  '講演場所_SITE',
+  '共催_COHOST_1',
+  '共催3(選択）_COHOST_3',
+  'オリエンテーションスライドヘッダー_HEAD_1',
+  '起案1開催DATE_KIAN_1',
+  '起案2資料_DATE_KIAN_2',
+  '起案3受講証修了証_DATE_KIAN_3',
+  'HP案内開始チラシ配布',
+  '謝金_COST',
+  '目的_PURPOSE',
+  'メール用研修会開催日付_DATE_2',
+  '名前_NAME',
+  'Zoom_ID_WEBINER_ID',
+  'zoom_url_zoom_url',
+  'HP_URL_url_1',
+  'Zoom_パスコード_PASSCODE',
+  '進行表導入_INTRO_1',
+  '進行表研修会趣旨説明_INTRO_2',
+  '進行表講師紹介_INTRO_3',
+  '講義資料提供の締切_DATA_deadline',
+  '起案1チェック_CHECK_K1',
+  'HPチェック_CHECK_HP',
+  '起案2チェック_CHECK_K2',
+  '起案3チェック_CHECK_K3'
+];
 
-const fullKeys={no:'起案行No',year:'年度_YEAR_1',date:'開催日_DATE_1',day:'曜日 _DAY',start:'研修会開始_START_1',end:'研修会終了_END_1',roomOpen:'研修会入室開始時間_TIME_1',duration:'時間（分）_TIME_2',deadline1:'〆切院外_DEADLINE_1',deadline2:'〆切時間院内_DEADLINE_2',deadline3:'配布資料DL〆切_DEADLINE_3',title:'テーマ(標題)_TITLE',speaker:'担当講師_SPEAKER',subject:'対象_SUBJECT_1',subject2:'対象詳細_SUBJECT_2',site:'講演場所_SITE',cohost:'共催_COHOST_1',cohost3:'共催3(選択）_COHOST_3',k1:'起案1開催DATE_KIAN_1',k2:'起案2資料_DATE_KIAN_2',k3:'起案3受講証修了証_DATE_KIAN_3',hp:'HP案内開始チラシ配布',cost:'謝金_COST',purpose:'目的_PURPOSE',date2:'メール用研修会開催日付_DATE_2',name:'名前_NAME',zoomId:'Zoom_ID_WEBINER_ID',zoomUrl:'zoom_url_zoom_url',hpUrl:'HP_URL_url_1',passcode:'Zoom_パスコード_PASSCODE',intro1:'進行表導入_INTRO_1',intro2:'進行表研修会趣旨説明_INTRO_2',intro3:'進行表講師紹介_INTRO_3',dataDeadline:'講義資料提供の締切_DATA_deadline',checkK1:'起案1チェック_CHECK_K1',checkHp:'HPチェック_CHECK_HP',checkK2:'起案2チェック_CHECK_K2',checkK3:'起案3チェック_CHECK_K3'};
+const fullKeys={
+  no:'起案行No',
+  year:'年度_YEAR_1',
+  date:'開催日_DATE_1',
+  day:'曜日 _DAY',
+  start:'研修会開始_START_1',
+  end:'研修会終了_END_1',
+  roomOpen:'研修会入室開始時間_TIME_1',
+  duration:'時間（分）_TIME_2',
+  deadline1:'〆切院外_DEADLINE_1',
+  deadline2:'〆切時間院内_DEADLINE_2',
+  deadline3:'配布資料DL〆切_DEADLINE_3',
+  title:'テーマ(標題)_TITLE',
+  speaker:'担当講師_SPEAKER',
+  subject:'対象_SUBJECT_1',
+  subject2:'対象詳細_SUBJECT_2',
+  site:'講演場所_SITE',
+  cohost:'共催_COHOST_1',
+  cohost3:'共催3(選択）_COHOST_3',
+  head1:'オリエンテーションスライドヘッダー_HEAD_1',
+  k1:'起案1開催DATE_KIAN_1',
+  k2:'起案2資料_DATE_KIAN_2',
+  k3:'起案3受講証修了証_DATE_KIAN_3',
+  hp:'HP案内開始チラシ配布',
+  cost:'謝金_COST',
+  purpose:'目的_PURPOSE',
+  date2:'メール用研修会開催日付_DATE_2',
+  name:'名前_NAME',
+  zoomId:'Zoom_ID_WEBINER_ID',
+  zoomUrl:'zoom_url_zoom_url',
+  hpUrl:'HP_URL_url_1',
+  passcode:'Zoom_パスコード_PASSCODE',
+  intro1:'進行表導入_INTRO_1',
+  intro2:'進行表研修会趣旨説明_INTRO_2',
+  intro3:'進行表講師紹介_INTRO_3',
+  dataDeadline:'講義資料提供の締切_DATA_deadline',
+  checkK1:'起案1チェック_CHECK_K1',
+  checkHp:'HPチェック_CHECK_HP',
+  checkK2:'起案2チェック_CHECK_K2',
+  checkK3:'起案3チェック_CHECK_K3'
+};
 
-const els={csvFile:document.getElementById('csvFile'),newDbBtn:document.getElementById('newDbBtn'),recordSelect:document.getElementById('recordSelect'),openConfirmBtn:document.getElementById('openConfirmBtn'),appendBtn:document.getElementById('appendBtn'),prefillBtn:document.getElementById('prefillBtn'),loadSelectedBtn:document.getElementById('loadSelectedBtn'),confirmAppendBtn:document.getElementById('confirmAppendBtn'),downloadBtn:document.getElementById('downloadBtn'),backBtn:document.getElementById('backBtn'),tableList:document.getElementById('tableList'),statusBox:document.getElementById('statusBox'),miniNext:document.getElementById('miniNext'),miniYearCount:document.getElementById('miniYearCount'),miniDbState:document.getElementById('miniDbState'),miniDbText:document.getElementById('miniDbText'),sumAll:document.getElementById('sumAll'),sumYear:document.getElementById('sumYear'),sumNext:document.getElementById('sumNext'),sumSoon:document.getElementById('sumSoon'),sumDone:document.getElementById('sumDone'),sumDraft:document.getElementById('sumDraft'),sumSubject:document.getElementById('sumSubject'),roadmapLabel:document.getElementById('roadmapLabel'),roadmapBar:document.getElementById('roadmapBar'),dK1:document.getElementById('dK1'),dK2:document.getElementById('dK2'),dHp:document.getElementById('dHp'),dK3:document.getElementById('dK3'),dRoomOpen:document.getElementById('dRoomOpen'),dDuration:document.getElementById('dDuration'),dDeadline1:document.getElementById('dDeadline1'),dDeadline2:document.getElementById('dDeadline2'),dDeadline3:document.getElementById('dDeadline3'),dDataDeadline:document.getElementById('dDataDeadline'),dDate2:document.getElementById('dDate2'),dSubject2:document.getElementById('dSubject2'),ckK1:document.getElementById('ckK1'),ckHp:document.getElementById('ckHp'),ckK2:document.getElementById('ckK2'),ckK3:document.getElementById('ckK3'),checkList:document.getElementById('checkList'),confirmCount:document.getElementById('confirmCount'),confirmWarn:document.getElementById('confirmWarn'),confirmState:document.getElementById('confirmState'),folderView:document.getElementById('folderView'),resultDone:document.getElementById('resultDone'),resultHold:document.getElementById('resultHold'),resultZip:document.getElementById('resultZip'),alertList:document.getElementById('alertList'),templateFiles:document.getElementById('templateFiles'),mergeRecordSelect:document.getElementById('mergeRecordSelect'),templateState:document.getElementById('templateState'),mergeAllBtn:document.getElementById('mergeAllBtn'),mergeStatusBox:document.getElementById('mergeStatusBox'),templateList:document.getElementById('templateList'),sumAllTop:document.getElementById('sumAllTop'),sumYearTop:document.getElementById('sumYearTop'),sumNextTop:document.getElementById('sumNextTop'),annualGauge:document.getElementById('annualGauge'),annualGaugeText:document.getElementById('annualGaugeText'),annualGaugeSub:document.getElementById('annualGaugeSub'),paramYearCount:document.getElementById('paramYearCount'),paramDoneCount:document.getElementById('paramDoneCount'),paramSoonCount:document.getElementById('paramSoonCount'),paramDraftCount:document.getElementById('paramDraftCount')};
+const els={
+  csvFile:document.getElementById('csvFile'),
+  newDbBtn:document.getElementById('newDbBtn'),
+  recordSelect:document.getElementById('recordSelect'),
+  openConfirmBtn:document.getElementById('openConfirmBtn'),
+  appendBtn:document.getElementById('appendBtn'),
+  prefillBtn:document.getElementById('prefillBtn'),
+  loadSelectedBtn:document.getElementById('loadSelectedBtn'),
+  confirmAppendBtn:document.getElementById('confirmAppendBtn'),
+  downloadBtn:document.getElementById('downloadBtn'),
+  backBtn:document.getElementById('backBtn'),
+  tableList:document.getElementById('tableList'),
+  statusBox:document.getElementById('statusBox'),
+  miniNext:document.getElementById('miniNext'),
+  miniYearCount:document.getElementById('miniYearCount'),
+  miniDbState:document.getElementById('miniDbState'),
+  miniDbText:document.getElementById('miniDbText'),
+  sumAll:document.getElementById('sumAll'),
+  sumYear:document.getElementById('sumYear'),
+  sumNext:document.getElementById('sumNext'),
+  sumSoon:document.getElementById('sumSoon'),
+  sumDone:document.getElementById('sumDone'),
+  sumDraft:document.getElementById('sumDraft'),
+  sumSubject:document.getElementById('sumSubject'),
+  roadmapLabel:document.getElementById('roadmapLabel'),
+  roadmapBar:document.getElementById('roadmapBar'),
+  dK1:document.getElementById('dK1'),
+  dK2:document.getElementById('dK2'),
+  dHp:document.getElementById('dHp'),
+  dK3:document.getElementById('dK3'),
+  dRoomOpen:document.getElementById('dRoomOpen'),
+  dDuration:document.getElementById('dDuration'),
+  dDeadline1:document.getElementById('dDeadline1'),
+  dDeadline2:document.getElementById('dDeadline2'),
+  dDeadline3:document.getElementById('dDeadline3'),
+  dDataDeadline:document.getElementById('dDataDeadline'),
+  dDate2:document.getElementById('dDate2'),
+  dSubject2:document.getElementById('dSubject2'),
+  ckK1:document.getElementById('ckK1'),
+  ckHp:document.getElementById('ckHp'),
+  ckK2:document.getElementById('ckK2'),
+  ckK3:document.getElementById('ckK3'),
+  checkList:document.getElementById('checkList'),
+  confirmCount:document.getElementById('confirmCount'),
+  confirmWarn:document.getElementById('confirmWarn'),
+  confirmState:document.getElementById('confirmState'),
+  folderView:document.getElementById('folderView'),
+  resultDone:document.getElementById('resultDone'),
+  resultHold:document.getElementById('resultHold'),
+  resultZip:document.getElementById('resultZip'),
+  alertList:document.getElementById('alertList'),
+  templateFiles:document.getElementById('templateFiles'),
+  mergeRecordSelect:document.getElementById('mergeRecordSelect'),
+  templateState:document.getElementById('templateState'),
+  mergeAllBtn:document.getElementById('mergeAllBtn'),
+  mergeStatusBox:document.getElementById('mergeStatusBox'),
+  templateList:document.getElementById('templateList'),
+  sumAllTop:document.getElementById('sumAllTop'),
+  sumYearTop:document.getElementById('sumYearTop'),
+  sumNextTop:document.getElementById('sumNextTop'),
+  annualGauge:document.getElementById('annualGauge'),
+  annualGaugeText:document.getElementById('annualGaugeText'),
+  annualGaugeSub:document.getElementById('annualGaugeSub'),
+  paramYearCount:document.getElementById('paramYearCount'),
+  paramDoneCount:document.getElementById('paramDoneCount'),
+  paramSoonCount:document.getElementById('paramSoonCount'),
+  paramDraftCount:document.getElementById('paramDraftCount')
+};
 
-const fields={no:document.getElementById('fNo'),year:document.getElementById('fYear'),date:document.getElementById('fDate'),day:document.getElementById('fDay'),date2:document.getElementById('fDate2'),name:document.getElementById('fName'),title:document.getElementById('fTitle'),speaker:document.getElementById('fSpeaker'),start:document.getElementById('fStart'),end:document.getElementById('fEnd'),roomOpen:document.getElementById('fRoomOpen'),duration:document.getElementById('fDuration'),deadline1:document.getElementById('fDeadline1'),deadline2:document.getElementById('fDeadline2'),deadline3:document.getElementById('fDeadline3'),dataDeadline:document.getElementById('fDataDeadline'),cost:document.getElementById('fCost'),subject:document.getElementById('fSubject'),subject2:document.getElementById('fSubject2'),site:document.getElementById('fSite'),cohost:document.getElementById('fCohost'),cohost3:document.getElementById('fCohost3'),zoomId:document.getElementById('fZoomId'),passcode:document.getElementById('fPasscode'),zoomUrl:document.getElementById('fZoomUrl'),hpUrl:document.getElementById('fHpUrl'),purpose:document.getElementById('fPurpose'),intro1:document.getElementById('fIntro1'),intro2:document.getElementById('fIntro2'),intro3:document.getElementById('fIntro3')};
+const fields={
+  no:document.getElementById('fNo'),
+  year:document.getElementById('fYear'),
+  date:document.getElementById('fDate'),
+  day:document.getElementById('fDay'),
+  date2:document.getElementById('fDate2'),
+  name:document.getElementById('fName'),
+  title:document.getElementById('fTitle'),
+  speaker:document.getElementById('fSpeaker'),
+  start:document.getElementById('fStart'),
+  end:document.getElementById('fEnd'),
+  roomOpen:document.getElementById('fRoomOpen'),
+  duration:document.getElementById('fDuration'),
+  deadline1:document.getElementById('fDeadline1'),
+  deadline2:document.getElementById('fDeadline2'),
+  deadline3:document.getElementById('fDeadline3'),
+  dataDeadline:document.getElementById('fDataDeadline'),
+  cost:document.getElementById('fCost'),
+  subject:document.getElementById('fSubject'),
+  subject2:document.getElementById('fSubject2'),
+  site:document.getElementById('fSite'),
+  cohost:document.getElementById('fCohost'),
+  cohost3:document.getElementById('fCohost3'),
+  zoomId:document.getElementById('fZoomId'),
+  passcode:document.getElementById('fPasscode'),
+  zoomUrl:document.getElementById('fZoomUrl'),
+  hpUrl:document.getElementById('fHpUrl'),
+  purpose:document.getElementById('fPurpose'),
+  intro1:document.getElementById('fIntro1'),
+  intro2:document.getElementById('fIntro2'),
+  intro3:document.getElementById('fIntro3')
+};
 
 let currentHeaders=[],rawRows=[],dataRows=[],selectedRow=null,stagedRow=null,lastSaveMode='',selectedTemplates=[];
+
+const HEAD_TEXT_DEFAULT='2026年度　臨床研究研修会';
+const HEAD_TEXT_COHOST='2026年度　臨床腫瘍学コース・臨床研究研修会（共催）';
+const COHOST_OPTION_NONE='なし';
+const COHOST_OPTION_TEAM='企画人材班';
+const COHOST3_TEXT_TEAM='臨床腫瘍学コースとの共催';
 
 els.csvFile.addEventListener('change',loadCsv);
 els.templateFiles.addEventListener('change',handleTemplateFiles);
@@ -975,9 +1162,22 @@ els.openConfirmBtn.addEventListener('click',stageDraft);
 els.confirmAppendBtn.addEventListener('click',commitDraft);
 els.downloadBtn.addEventListener('click',downloadCsv);
 els.backBtn.addEventListener('click',()=>setStatus('入力内容を調整できます。必要なら項目を修正してください。'));
-[fields.no,fields.date,fields.name,fields.start,fields.end,fields.title,fields.speaker,fields.cost,fields.subject,fields.site,fields.cohost,fields.cohost3,fields.zoomId,fields.passcode,fields.zoomUrl,fields.hpUrl,fields.purpose,fields.intro1,fields.intro2,fields.intro3].forEach(el=>el.addEventListener('input',recalcDraft));
+fields.cohost.addEventListener('change',()=>{syncCohostFields();recalcDraft();});
+[
+  fields.no,fields.date,fields.name,fields.start,fields.end,fields.title,fields.speaker,fields.cost,
+  fields.subject,fields.site,fields.cohost3,fields.zoomId,fields.passcode,fields.zoomUrl,fields.hpUrl,
+  fields.purpose,fields.intro1,fields.intro2,fields.intro3
+].forEach(el=>el.addEventListener('input',recalcDraft));
+[fields.subject,fields.site].forEach(el=>el.addEventListener('change',recalcDraft));
 [els.ckK1,els.ckHp,els.ckK2,els.ckK3].forEach(el=>el.addEventListener('change',recalcDraft));
 
+function getHead1ValueByCohost(cohostValue){
+  return String(cohostValue||'').trim()===COHOST_OPTION_TEAM ? HEAD_TEXT_COHOST : HEAD_TEXT_DEFAULT;
+}
+function syncCohostFields(){
+  const isTeam=String(fields.cohost.value||'').trim()===COHOST_OPTION_TEAM;
+  fields.cohost3.value=isTeam?COHOST3_TEXT_TEAM:'';
+}
 function setMergeStatus(msg){els.mergeStatusBox.textContent=msg}
 function setMergeState(){const hasTemplates=selectedTemplates.length>0;const hasNo=!!String(els.mergeRecordSelect.value||'').trim();els.templateState.value=`${selectedTemplates.length}件`;els.mergeAllBtn.disabled=!(hasTemplates&&hasNo)}
 function renderMergeOptions(){const options=['<option value="">Noを選択して差し込み</option>'].concat(dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`));els.mergeRecordSelect.innerHTML=options.join('');els.mergeRecordSelect.disabled=!dataRows.length;setMergeState()}
@@ -1013,6 +1213,7 @@ function buildTemplateData(row){
     COHOST_1: row?.[fullKeys.cohost] ?? '',
     COHOST_2: row?.[fullKeys.site] ?? '',
     COHOST_3: row?.[fullKeys.cohost3] ?? '',
+    HEAD_1: row?.[fullKeys.head1] ?? '',
     NO: row?.[fullKeys.no] ?? '',
     PASSCODE: row?.[fullKeys.passcode] ?? '',
     zoom_url: row?.[fullKeys.zoomUrl] ?? '',
@@ -1049,6 +1250,9 @@ function buildTemplateData(row){
   map[fullKeys.passcode] = String(row?.[fullKeys.passcode] ?? '');
   map['Zoom_パスコード_PASSCODE'] = String(row?.[fullKeys.passcode] ?? '');
   map['PASSCODE'] = String(row?.[fullKeys.passcode] ?? '');
+
+  map[fullKeys.head1] = String(row?.[fullKeys.head1] ?? '');
+  map['オリエンテーションスライドヘッダー_HEAD_1'] = String(row?.[fullKeys.head1] ?? '');
 
   return map;
 }
@@ -1123,7 +1327,6 @@ async function mergeAllTemplates(){
     setMergeStatus(`一括差し込みに失敗しました: ${err?.message||'テンプレート形式を確認してください。'}`);
   }
 }
-
 function createNewDatabase(){
   currentHeaders=[...DEFAULT_HEADERS];
   rawRows=[];
@@ -1131,8 +1334,10 @@ function createNewDatabase(){
   selectedRow=null;
   stagedRow=null;
   lastSaveMode='';
-  ensureCheckHeaders();
+  ensureAdditionalHeaders();
   fields.no.value='1';
+  fields.cohost.value=COHOST_OPTION_NONE;
+  syncCohostFields();
   resetScheduleChecks();
   els.recordSelect.innerHTML='<option value="">Noを選択して表示</option>';
   els.recordSelect.disabled=true;
@@ -1161,8 +1366,7 @@ function loadCsv(e){
     encoding:'UTF-8',
     complete:({data,meta})=>{
       currentHeaders=(meta?.fields?.length?meta.fields:[...DEFAULT_HEADERS]);
-      ensureCheckHeaders();
-      [fullKeys.deadline3,fullKeys.cost,fullKeys.dataDeadline,fullKeys.date2,fullKeys.subject2,fullKeys.name,fullKeys.cohost3,fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK2,fullKeys.checkK3].forEach(ensureHeader);
+      ensureAdditionalHeaders();
       rawRows=Array.isArray(data)?compactRawRows(data.map(r=>normalizeRowShape(r))):[];
       dataRows=buildDisplayRowsFromRaw(rawRows);
       els.appendBtn.disabled=false;
@@ -1174,7 +1378,12 @@ function loadCsv(e){
       els.recordSelect.disabled=dataRows.length===0;
       renderRecordOptions();
       setNextNo();
-      if(dataRows.length)prefillFromLast();else{fields.no.value='1';resetScheduleChecks();}
+      if(dataRows.length)prefillFromLast();else{
+        fields.no.value='1';
+        fields.cohost.value=COHOST_OPTION_NONE;
+        syncCohostFields();
+        resetScheduleChecks();
+      }
       renderTable();
       renderStats();
       recalcDraft();
@@ -1193,6 +1402,14 @@ function loadCsv(e){
 }
 function ensureHeader(h){if(!currentHeaders.includes(h))currentHeaders.push(h)}
 function ensureCheckHeaders(){[fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK2,fullKeys.checkK3].forEach(ensureHeader)}
+function ensureAdditionalHeaders(){
+  ensureCheckHeaders();
+  [
+    fullKeys.deadline3,fullKeys.cost,fullKeys.dataDeadline,fullKeys.date2,fullKeys.subject2,
+    fullKeys.name,fullKeys.cohost3,fullKeys.head1,fullKeys.checkK1,fullKeys.checkHp,
+    fullKeys.checkK2,fullKeys.checkK3
+  ].forEach(ensureHeader);
+}
 function normalizeRowShape(row){const out={};currentHeaders.forEach(h=>out[h]=row?.[h]??'');return out}
 function isMeaningfulRow(row){return currentHeaders.some(h=>String(row?.[h]??'').trim()!=='')}
 function compactRawRows(rows){return rows.filter(r=>isMeaningfulRow(r))}
@@ -1237,8 +1454,12 @@ function prefillFromLast(){
   fields.end.value=normTime(last[fullKeys.end])||'19:00';
   fields.subject.value=last[fullKeys.subject]||'研究者';
   fields.site.value=last[fullKeys.site]||'Web会議室';
-  fields.cohost.value=last[fullKeys.cohost]||'-';
-  fields.cohost3.value=last[fullKeys.cohost3]||'';
+  const cohostValue=String(last[fullKeys.cohost]||'').trim()===COHOST_OPTION_TEAM?COHOST_OPTION_TEAM:COHOST_OPTION_NONE;
+  fields.cohost.value=cohostValue;
+  syncCohostFields();
+  if(cohostValue!==COHOST_OPTION_TEAM){
+    fields.cohost3.value='';
+  }
   fields.zoomId.value=last[fullKeys.zoomId]||'';
   fields.passcode.value=last[fullKeys.passcode]||'';
   fields.zoomUrl.value=last[fullKeys.zoomUrl]||'https://zoom.us/';
@@ -1278,8 +1499,11 @@ function loadSelectedIntoForm(){
   fields.subject.value=selectedRow[fullKeys.subject]||'研究者';
   fields.subject2.value=selectedRow[fullKeys.subject2]||'';
   fields.site.value=selectedRow[fullKeys.site]||'Web会議室';
-  fields.cohost.value=selectedRow[fullKeys.cohost]||'-';
-  fields.cohost3.value=selectedRow[fullKeys.cohost3]||'';
+  fields.cohost.value=String(selectedRow[fullKeys.cohost]||'').trim()===COHOST_OPTION_TEAM?COHOST_OPTION_TEAM:COHOST_OPTION_NONE;
+  syncCohostFields();
+  if(String(selectedRow[fullKeys.cohost]||'').trim()!==COHOST_OPTION_TEAM){
+    fields.cohost3.value='';
+  }
   fields.zoomId.value=selectedRow[fullKeys.zoomId]||'';
   fields.passcode.value=selectedRow[fullKeys.passcode]||'';
   fields.zoomUrl.value=selectedRow[fullKeys.zoomUrl]||'';
@@ -1315,6 +1539,7 @@ function calcDerivedFields(){
   const dataDeadline=date?formatMonthDayWeek(addDays(new Date(date+'T00:00:00'),-7)):'';
   const date2=date?formatDate2(date):'';
   const subject2=subjectDetail(fields.subject.value);
+  syncCohostFields();
   fields.roomOpen.value=roomOpen;
   fields.duration.value=duration&&Number(duration)>=0?duration:'';
   fields.deadline1.value=deadline1;
@@ -1394,8 +1619,9 @@ function buildRow(){
   row[fullKeys.subject]=fields.subject.value;
   row[fullKeys.subject2]=fields.subject2.value;
   row[fullKeys.site]=fields.site.value;
-  row[fullKeys.cohost]=fields.cohost.value||'-';
-  row[fullKeys.cohost3]=fields.cohost3.value||'';
+  row[fullKeys.cohost]=fields.cohost.value||COHOST_OPTION_NONE;
+  row[fullKeys.cohost3]=String(fields.cohost.value||'').trim()===COHOST_OPTION_TEAM?COHOST3_TEXT_TEAM:'';
+  row[fullKeys.head1]=getHead1ValueByCohost(fields.cohost.value);
   row[fullKeys.k1]=fmtMonthDay(auto.k1);
   row[fullKeys.k2]=fmtMonthDay(auto.k2);
   row[fullKeys.k3]=fmtMonthDay(auto.k3);
@@ -1558,7 +1784,6 @@ function renderStats(){
   const ratio=total?Math.round((done/total)*100):0;
   els.roadmapLabel.textContent=`${done} / ${total}`;
   els.roadmapBar.style.width=`${ratio}%`;
-
   updateAnnualGauge(done,total,yearCount,soon,draftCount);
 }
 function renderConfirm(warns){
@@ -1647,6 +1872,7 @@ function normTime(v){const m=String(v||'').match(/(\d{1,2}):(\d{2})/);return m?`
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function safeName(s){return String(s).replace(/[\\/:*?"<>|\s]+/g,'-')}
 
+syncCohostFields();
 recalcDraft();
 renderTemplateList();
 </script>
