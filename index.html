@@ -1520,15 +1520,165 @@ function createNewDatabase(){
   els.miniDbState.textContent='新規DB作成済み';
   els.miniDbText.textContent='空マスターを初期化しました。1件目から登録できます。';
   renderTable();
-　setNextNo();
-　renderStats();
-　recalcDraft();
-　renderAlerts();
-　renderTasks();
-　renderMergeOptions();
-　setStatus('空のマスターCSVを新規作成しました。');
+  setNextNo();
+  renderStats();
+  recalcDraft();
+  renderAlerts();
+  renderTasks();
+  renderMergeOptions();
+  setStatus('空のマスターCSVを新規作成しました。');
 }
 
+function validateDraft(){
+  const warns=[];
+  if(!String(fields.no.value||'').trim()) warns.push('No が未入力です。');
+  if(!String(fields.date.value||'').trim()) warns.push('開催日_DATE_1 が未入力です。');
+  if(!String(fields.title.value||'').trim()) warns.push('テーマ_TITLE が未入力です。');
+  if(!String(fields.speaker.value||'').trim()) warns.push('担当講師_SPEAKER が未入力です。');
+  return warns;
+}
+
+function getRawRowIndexByNo(no){
+  return rawRows.findIndex(r=>String(r?.[fullKeys.no]||'').trim()===String(no||'').trim());
+}
+
+function updateAnnualGauge(done,total,yearCount,soon,draftCount){
+  const ratio=total?Math.max(0,Math.min(100,Math.round((done/total)*100))):0;
+  const circumference=578;
+  const offset=circumference-(circumference*ratio/100);
+
+  els.annualGauge.style.strokeDashoffset=String(offset);
+  els.annualGaugeText.textContent=`${ratio}%`;
+  els.annualGaugeSub.textContent=`${done} / ${total} Completed`;
+  els.paramYearCount.textContent=String(yearCount);
+  els.paramDoneCount.textContent=String(done);
+  els.paramSoonCount.textContent=String(soon);
+  els.paramDraftCount.textContent=String(draftCount);
+}
+
+function renderStats(){
+  const total=dataRows.length;
+  const now=new Date();
+  const currentYear=now.getFullYear();
+  const currentMonth=now.getMonth()+1;
+
+  const fiscalStartYear=currentMonth>=4?currentYear:currentYear-1;
+  const fiscalStart=new Date(fiscalStartYear,3,1);
+  const fiscalEnd=new Date(fiscalStartYear+1,2,31,23,59,59,999);
+
+  const yearCount=dataRows.filter(r=>{
+    const rowDate=parseShortJapaneseDate(r[fullKeys.date],r[fullKeys.year]);
+    return rowDate&&rowDate>=fiscalStart&&rowDate<=fiscalEnd;
+  }).length;
+
+  const today=new Date();
+  const today0=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+
+  const soon=dataRows.filter(r=>{
+    const d=parseShortJapaneseDate(r[fullKeys.date],r[fullKeys.year]);
+    if(!d) return false;
+    const diff=Math.round((d-today0)/86400000);
+    return diff>=0&&diff<=30;
+  }).length;
+
+  const done=dataRows.filter(r=>{
+    const d=parseShortJapaneseDate(r[fullKeys.date],r[fullKeys.year]);
+    return d&&d<today0;
+  }).length;
+
+  const next=dataRows.reduce((m,r)=>Math.max(m,Number(r[fullKeys.no]||0)),0)+1;
+  const draftCount=stagedRow?1:0;
+
+  els.sumAll.textContent=String(total);
+  els.sumYear.textContent=String(yearCount);
+  els.sumNext.textContent=String(next);
+  els.sumSubject.textContent=fields.subject.value||'-';
+  els.sumSoon.textContent=`${soon}件`;
+  els.sumDone.textContent=`${done}件`;
+  els.sumDraft.textContent=`${draftCount}件`;
+
+  els.sumAllTop.textContent=String(total);
+  els.sumYearTop.textContent=String(yearCount);
+  els.sumNextTop.textContent=String(next);
+  els.miniYearCount.textContent=String(yearCount);
+  els.miniNext.textContent=`No.${next}`;
+
+  els.roadmapLabel.textContent=`${done} / ${total}`;
+  els.roadmapBar.style.width=`${total?Math.round((done/total)*100):0}%`;
+
+  updateAnnualGauge(done,total,yearCount,soon,draftCount);
+}
+
+function collectDeadlineAlerts(){
+  const alerts=[];
+  const today=new Date();
+  const today0=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+
+  dataRows.forEach(r=>{
+    const no=String(r[fullKeys.no]||'').trim();
+    const title=r[fullKeys.title]||'-';
+
+    [
+      {label:'起案1', date:r[fullKeys.k1], checked:r[fullKeys.checkK1]},
+      {label:'HP', date:r[fullKeys.hp], checked:r[fullKeys.checkHp]},
+      {label:'起案2', date:r[fullKeys.k2], checked:r[fullKeys.checkK2]},
+      {label:'起案3', date:r[fullKeys.k3], checked:r[fullKeys.checkK3]}
+    ].forEach(item=>{
+      if(isCheckedValue(item.checked)) return;
+      const d=parseShortJapaneseDate(item.date,r[fullKeys.year]);
+      if(!d) return;
+      const diff=Math.round((d-today0)/86400000);
+      if(diff>=0&&diff<=7){
+        alerts.push({no,title,label:item.label,date:item.date,diff});
+      }
+    });
+  });
+
+  alerts.sort((a,b)=>a.diff-b.diff||Number(a.no)-Number(b.no));
+  return alerts;
+}
+
+function renderAlerts(){
+  const alerts=collectDeadlineAlerts();
+  if(!alerts.length){
+    els.alertList.innerHTML='<div class="alert-item"><div><span class="alert-tag">WAIT</span></div><div><strong>期限監視待機中</strong><p>7日以内に期限が迫る未対応タスクはありません。</p></div><div class="mono">No data</div></div>';
+    return;
+  }
+
+  els.alertList.innerHTML=alerts.map(a=>{
+    const tag=a.diff<=1?'TODAY':a.diff<=3?'SOON':'WAIT';
+    return `<div class="alert-item"><div><span class="alert-tag">${esc(tag)}</span></div><div><strong>No.${esc(a.no)} / ${esc(a.label)}</strong><p>${esc(a.title)} / 期限: ${esc(a.date)}</p></div><div class="mono">${a.diff}日以内</div></div>`;
+  }).join('');
+}
+function renderTasks(){
+  const no = String(els.recordSelect.value || fields.no.value || '').trim();
+  const row = getRowByNo(no) || stagedRow || buildRow();
+
+  const taskRows = TASKDEFS.map(task => {
+    const date = row[`TASK_${task.idx}_DATE`] || '';
+    const day = row[`TASK_${task.idx}_DAY`] || '';
+    const status = row[`TASK_${task.idx}_STATUS`] || '未着手';
+    return { idx: task.idx, name: task.name, date, day, status };
+  });
+
+  if(!taskRows.length){
+    els.taskList.innerHTML = '<div class="list-row"><div><strong>Task data</strong><p>タスク定義がありません</p></div><div><span class="status s3">WAIT</span></div></div>';
+    return;
+  }
+
+  els.taskList.innerHTML = taskRows.map(t => `
+    <div class="task-row">
+      <div><span class="badge">TASK ${esc(t.idx)}</span></div>
+      <div>
+        <strong>${esc(t.name)}</strong>
+        <p>${esc(t.day || '')}</p>
+      </div>
+      <div class="mono">${esc(t.date || '-')}</div>
+      <div><span class="status s3">${esc(t.status)}</span></div>
+    </div>
+  `).join('');
+}
+  
 function loadCsv(e){
   const file=e.target.files?.[0];
   if(!file){
