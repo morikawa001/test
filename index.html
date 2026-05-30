@@ -1857,25 +1857,20 @@ function buildRow(){
   row[fullKeys.checkK3]=boolToCsv(els.ckK3.checked);
 
   TASKDEFS.forEach(task=>{
-    let taskDateText='';
+    const taskDate=base?addDays(base,task.offset):null;
+    const taskDateText=taskDate?fmtMonthDay(taskDate):'';
+    const taskDayText=taskDate?weekdayJa(fmtDate(taskDate)):'';
     let taskStatus='WAIT';
 
-    if(task.idx==='01'){
-      taskDateText=row[fullKeys.k1]||'';
-      taskStatus=row[fullKeys.checkK1]==='1'?'DONE':'WAIT';
-    }else if(task.idx==='02'){
-      taskDateText=row[fullKeys.hp]||'';
-      taskStatus=row[fullKeys.checkHp]==='1'?'DONE':'WAIT';
-    }else{
-      const taskDate=base?addDays(base,task.offset):null;
-      taskDateText=taskDate?fmtMonthDay(taskDate):'';
-      taskStatus='WAIT';
-    }
+    if(task.idx==='01') taskStatus=els.ckK1.checked?'DONE':'WAIT';
+    else if(task.idx==='02') taskStatus=els.ckHp.checked?'DONE':'WAIT';
+    else if(task.idx==='03') taskStatus=els.ckK2.checked?'DONE':'WAIT';
+    else if(task.idx==='04') taskStatus=els.ckK3.checked?'DONE':'WAIT';
 
     row[`TASK_${task.idx}_OFFSET`]=String(task.offset);
     row[`TASK_${task.idx}_NAME`]=task.name;
     row[`TASK_${task.idx}_DATE`]=taskDateText;
-    row[`TASK_${task.idx}_DAY`]=taskDateText?weekdayJa(toIsoDateFromShortDate(taskDateText,row[fullKeys.year])):'';
+    row[`TASK_${task.idx}_DAY`]=taskDayText;
     row[`TASK_${task.idx}_STATUS`]=taskStatus;
   });
 
