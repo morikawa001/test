@@ -649,6 +649,7 @@ label[for="templateFiles"] {
 </div>
       <div class="action-grid">
   <button class="btn" id="newDbBtn">DB新規</button>
+  <button class="btn primary" id="openConfirmBtn" disabled>確認</button>
 </div>
 
 <div class="action-grid">
@@ -1097,6 +1098,7 @@ const els = {
   newDbBtn: document.getElementById('newDbBtn'),
   recordSelect: document.getElementById('recordSelect'),
   openTaskSheetBtn: document.getElementById('openTaskSheetBtn'),
+  openConfirmBtn: document.getElementById('openConfirmBtn'),
   appendBtn: document.getElementById('appendBtn'),
   prefillBtn:document.getElementById('prefillBtn'),
   loadSelectedBtn:document.getElementById('loadSelectedBtn'),
@@ -1232,6 +1234,7 @@ els.openTaskSheetBtn.addEventListener('click', openTaskSheet);
 els.loadSelectedBtn.addEventListener('click', loadSelectedIntoForm);
 els.prefillBtn.addEventListener('click', prefillFromLast);
 els.appendBtn.addEventListener('click',stageDraft);
+els.openConfirmBtn.addEventListener('click',stageDraft);
 els.confirmAppendBtn.addEventListener('click',commitDraft);
 els.downloadBtn.addEventListener('click',downloadCsv);
 els.backBtn.addEventListener('click',()=>setStatus('入力内容を調整できます。必要なら項目を修正してください。'));
@@ -1455,6 +1458,7 @@ function createNewDatabase(){
   els.prefillBtn.disabled = true;
   els.loadSelectedBtn.disabled = true;
   els.appendBtn.disabled=false;
+  els.openConfirmBtn.disabled=false;
   els.confirmAppendBtn.disabled=false;
   els.downloadBtn.disabled=false;
   els.miniDbState.textContent='新規DB作成済み';
@@ -1603,7 +1607,6 @@ function prefillFromLast(){
 function handleSelectRecord(){
   const no = els.recordSelect.value;
   selectedRow = dataRows.find(r => String(r[fullKeys.no]).trim() === String(no).trim()) || null;
-  els.loadSelectedBtn.disabled = !selectedRow;
   els.openTaskSheetBtn.disabled = !selectedRow;
   if(selectedRow) setStatus(`No.${selectedRow[fullKeys.no]} を選択`);
 }
