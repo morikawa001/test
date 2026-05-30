@@ -1,145 +1,142 @@
-const SHEET_NAME = 'ResearchEducation_Events';
-const REQUIRED_HEADERS = [
-  '起案行No',
-  '年度_YEAR_1',
-  '開催日_DATE_1',
-  'テーマ(標題)_TITLE',
-  '担当講師_SPEAKER',
-  '共催_COHOST_1',
-  '対象_SUBJECT_1',
-  'HP_URL_url_1',
-  'Zoom_ID_WEBINER_ID',
-  'Zoom_パスコード_PASSCODE',
-  '起案1開催DATE_KIAN_1',
-  '起案2資料_DATE_KIAN_2',
-  '起案3受講証修了証_DATE_KIAN_3'
-];
+<section class="manual-section">
+  <h1>取扱説明</h1>
+  <p>
+    このWebアプリは、臨床研究研修会のマスターCSV管理、研修会情報の入力・更新、日程の自動計算、
+    保存前確認、更新CSVの出力、テンプレートファイルへの一括差し込みを行うための管理ツールです。[file:1]
+  </p>
 
-function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('研修会PM')
-    .addItem('管理画面を開く', 'showApp')
-    .addToUi();
-}
+  <h2>1. このアプリでできること</h2>
+  <ul>
+    <li>マスターCSVを読み込んで既存データを表示・編集できます。[file:1]</li>
+    <li>新規DB作成から空のマスターを開始し、1件目から登録できます。[file:1]</li>
+    <li>開催日や開始時刻から、曜日、入室時刻、所要時間、各締切日、メール用日付などを自動計算します。[file:1]</li>
+    <li>保存前に確認画面で内容・注意事項・上書き/新規追加の状態を確認できます。[file:1]</li>
+    <li>保存後は更新済みCSVをダウンロードできます。[file:1]</li>
+    <li>docx / pptx / xlsx テンプレートへ、選択Noの内容を一括差し込み出力できます。[file:1]</li>
+  </ul>
 
-function showApp() {
-  const html = HtmlService
-    .createHtmlOutputFromFile('Index')
-    .setWidth(1400)
-    .setHeight(900);
-  SpreadsheetApp.getUi().showModalDialog(html, '研修会準備プロジェクト管理');
-}
+  <h2>2. 画面の見方</h2>
+  <ul>
+    <li><strong>Quick Operation</strong> では、テーマ切替、マスターCSV読込、新規DB作成、確認画面への移動、No選択を行います。[file:1]</li>
+    <li><strong>Annual Plan Parameter</strong> では、年度件数、開催済み件数、直近30日件数、追加予定件数をリング表示します。[file:1]</li>
+    <li><strong>Deadline Alert</strong> では、7日以内に期限が迫る起案や締切関連タスクを表示します。[file:1]</li>
+    <li><strong>Entry Console</strong> では、研修会の基本情報・Zoom情報・説明文などを入力します。[file:1]</li>
+    <li><strong>Computed Schedule</strong> では、自動計算された起案日、HP公開日、締切、チェック状態を確認できます。[file:1]</li>
+    <li><strong>Master Table</strong> では、現在保持しているマスター一覧を確認できます。同じNoは1行だけ保持され、保存時は上書き更新されます。[file:1]</li>
+    <li><strong>Commit Check</strong> では、保存前の確認内容と注意事項を一覧表示します。[file:1]</li>
+    <li><strong>Export Result</strong> では、保存後のCSV出力状態を表示します。[file:1]</li>
+    <li><strong>Template Injection</strong> では、テンプレートファイルを複数選択し、選択Noの値で一括差し込みできます。[file:1]</li>
+  </ul>
 
-function getSheet_() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = ss.getSheetByName(SHEET_NAME);
+  <h2>3. 基本的な使い方</h2>
+  <ol>
+    <li>まず <strong>マスターCSV</strong> の「csv選択」ボタンから既存CSVを読み込むか、<strong>新規DB作成</strong> を押して空のマスターを作成します。[file:1]</li>
+    <li>既存データを編集したい場合は、No選択欄から対象Noを選び、<strong>選択Noを反映</strong> を押します。[file:1]</li>
+    <li>新規追加したい場合は、必要に応じて <strong>直近行を複製</strong> を使い、前回入力内容をベースに編集します。[file:1]</li>
+    <li>Entry Console で各項目を入力または修正します。[file:1]</li>
+    <li>必要に応じて右側のチェック欄で、起案1 / HP / 起案2 / 起案3 の実施済み状態を設定します。[file:1]</li>
+    <li><strong>保存する</strong> または <strong>確認画面へ進む</strong> を押して内容を確認します。[file:1]</li>
+    <li>問題がなければ <strong>この内容で保存</strong> を押します。[file:1]</li>
+    <li>最後に <strong>更新CSVをダウンロード</strong> を押して、最新のCSVを保存します。[file:1]</li>
+  </ol>
 
-  if (!sheet) {
-    sheet = ss.insertSheet(SHEET_NAME);
-    sheet.getRange(1, 1, 1, REQUIRED_HEADERS.length).setValues([REQUIRED_HEADERS]);
-  }
+  <h2>4. CSV読込と新規DB作成</h2>
+  <p>
+    マスターCSVを読み込むと、CSV内の有効行を取り込み、No順で整理したうえで一覧・統計・期限アラート・差し込み対象Noが更新されます。[file:1]
+    有効データがある場合は、最後の行をもとに次回入力候補が自動で補完されます。[file:1]
+  </p>
+  <p>
+    新規DB作成では、既定ヘッダーを持つ空のマスターを初期化し、Noは1から開始されます。[file:1]
+    この状態でもそのまま入力・保存・CSVダウンロードが可能です。[file:1]
+  </p>
 
-  const lastCol = Math.max(sheet.getLastColumn(), REQUIRED_HEADERS.length);
-  const headerValues = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(v => String(v || '').trim());
+  <h2>5. 入力項目と自動計算</h2>
+  <p>
+    開催日、開始時刻、終了時刻、講義開始時刻、事前打合せ、質疑応答締切、講師名、タイトル、対象、開催方法、共催、Zoom情報、HP URL、目的、各種紹介文などを入力できます。[file:1]
+  </p>
+  <p>
+    開催日を入力すると曜日、メール用開催日、各種締切日、資料DL締切、講義資料締切が自動計算されます。[file:1]
+    開始・終了時刻からは入室時刻と所要時間が自動計算されます。[file:1]
+  </p>
+  <p>
+    対象区分に応じて対象詳細が自動設定されます。研究者の場合は「（医師・歯科医師等）」、研究支援者の場合は「（薬剤師・看護師等）」になります。[file:1]
+    共催が「企画人材班」の場合は、共催3やスライド用ヘッダー文言も連動して反映されます。[file:1]
+  </p>
 
-  if (!headerValues[0]) {
-    sheet.getRange(1, 1, 1, REQUIRED_HEADERS.length).setValues([REQUIRED_HEADERS]);
-  }
+  <h2>6. 起案日・締切日の考え方</h2>
+  <ul>
+    <li>起案1は開催35日前です。[file:1]</li>
+    <li>HP公開は開催28日前です。[file:1]</li>
+    <li>起案2は開催7日前です。[file:1]</li>
+    <li>起案3は開催翌営業日基準で自動計算されます。[file:1]</li>
+    <li>院外締切は開催8日前の12:00です。[file:1]</li>
+    <li>資料DL締切は開催翌営業日基準で表示されます。[file:1]</li>
+    <li>講義資料締切は開催7日前です。[file:1]</li>
+  </ul>
+  <p>
+    土日および日本の主要祝日は営業日計算から除外されるように処理されています。[file:1]
+  </p>
 
-  return sheet;
-}
+  <h2>7. 保存の仕組み</h2>
+  <p>
+    保存時は、入力中のNoを基準に、既存Noがあれば上書き、存在しなければ新規追加として扱われます。[file:1]
+    そのため、同じNoが複数行に増えることはなく、マスター内では同一Noは1件として保持されます。[file:1]
+  </p>
+  <p>
+    保存対象には、基本情報だけでなく、起案1 / HP / 起案2 / 起案3 のチェック状態も含まれます。[file:1]
+  </p>
 
-function getHeaderMap_(headers) {
-  const map = {};
-  headers.forEach((h, i) => {
-    if (h) map[h] = i;
-  });
-  return map;
-}
+  <h2>8. 保存前確認</h2>
+  <p>
+    確認画面では、保存予定件数、要確認件数、保存状態、新規追加か上書きか、自動計算項目、起案チェック状態を一覧表示します。[file:1]
+  </p>
+  <p>
+    No未入力、Noが整数でない、開催日未入力、タイトル未入力、講師名未入力、開始/終了時間未入力、終了時刻が開始時刻以前、Zoom URLやHP URLの形式不正、謝金が数値でない場合は注意事項として表示されます。[file:1]
+  </p>
 
-function rowToObject_(row, headers) {
-  const obj = {};
-  headers.forEach((h, i) => {
-    if (h) obj[h] = row[i];
-  });
-  return obj;
-}
+  <h2>9. CSV出力</h2>
+  <p>
+    保存後または編集中の状態から、更新CSVをダウンロードできます。[file:1]
+    出力ファイル名は「開催日_タイトル.csv」の形式で自動作成されます。[file:1]
+  </p>
+  <p>
+    CSVはUTF-8 BOM付きで出力されるため、日本語環境でも扱いやすい形式になっています。[file:1]
+  </p>
 
-function normalizeDateValue_(v) {
-  if (Object.prototype.toString.call(v) === '[object Date]' && !isNaN(v)) {
-    return Utilities.formatDate(v, Session.getScriptTimeZone(), 'yyyy-MM-dd');
-  }
-  return v == null ? '' : v;
-}
+  <h2>10. テンプレート一括差し込み</h2>
+  <p>
+    Template Injection では、docx / pptx / xlsx ファイルを複数まとめて選択し、差し込み対象Noを選ぶことで一括出力できます。[file:1]
+  </p>
+  <p>
+    差し込み時は、CSVヘッダー名に加えて、DATE_1、DATE_2、TITLE、SPEAKER、NO、PASSCODE、ZOOM_URL、WEBINER_ID などの別名キーにも対応しています。[file:1]
+    そのため、テンプレート側で置換文字列をそろえておけば、Word・PowerPoint・Excelに対してまとめて差し込み可能です。[file:1]
+  </p>
+  <p>
+    出力ファイル名は「No{番号}_{タイトル}_{元ファイル名}」の形式になります。[file:1]
+  </p>
 
-function getEvents() {
-  const sheet = getSheet_();
-  const lastRow = sheet.getLastRow();
-  const lastCol = sheet.getLastColumn();
-  const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(v => String(v || '').trim());
-  const headerMap = getHeaderMap_(headers);
-  const missingFields = REQUIRED_HEADERS.filter(h => !(h in headerMap));
+  <h2>11. テーマ切替</h2>
+  <p>
+    「表示テーマ切替」ボタンで、ダークテーマとライトテーマを切り替えられます。[file:1]
+    ダークテーマはグリーン端末調、ライトテーマは Notion 風の明るい業務UIとして設計されています。[file:1]
+  </p>
 
-  if (lastRow < 2) {
-    return { headers, items: [], missingFields };
-  }
+  <h2>12. 使い方の例</h2>
+  <ol>
+    <li>「csv選択」から既存マスターCSVを読み込みます。[file:1]</li>
+    <li>Noを選択して既存研修会を反映し、開催日や講師名だけ修正します。[file:1]</li>
+    <li>自動計算された締切や起案日を右側で確認します。[file:1]</li>
+    <li>「確認画面へ進む」で内容を確認し、「この内容で保存」を押します。[file:1]</li>
+    <li>「更新CSVをダウンロード」で新しいマスターCSVを保存します。[file:1]</li>
+    <li>必要ならテンプレートファイルを選択し、同じNoで差し込み資料も出力します。[file:1]</li>
+  </ol>
 
-  const values = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
-  const items = values
-    .filter(row => row.some(cell => String(cell || '').trim() !== ''))
-    .map(row => {
-      const obj = rowToObject_(row, headers);
-      Object.keys(obj).forEach(key => {
-        obj[key] = normalizeDateValue_(obj[key]);
-      });
-      return obj;
-    });
-
-  return { headers, items, missingFields };
-}
-
-function saveEvent(item) {
-  const sheet = getSheet_();
-  let headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(v => String(v || '').trim());
-
-  REQUIRED_HEADERS.forEach(header => {
-    if (!headers.includes(header)) {
-      headers.push(header);
-    }
-  });
-
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-
-  const idHeader = '起案行No';
-  const idIndex = headers.indexOf(idHeader);
-
-  if (idIndex < 0) {
-    throw new Error('起案行No 列が見つかりません。');
-  }
-
-  const lastRow = sheet.getLastRow();
-  const data = lastRow >= 2 ? sheet.getRange(2, 1, lastRow - 1, headers.length).getValues() : [];
-  const idValue = String(item[idHeader] || '').trim();
-
-  if (!idValue) {
-    throw new Error('起案行No は必須です。');
-  }
-
-  const outputRow = headers.map(h => item[h] == null ? '' : item[h]);
-
-  let targetRow = -1;
-  for (let i = 0; i < data.length; i++) {
-    if (String(data[i][idIndex] || '').trim() === idValue) {
-      targetRow = i + 2;
-      break;
-    }
-  }
-
-  if (targetRow > -1) {
-    sheet.getRange(targetRow, 1, 1, headers.length).setValues([outputRow]);
-  } else {
-    sheet.getRange(sheet.getLastRow() + 1, 1, 1, headers.length).setValues([outputRow]);
-  }
-
-  return getEvents();
-}
+  <h2>13. 注意事項</h2>
+  <ul>
+    <li>CSVを差し替えたあとは、必ず最新の更新CSVをダウンロードして保管してください。[file:1]</li>
+    <li>同じNoで保存した場合は上書き更新になります。[file:1]</li>
+    <li>テンプレート差し込みは、docx / pptx / xlsx のみ対応です。[file:1]</li>
+    <li>URL項目は http または https で始まる形式で入力してください。[file:1]</li>
+    <li>開催日や時刻を変更した場合は、自動計算欄と確認画面を必ず確認してください。[file:1]</li>
+  </ul>
+</section>
