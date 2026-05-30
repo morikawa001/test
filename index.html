@@ -316,6 +316,11 @@ label[for="templateFiles"] {
   font-size: inherit; 
   color: var(--text-strong); 
 }
+#templateFilesName,
+#csvFileName {
+  font-size: 1rem;
+  color: var(--faint);
+}
 .file-pick input[type=file],
 #templateFiles{
   padding:9px 11px;
@@ -942,7 +947,7 @@ label[for="templateFiles"] {
       <div class="field full">
   <label for="templateFiles" class="btn">ファイル選択</label>
   <input id="templateFiles" type="file" multiple accept=".docx,.pptx,.xlsx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-  <input id="templateFilesName" value="選択可能です" readonly>
+  <input id="templateFilesName" value="ファイル未選択" readonly>
 </div>
       <div class="field">
         <label>差し込み対象No</label>
@@ -1241,7 +1246,7 @@ function handleTemplateFiles(e){
   selectedTemplates=Array.from(e.target.files||[]).filter(f=>/\.(docx|pptx|xlsx)$/i.test(f.name));
 
   if(!selectedTemplates.length){
-    els.templateFilesName.value='選択可能です';
+    els.templateFilesName.value='ファイル未選択';
   }else if(selectedTemplates.length===1){
     els.templateFilesName.value=selectedTemplates[0].name;
   }else{
@@ -1443,7 +1448,7 @@ function createNewDatabase(){
 function loadCsv(e){
   const file=e.target.files?.[0];
   if(!file){
-    els.csvFileName.value='選択可能です';
+    els.csvFileName.value='ファイル未選択';
     setStatus('CSVが未選択です。');
     return;
   }
@@ -1486,7 +1491,7 @@ function loadCsv(e){
       e.target.value='';
     },
     error:(err)=>{
-      els.csvFileName.value='選択可能です';
+      els.csvFileName.value='ファイル未選択';
       setStatus(`CSV読込エラー: ${err?.message||err}`);
       e.target.value='';
     }
