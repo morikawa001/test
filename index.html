@@ -487,45 +487,6 @@ label[for="templateFiles"] {
   gap:12px;
   align-items:center;
 }
-.alert-wrap,.template-list,.table-list,.confirm-list,.folder-list,.schedule-list{
-  display:grid;
-  gap:10px;
-}
-
-.alert-item{
-  padding:13px 14px;
-  display:grid;
-  grid-template-columns:120px 1fr 130px;
-  gap:12px;
-  align-items:center;
-}
-
-.task-list{
-  display:grid;
-  gap:10px;
-}
-
-.task-row{
-  padding:14px;
-  display:grid;
-  grid-template-columns: 90px 1.2fr 140px 120px;
-  gap:12px;
-  align-items:center;
-  background:var(--panel2);
-  border:1px solid var(--line);
-  border-radius:12px;
-}
-
-.task-row p{
-  color:var(--muted);
-  font-size:.92rem;
-}
-
-@media (max-width:860px){
-  .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.template-row,.alert-item,.schedule-card,.task-row{
-    grid-template-columns:1fr;
-  }
-}
 .alert-tag,.badge,.status{
   display:inline-flex;
   align-items:center;
@@ -753,25 +714,6 @@ label[for="templateFiles"] {
       </div>
     </div>
   </section>
-
-  <section class="panel">
-  <div class="corner-label">Task Board</div>
-  <div class="panel-head">
-    <div>
-      <h2>Task Board</h2>
-      <p>CSV task columns</p>
-    </div>
-  </div>
-  <div class="task-list" id="taskList">
-    <div class="list-row">
-      <div>
-        <strong>Task data</strong>
-        <p>レコードを選択するとTASK一覧を表示します</p>
-      </div>
-      <div><span class="status s3">WAIT</span></div>
-    </div>
-  </div>
-</section>
 
   <section class="main-grid">
     <section class="panel">
@@ -1092,9 +1034,7 @@ const DEFAULT_HEADERS=[
   '起案1チェック_CHECK_K1',
   'HPチェック_CHECK_HP',
   '起案2チェック_CHECK_K2',
-  '起案3チェック_CHECK_K3',
-  '1CHECKK1','HPCHECKHP','2CHECKK2','3CHECKK3',
-  'DATAdeadline','1CHECKK1','HPCHECKHP','2CHECKK2','3CHECKK3',
+  '起案3チェック_CHECK_K3'
 ];
 
 const fullKeys={
@@ -1200,7 +1140,6 @@ const els={
   resultHold:document.getElementById('resultHold'),
   resultZip:document.getElementById('resultZip'),
   alertList:document.getElementById('alertList'),
-  taskList:document.getElementById('taskList'),
   templateFiles:document.getElementById('templateFiles'),
   templateFilesName:document.getElementById('templateFilesName'),
   mergeRecordSelect:document.getElementById('mergeRecordSelect'),
@@ -1265,19 +1204,6 @@ const COHOST_OPTION_NONE='なし';
 const COHOST_OPTION_TEAM='企画人材班';
 const COHOST3_TEXT_TEAM='臨床腫瘍学コースとの共催';
 
-const TASK_DEFS = [
-  { idx: '01', offset: -56, name: '研修会演題と目的案を作成' },
-  { idx: '02', offset: -49, name: '講師にメールで確認' }
-];
-
-const TASK_HEADERS = TASK_DEFS.flatMap(t => ([
-  `TASK_${t.idx}_OFFSET`,
-  `TASK_${t.idx}_NAME`,
-  `TASK_${t.idx}_DATE`,
-  `TASK_${t.idx}_DAY`,
-  `TASK_${t.idx}_STATUS`
-]));
-  
 const CLOSING_TEXT_RESEARCHER='司会:（研究者） 本日の研修の受講証を希望する方は、終了後のアンケートよりお申込みください。 なお、受講証につきましては、研修会開始から質疑応答終了までの時間のうち3/4以上を聴講した方で、 希望される方に発行いたします。 また、本研修会の修了証書の発行につきまして、修了証書をご希望の方は、 今回を含め、研究者対象の研修会を3回以上受講した方のみ、お申込みいただけます。 対象の研修会を3回受講された方で、修了証の発行をご希望の方は、アンケートよりお申し込みください。 ＜スライド切り替え＞ 最後になりますが、受講者の皆様には、アンケートへのご回答、ご協力をお願いいたします。 ウェビナー退室後にアンケートが表示されますので、 ご回答後に送信ボタンを押して提出してください。 本日は、2026年度_静岡がんセンター臨床研究研修会にご参加いただき、どうもありがとうございました。 本ウェビナーはまもなく切断いたします。';
 const CLOSING_TEXT_SUPPORT='司会:（支援者） 本日の研修の受講証を希望する方は、終了後のアンケートよりお申込みください。 なお、受講証につきましては、研修会開始から質疑応答終了までの時間のうち3/4以上を聴講した方で、 希望される方に発行いたします。 また、本研修会の修了証書の発行につきまして、修了証書をご希望の方は、 今回を含め、研究支援者対象の研修会を3回以上受講した方のみ、お申込みいただけます。 対象の研修会を3回受講された方で、修了証の発行をご希望の方は、アンケートよりお申し込みください。 ＜スライド切り替え＞ 最後になりますが、受講者の皆様には、アンケートへのご回答、ご協力をお願いいたします。 ウェビナー退室後にアンケートが表示されますので、 ご回答後に送信ボタンを押して提出してください。 本日は、2026年度_静岡がんセンター臨床研究研修会にご参加いただき、どうもありがとうございました。 本ウェビナーはまもなく切断いたします。';
 const CLOSING_TEXT_COMMITTEE='司会:（委員会） 本日の研修の受講証を希望する方は、終了後のアンケートよりお申込みください。 なお、受講証につきましては、研修会開始から質疑応答終了までの時間のうち3/4以上を聴講した方で、 希望される方に発行いたします。 ＜スライド切り替え＞ 最後になりますが、受講者の皆様には、アンケートへのご回答、ご協力をお願いいたします。 ウェビナー退室後にアンケートが表示されますので、 ご回答後に送信ボタンを押して提出してください。 本日は、2026年度_静岡がんセンター臨床研究研修会にご参加いただき、どうもありがとうございました。 本ウェビナーはまもなく切断いたします。';
@@ -1524,161 +1450,10 @@ function createNewDatabase(){
   renderStats();
   recalcDraft();
   renderAlerts();
-  renderTasks();
   renderMergeOptions();
   setStatus('空のマスターCSVを新規作成しました。');
 }
 
-function validateDraft(){
-  const warns=[];
-  if(!String(fields.no.value||'').trim()) warns.push('No が未入力です。');
-  if(!String(fields.date.value||'').trim()) warns.push('開催日_DATE_1 が未入力です。');
-  if(!String(fields.title.value||'').trim()) warns.push('テーマ_TITLE が未入力です。');
-  if(!String(fields.speaker.value||'').trim()) warns.push('担当講師_SPEAKER が未入力です。');
-  return warns;
-}
-
-function getRawRowIndexByNo(no){
-  return rawRows.findIndex(r=>String(r?.[fullKeys.no]||'').trim()===String(no||'').trim());
-}
-
-function updateAnnualGauge(done,total,yearCount,soon,draftCount){
-  const ratio=total?Math.max(0,Math.min(100,Math.round((done/total)*100))):0;
-  const circumference=578;
-  const offset=circumference-(circumference*ratio/100);
-
-  els.annualGauge.style.strokeDashoffset=String(offset);
-  els.annualGaugeText.textContent=`${ratio}%`;
-  els.annualGaugeSub.textContent=`${done} / ${total} Completed`;
-  els.paramYearCount.textContent=String(yearCount);
-  els.paramDoneCount.textContent=String(done);
-  els.paramSoonCount.textContent=String(soon);
-  els.paramDraftCount.textContent=String(draftCount);
-}
-
-function renderStats(){
-  const total=dataRows.length;
-  const now=new Date();
-  const currentYear=now.getFullYear();
-  const currentMonth=now.getMonth()+1;
-
-  const fiscalStartYear=currentMonth>=4?currentYear:currentYear-1;
-  const fiscalStart=new Date(fiscalStartYear,3,1);
-  const fiscalEnd=new Date(fiscalStartYear+1,2,31,23,59,59,999);
-
-  const yearCount=dataRows.filter(r=>{
-    const rowDate=parseShortJapaneseDate(r[fullKeys.date],r[fullKeys.year]);
-    return rowDate&&rowDate>=fiscalStart&&rowDate<=fiscalEnd;
-  }).length;
-
-  const today=new Date();
-  const today0=new Date(today.getFullYear(),today.getMonth(),today.getDate());
-
-  const soon=dataRows.filter(r=>{
-    const d=parseShortJapaneseDate(r[fullKeys.date],r[fullKeys.year]);
-    if(!d) return false;
-    const diff=Math.round((d-today0)/86400000);
-    return diff>=0&&diff<=30;
-  }).length;
-
-  const done=dataRows.filter(r=>{
-    const d=parseShortJapaneseDate(r[fullKeys.date],r[fullKeys.year]);
-    return d&&d<today0;
-  }).length;
-
-  const next=dataRows.reduce((m,r)=>Math.max(m,Number(r[fullKeys.no]||0)),0)+1;
-  const draftCount=stagedRow?1:0;
-
-  els.sumAll.textContent=String(total);
-  els.sumYear.textContent=String(yearCount);
-  els.sumNext.textContent=String(next);
-  els.sumSubject.textContent=fields.subject.value||'-';
-  els.sumSoon.textContent=`${soon}件`;
-  els.sumDone.textContent=`${done}件`;
-  els.sumDraft.textContent=`${draftCount}件`;
-
-  els.sumAllTop.textContent=String(total);
-  els.sumYearTop.textContent=String(yearCount);
-  els.sumNextTop.textContent=String(next);
-  els.miniYearCount.textContent=String(yearCount);
-  els.miniNext.textContent=`No.${next}`;
-
-  els.roadmapLabel.textContent=`${done} / ${total}`;
-  els.roadmapBar.style.width=`${total?Math.round((done/total)*100):0}%`;
-
-  updateAnnualGauge(done,total,yearCount,soon,draftCount);
-}
-
-function collectDeadlineAlerts(){
-  const alerts=[];
-  const today=new Date();
-  const today0=new Date(today.getFullYear(),today.getMonth(),today.getDate());
-
-  dataRows.forEach(r=>{
-    const no=String(r[fullKeys.no]||'').trim();
-    const title=r[fullKeys.title]||'-';
-
-    [
-      {label:'起案1', date:r[fullKeys.k1], checked:r[fullKeys.checkK1]},
-      {label:'HP', date:r[fullKeys.hp], checked:r[fullKeys.checkHp]},
-      {label:'起案2', date:r[fullKeys.k2], checked:r[fullKeys.checkK2]},
-      {label:'起案3', date:r[fullKeys.k3], checked:r[fullKeys.checkK3]}
-    ].forEach(item=>{
-      if(isCheckedValue(item.checked)) return;
-      const d=parseShortJapaneseDate(item.date,r[fullKeys.year]);
-      if(!d) return;
-      const diff=Math.round((d-today0)/86400000);
-      if(diff>=0&&diff<=7){
-        alerts.push({no,title,label:item.label,date:item.date,diff});
-      }
-    });
-  });
-
-  alerts.sort((a,b)=>a.diff-b.diff||Number(a.no)-Number(b.no));
-  return alerts;
-}
-
-function renderAlerts(){
-  const alerts=collectDeadlineAlerts();
-  if(!alerts.length){
-    els.alertList.innerHTML='<div class="alert-item"><div><span class="alert-tag">WAIT</span></div><div><strong>期限監視待機中</strong><p>7日以内に期限が迫る未対応タスクはありません。</p></div><div class="mono">No data</div></div>';
-    return;
-  }
-
-  els.alertList.innerHTML=alerts.map(a=>{
-    const tag=a.diff<=1?'TODAY':a.diff<=3?'SOON':'WAIT';
-    return `<div class="alert-item"><div><span class="alert-tag">${esc(tag)}</span></div><div><strong>No.${esc(a.no)} / ${esc(a.label)}</strong><p>${esc(a.title)} / 期限: ${esc(a.date)}</p></div><div class="mono">${a.diff}日以内</div></div>`;
-  }).join('');
-}
-function renderTasks(){
-  const no = String(els.recordSelect.value || fields.no.value || '').trim();
-  const row = getRowByNo(no) || stagedRow || buildRow();
-
-  const taskRows = TASKDEFS.map(task => {
-    const date = row[`TASK_${task.idx}_DATE`] || '';
-    const day = row[`TASK_${task.idx}_DAY`] || '';
-    const status = row[`TASK_${task.idx}_STATUS`] || '未着手';
-    return { idx: task.idx, name: task.name, date, day, status };
-  });
-
-  if(!taskRows.length){
-    els.taskList.innerHTML = '<div class="list-row"><div><strong>Task data</strong><p>タスク定義がありません</p></div><div><span class="status s3">WAIT</span></div></div>';
-    return;
-  }
-
-  els.taskList.innerHTML = taskRows.map(t => `
-    <div class="task-row">
-      <div><span class="badge">TASK ${esc(t.idx)}</span></div>
-      <div>
-        <strong>${esc(t.name)}</strong>
-        <p>${esc(t.day || '')}</p>
-      </div>
-      <div class="mono">${esc(t.date || '-')}</div>
-      <div><span class="status s3">${esc(t.status)}</span></div>
-    </div>
-  `).join('');
-}
-  
 function loadCsv(e){
   const file=e.target.files?.[0];
   if(!file){
@@ -1714,17 +1489,16 @@ function loadCsv(e){
         syncCohostFields();
         resetScheduleChecks();
       }
-     　renderTable();
-　　　　renderStats();
-　　　　recalcDraft();
-　　　　renderAlerts();
-　　　　renderTasks();
-　　　　els.miniDbState.textContent='CSV読込済';
-　　　　els.miniDbText.textContent=dataRows.length?`${dataRows.length}件のCSVを読込済み`:'CSVに有効データがありません';
-　　　　renderMergeOptions();
-　　　　setStatus(dataRows.length?`CSVを読み込みました。${dataRows.length}件です。`:'CSVを読み込みましたが有効行はありません。');
-　　　　e.target.value='';
-    　　},
+      renderTable();
+      renderStats();
+      recalcDraft();
+      renderAlerts();
+      els.miniDbState.textContent='CSV読込済';
+      els.miniDbText.textContent=dataRows.length?`${dataRows.length}件のCSVを読込済み`:'CSVに有効データがありません';
+      renderMergeOptions();
+      setStatus(dataRows.length?`CSVを読み込みました。${dataRows.length}件です。`:'CSVを読み込みましたが有効行はありません。');
+      e.target.value='';
+    },
     error:(err)=>{
       els.csvFileName.value='ファイル未選択';
       setStatus(`CSV読込エラー: ${err?.message||err}`);
@@ -1741,8 +1515,7 @@ function ensureAdditionalHeaders(){
     fullKeys.lectureStart,fullKeys.qaDeadline,fullKeys.qaTime,fullKeys.preMeeting,
     fullKeys.deadline3,fullKeys.cost,fullKeys.dataDeadline,fullKeys.date2,fullKeys.subject2,
     fullKeys.name,fullKeys.cohost3,fullKeys.head1,fullKeys.closing1,
-    fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK2,fullKeys.checkK3,
-    ...TASK_HEADERS
+    fullKeys.checkK1,fullKeys.checkHp,fullKeys.checkK2,fullKeys.checkK3
   ].forEach(ensureHeader);
 }
 
@@ -1960,7 +1733,6 @@ function buildRow(){
   const auto=calcAutoDates(base);
   const row={};
   currentHeaders.forEach(h=>row[h]='');
-
   row[fullKeys.no]=String(fields.no.value||'').trim();
   row[fullKeys.year]=fields.year.value;
   row[fullKeys.date]=formatDate1Short(fields.date.value);
@@ -1981,8 +1753,8 @@ function buildRow(){
   row[fullKeys.subject]=fields.subject.value;
   row[fullKeys.subject2]=fields.subject2.value;
   row[fullKeys.site]=fields.site.value;
-  row[fullKeys.cohost]=fields.cohost.value||COHOSTOPTIONNONE;
-  row[fullKeys.cohost3]=String(fields.cohost.value||'').trim()===COHOSTOPTIONTEAM?COHOST3TEXTTEAM:'';
+  row[fullKeys.cohost]=fields.cohost.value||COHOST_OPTION_NONE;
+  row[fullKeys.cohost3]=String(fields.cohost.value||'').trim()===COHOST_OPTION_TEAM?COHOST3_TEXT_TEAM:'';
   row[fullKeys.head1]=getHead1ValueByCohost(fields.cohost.value);
   row[fullKeys.closing1]=getClosingTextBySubject(fields.subject.value);
   row[fullKeys.k1]=fmtMonthDay(auto.k1);
@@ -2005,25 +1777,6 @@ function buildRow(){
   row[fullKeys.checkHp]=boolToCsv(els.ckHp.checked);
   row[fullKeys.checkK2]=boolToCsv(els.ckK2.checked);
   row[fullKeys.checkK3]=boolToCsv(els.ckK3.checked);
-
-  TASKDEFS.forEach(task=>{
-    const taskDate=base?addDays(base,task.offset):null;
-    const taskDateText=taskDate?fmtMonthDay(taskDate):'';
-    const taskDayText=taskDate?weekdayJa(fmtDate(taskDate)):'';
-    let taskStatus='WAIT';
-
-    if(task.idx==='01') taskStatus=els.ckK1.checked?'DONE':'WAIT';
-    else if(task.idx==='02') taskStatus=els.ckHp.checked?'DONE':'WAIT';
-    else if(task.idx==='03') taskStatus=els.ckK2.checked?'DONE':'WAIT';
-    else if(task.idx==='04') taskStatus=els.ckK3.checked?'DONE':'WAIT';
-
-    row[`TASK_${task.idx}_OFFSET`]=String(task.offset);
-    row[`TASK_${task.idx}_NAME`]=task.name;
-    row[`TASK_${task.idx}_DATE`]=taskDateText;
-    row[`TASK_${task.idx}_DAY`]=taskDayText;
-    row[`TASK_${task.idx}_STATUS`]=taskStatus;
-  });
-
   return row;
 }
 
@@ -2044,7 +1797,6 @@ function commitDraft(){
   setNextNo();
   renderStats();
   renderAlerts();
-  renderTasks();
   renderConfirm([]);
   renderResult(true);
   els.recordSelect.disabled=!dataRows.length;
@@ -2160,49 +1912,6 @@ function renderAlerts(){
   els.alertList.innerHTML=alerts.map(a=>`<div class="alert-item"><div><span class="alert-tag">${a.diff===0?'TODAY':a.diff===1?'TOMORROW':`+${a.diff}D`}</span></div><div><strong>No.${esc(a.no)} / ${esc(a.title)}</strong><p>${esc(a.label)} : ${esc(a.raw||'-')}</p></div><div class="mono">Task alert</div></div>`).join('');
 }
 
-function renderTasks(row){
-  if(!els.taskList) return;
-
-  const source = row || stagedRow || selectedRow;
-  if(!source){
-    els.taskList.innerHTML = `
-      <div class="list-row">
-        <div>
-          <strong>Task data</strong>
-          <p>レコードを選択するとTASK一覧を表示します</p>
-        </div>
-        <div><span class="status s3">WAIT</span></div>
-      </div>
-    `;
-    return;
-  }
-
-  els.taskList.innerHTML = TASK_DEFS.map(task => {
-    const name = source[`TASK_${task.idx}_NAME`] || task.name || '-';
-    const offset = source[`TASK_${task.idx}_OFFSET`] || String(task.offset);
-    const date = source[`TASK_${task.idx}_DATE`] || '-';
-    const day = source[`TASK_${task.idx}_DAY`] || '-';
-    const status = source[`TASK_${task.idx}_STATUS`] || '未着手';
-
-    const statusClass =
-      status === '完了' ? 's2' :
-      status === '進行中' ? 's3' :
-      status === '保留' ? 's4' : 's1';
-
-    return `
-      <div class="task-row">
-        <div><span class="badge">TASK ${task.idx}</span></div>
-        <div>
-          <strong>${esc(name)}</strong>
-          <p>Offset ${esc(offset)}日 / ${esc(date)}（${esc(day)}）</p>
-        </div>
-        <div class="mono">${esc(status)}</div>
-        <div><span class="status ${statusClass}">${esc(status)}</span></div>
-      </div>
-    `;
-  }).join('');
-}
-
 function updateAnnualGauge(done,total,yearCount,soon,draftCount){
   const circumference=578;
   const ratio=total?Math.max(0,Math.min(1,done/total)):0;
@@ -2218,49 +1927,48 @@ function updateAnnualGauge(done,total,yearCount,soon,draftCount){
 
 function renderStats(){
   const total = dataRows.length;
+
   const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1;
+const currentYear = now.getFullYear();
+const currentMonth = now.getMonth() + 1;
 
-  const fiscalStartYear = currentMonth >= 4 ? currentYear : currentYear - 1;
-  const fiscalStart = new Date(fiscalStartYear, 3, 1);
-  const fiscalEnd = new Date(fiscalStartYear + 1, 2, 31);
+const fiscalStartYear = currentMonth >= 4 ? currentYear : currentYear - 1;
+const fiscalStart = new Date(fiscalStartYear, 3, 1);   // 4/1
+const fiscalEnd = new Date(fiscalStartYear + 1, 2, 31); // 翌年3/31
 
-  const yearCount = dataRows.filter(r => {
-    const rowDate = parseShortJapaneseDate(r[fullKeys.date], r[fullKeys.year]);
-    if(!rowDate) return false;
-    return rowDate >= fiscalStart && rowDate <= fiscalEnd;
-  }).length;
+const yearCount = dataRows.filter(r => {
+  const rowDate = parseShortJapaneseDate(r[fullKeys.date], r[fullKeys.year]);
+  if(!rowDate) return false;
+  return rowDate >= fiscalStart && rowDate <= fiscalEnd;
+}).length;
 
   const today = new Date();
   const today0 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-  const soon = dataRows.filter(r => {
+  const soon = dataRows.filter(r=>{
     const d = parseShortJapaneseDate(r[fullKeys.date], r[fullKeys.year]);
     if(!d) return false;
-    const diff = Math.round((d - today0) / 86400000);
+    const diff = (d - today0) / 86400000;
     return diff >= 0 && diff <= 30;
   }).length;
 
-  const done = dataRows.filter(r => {
+  const done = dataRows.filter(r=>{
     const d = parseShortJapaneseDate(r[fullKeys.date], r[fullKeys.year]);
     return d && d < today0;
   }).length;
 
-  const next = dataRows.reduce((m, r) => Math.max(m, Number(r[fullKeys.no]) || 0), 0) + 1;
+  const next = dataRows.reduce((m,r)=>Math.max(m, Number(r[fullKeys.no] || 0)), 0) + 1;
   const draftCount = stagedRow ? 1 : 0;
 
-  els.sumAll.textContent = String(total);
-  els.sumYear.textContent = String(yearCount);
-  els.sumSoon.textContent = String(soon);
-  els.sumDone.textContent = String(done);
-  els.sumDraft.textContent = String(draftCount);
+  els.sumAll.textContent = total;
+  els.sumYear.textContent = yearCount;
+  els.sumSoon.textContent = `${soon}件`;
+  els.sumDone.textContent = `${done}件`;
+  els.sumDraft.textContent = `${draftCount}件`;
   els.sumSubject.textContent = fields.subject.value || '-';
-
   els.miniYearCount.textContent = String(yearCount);
   els.miniNext.textContent = `No.${next}`;
   els.sumNext.textContent = String(next);
-
   els.sumAllTop.textContent = String(total);
   els.sumYearTop.textContent = String(yearCount);
   els.sumNextTop.textContent = String(next);
