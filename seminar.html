@@ -1,142 +1,261 @@
-<section class="manual-section">
-  <h1>取扱説明</h1>
-  <p>
-    このWebアプリは、臨床研究研修会のマスターCSV管理、研修会情報の入力・更新、日程の自動計算、
-    保存前確認、更新CSVの出力、テンプレートファイルへの一括差し込みを行うための管理ツールです。[file:1]
-  </p>
+<section class="wiki-manual">
+  <header class="wiki-header">
+    <p class="wiki-breadcrumb">取扱説明 / 臨床研究研修会 ダッシュボード</p>
+    <h1>臨床研究研修会 ダッシュボード</h1>
+    <p class="wiki-lead">
+      臨床研究研修会のマスターCSV管理、開催情報入力、日程自動計算、保存前確認、
+      更新CSV出力、テンプレート一括差し込みを行うためのWebアプリです。
+    </p>
+  </header>
 
-  <h2>1. このアプリでできること</h2>
-  <ul>
-    <li>マスターCSVを読み込んで既存データを表示・編集できます。[file:1]</li>
-    <li>新規DB作成から空のマスターを開始し、1件目から登録できます。[file:1]</li>
-    <li>開催日や開始時刻から、曜日、入室時刻、所要時間、各締切日、メール用日付などを自動計算します。[file:1]</li>
-    <li>保存前に確認画面で内容・注意事項・上書き/新規追加の状態を確認できます。[file:1]</li>
-    <li>保存後は更新済みCSVをダウンロードできます。[file:1]</li>
-    <li>docx / pptx / xlsx テンプレートへ、選択Noの内容を一括差し込み出力できます。[file:1]</li>
-  </ul>
+  <nav class="wiki-toc" aria-label="目次">
+    <h2>目次</h2>
+    <ol>
+      <li><a href="#overview">概要</a></li>
+      <li><a href="#screen">画面構成</a></li>
+      <li><a href="#basic-flow">基本操作</a></li>
+      <li><a href="#csv-db">CSV読込と新規DB作成</a></li>
+      <li><a href="#entry">入力項目</a></li>
+      <li><a href="#auto-calc">自動計算</a></li>
+      <li><a href="#save-check">保存と確認画面</a></li>
+      <li><a href="#export">CSV出力</a></li>
+      <li><a href="#template">テンプレート差し込み</a></li>
+      <li><a href="#theme">テーマ切替</a></li>
+      <li><a href="#notes">注意事項</a></li>
+    </ol>
+  </nav>
 
-  <h2>2. 画面の見方</h2>
-  <ul>
-    <li><strong>Quick Operation</strong> では、テーマ切替、マスターCSV読込、新規DB作成、確認画面への移動、No選択を行います。[file:1]</li>
-    <li><strong>Annual Plan Parameter</strong> では、年度件数、開催済み件数、直近30日件数、追加予定件数をリング表示します。[file:1]</li>
-    <li><strong>Deadline Alert</strong> では、7日以内に期限が迫る起案や締切関連タスクを表示します。[file:1]</li>
-    <li><strong>Entry Console</strong> では、研修会の基本情報・Zoom情報・説明文などを入力します。[file:1]</li>
-    <li><strong>Computed Schedule</strong> では、自動計算された起案日、HP公開日、締切、チェック状態を確認できます。[file:1]</li>
-    <li><strong>Master Table</strong> では、現在保持しているマスター一覧を確認できます。同じNoは1行だけ保持され、保存時は上書き更新されます。[file:1]</li>
-    <li><strong>Commit Check</strong> では、保存前の確認内容と注意事項を一覧表示します。[file:1]</li>
-    <li><strong>Export Result</strong> では、保存後のCSV出力状態を表示します。[file:1]</li>
-    <li><strong>Template Injection</strong> では、テンプレートファイルを複数選択し、選択Noの値で一括差し込みできます。[file:1]</li>
-  </ul>
+  <section id="overview" class="wiki-block">
+    <h2>1. 概要</h2>
+    <p>
+      本アプリは、臨床研究研修会の開催管理を1つの画面で行うための業務支援ツールです。
+      マスターCSVの読込、新規データ作成、既存Noの更新、開催関連日付の自動算出、確認画面での検証、
+      更新CSVのダウンロード、および docx / pptx / xlsx テンプレートへの一括差し込みに対応しています。
+    </p>
 
-  <h2>3. 基本的な使い方</h2>
-  <ol>
-    <li>まず <strong>マスターCSV</strong> の「csv選択」ボタンから既存CSVを読み込むか、<strong>新規DB作成</strong> を押して空のマスターを作成します。[file:1]</li>
-    <li>既存データを編集したい場合は、No選択欄から対象Noを選び、<strong>選択Noを反映</strong> を押します。[file:1]</li>
-    <li>新規追加したい場合は、必要に応じて <strong>直近行を複製</strong> を使い、前回入力内容をベースに編集します。[file:1]</li>
-    <li>Entry Console で各項目を入力または修正します。[file:1]</li>
-    <li>必要に応じて右側のチェック欄で、起案1 / HP / 起案2 / 起案3 の実施済み状態を設定します。[file:1]</li>
-    <li><strong>保存する</strong> または <strong>確認画面へ進む</strong> を押して内容を確認します。[file:1]</li>
-    <li>問題がなければ <strong>この内容で保存</strong> を押します。[file:1]</li>
-    <li>最後に <strong>更新CSVをダウンロード</strong> を押して、最新のCSVを保存します。[file:1]</li>
-  </ol>
+    <table class="wiki-table">
+      <tbody>
+        <tr>
+          <th>アプリ名</th>
+          <td>臨床研究研修会 ダッシュボード</td>
+        </tr>
+        <tr>
+          <th>主用途</th>
+          <td>研修会マスターの登録・更新・確認・出力</td>
+        </tr>
+        <tr>
+          <th>対応入力</th>
+          <td>マスターCSV、フォーム入力、テンプレートファイル</td>
+        </tr>
+        <tr>
+          <th>対応出力</th>
+          <td>更新CSV、差し込み済み docx / pptx / xlsx</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 
-  <h2>4. CSV読込と新規DB作成</h2>
-  <p>
-    マスターCSVを読み込むと、CSV内の有効行を取り込み、No順で整理したうえで一覧・統計・期限アラート・差し込み対象Noが更新されます。[file:1]
-    有効データがある場合は、最後の行をもとに次回入力候補が自動で補完されます。[file:1]
-  </p>
-  <p>
-    新規DB作成では、既定ヘッダーを持つ空のマスターを初期化し、Noは1から開始されます。[file:1]
-    この状態でもそのまま入力・保存・CSVダウンロードが可能です。[file:1]
-  </p>
+  <section id="screen" class="wiki-block">
+    <h2>2. 画面構成</h2>
+    <p>
+      画面は、操作系、進捗確認、入力フォーム、スケジュール表示、保存確認、出力結果、差し込み処理の各エリアで構成されています。
+      主要構成は Quick Operation、Annual Plan Parameter、Deadline Alert、Entry Console、Computed Schedule、
+      Master Table、Commit Check、Export Result、Template Injection です。
+    </p>
 
-  <h2>5. 入力項目と自動計算</h2>
-  <p>
-    開催日、開始時刻、終了時刻、講義開始時刻、事前打合せ、質疑応答締切、講師名、タイトル、対象、開催方法、共催、Zoom情報、HP URL、目的、各種紹介文などを入力できます。[file:1]
-  </p>
-  <p>
-    開催日を入力すると曜日、メール用開催日、各種締切日、資料DL締切、講義資料締切が自動計算されます。[file:1]
-    開始・終了時刻からは入室時刻と所要時間が自動計算されます。[file:1]
-  </p>
-  <p>
-    対象区分に応じて対象詳細が自動設定されます。研究者の場合は「（医師・歯科医師等）」、研究支援者の場合は「（薬剤師・看護師等）」になります。[file:1]
-    共催が「企画人材班」の場合は、共催3やスライド用ヘッダー文言も連動して反映されます。[file:1]
-  </p>
+    <table class="wiki-table">
+      <thead>
+        <tr>
+          <th>エリア名</th>
+          <th>役割</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Quick Operation</td>
+          <td>テーマ切替、マスターCSV読込、新規DB作成、確認画面への移動、No選択を行います。</td>
+        </tr>
+        <tr>
+          <td>Annual Plan Parameter</td>
+          <td>年度件数、開催済み件数、直近30日件数、追加予定件数をリング表示します。</td>
+        </tr>
+        <tr>
+          <td>Deadline Alert</td>
+          <td>7日以内に期限が迫るタスクを優先表示します。</td>
+        </tr>
+        <tr>
+          <td>Entry Console</td>
+          <td>研修会の基本情報、Zoom情報、説明文などを入力・編集します。</td>
+        </tr>
+        <tr>
+          <td>Computed Schedule</td>
+          <td>自動計算された起案日、HP公開日、締切日、実施済みチェックを表示します。</td>
+        </tr>
+        <tr>
+          <td>Master Table</td>
+          <td>現在保持しているマスター行一覧を確認します。</td>
+        </tr>
+        <tr>
+          <td>Commit Check</td>
+          <td>保存前の差分や注意事項を確認します。</td>
+        </tr>
+        <tr>
+          <td>Export Result</td>
+          <td>更新CSVの出力状態を表示します。</td>
+        </tr>
+        <tr>
+          <td>Template Injection</td>
+          <td>docx / pptx / xlsx テンプレートへの一括差し込みを実行します。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 
-  <h2>6. 起案日・締切日の考え方</h2>
-  <ul>
-    <li>起案1は開催35日前です。[file:1]</li>
-    <li>HP公開は開催28日前です。[file:1]</li>
-    <li>起案2は開催7日前です。[file:1]</li>
-    <li>起案3は開催翌営業日基準で自動計算されます。[file:1]</li>
-    <li>院外締切は開催8日前の12:00です。[file:1]</li>
-    <li>資料DL締切は開催翌営業日基準で表示されます。[file:1]</li>
-    <li>講義資料締切は開催7日前です。[file:1]</li>
-  </ul>
-  <p>
-    土日および日本の主要祝日は営業日計算から除外されるように処理されています。[file:1]
-  </p>
+  <section id="basic-flow" class="wiki-block">
+    <h2>3. 基本操作</h2>
+    <ol>
+      <li>「csv選択」からマスターCSVを読み込むか、「新規DB作成」で空のデータベースを作成します。</li>
+      <li>既存データを編集する場合は、No選択欄から対象Noを選び、「選択Noを反映」を押します。</li>
+      <li>必要項目を Entry Console で入力または修正します。</li>
+      <li>右側の Computed Schedule で自動計算内容とチェック状態を確認します。</li>
+      <li>「確認画面へ進む」または保存操作を行い、Commit Check で内容を確認します。</li>
+      <li>問題がなければ保存し、「更新CSVをダウンロード」から最新CSVを取得します。</li>
+      <li>必要に応じてテンプレート差し込みを行い、資料ファイルをまとめて出力します。</li>
+    </ol>
+  </section>
 
-  <h2>7. 保存の仕組み</h2>
-  <p>
-    保存時は、入力中のNoを基準に、既存Noがあれば上書き、存在しなければ新規追加として扱われます。[file:1]
-    そのため、同じNoが複数行に増えることはなく、マスター内では同一Noは1件として保持されます。[file:1]
-  </p>
-  <p>
-    保存対象には、基本情報だけでなく、起案1 / HP / 起案2 / 起案3 のチェック状態も含まれます。[file:1]
-  </p>
+  <section id="csv-db" class="wiki-block">
+    <h2>4. CSV読込と新規DB作成</h2>
+    <p>
+      マスターCSVは「csv選択」ボタンから読み込みます。ファイル選択欄はブラウザ標準の
+      「選択されていません」表示を使わない構成に変更されており、選択後は専用表示欄にファイル名が反映されます。
+    </p>
+    <p>
+      CSVを読み込むと、No順にデータが整理され、一覧表示、統計表示、期限アラート、差し込み対象Noが更新されます。
+      新規DB作成では既定ヘッダーを持つ空のマスターが生成され、1件目から登録を始められます。
+    </p>
+  </section>
 
-  <h2>8. 保存前確認</h2>
-  <p>
-    確認画面では、保存予定件数、要確認件数、保存状態、新規追加か上書きか、自動計算項目、起案チェック状態を一覧表示します。[file:1]
-  </p>
-  <p>
-    No未入力、Noが整数でない、開催日未入力、タイトル未入力、講師名未入力、開始/終了時間未入力、終了時刻が開始時刻以前、Zoom URLやHP URLの形式不正、謝金が数値でない場合は注意事項として表示されます。[file:1]
-  </p>
+  <section id="entry" class="wiki-block">
+    <h2>5. 入力項目</h2>
+    <p>
+      Entry Console では、No、年度、開催日、曜日、メール用開催日、氏名、タイトル、講師名、
+      講義開始、研修会開始、終了、事前打合せ、質疑応答締切、質疑応答時間、謝金、対象、開催方法、
+      共催、Zoom ID、パスコード、Zoom URL、HP URL、目的、導入文、趣旨説明、講師紹介などを扱います。
+    </p>
 
-  <h2>9. CSV出力</h2>
-  <p>
-    保存後または編集中の状態から、更新CSVをダウンロードできます。[file:1]
-    出力ファイル名は「開催日_タイトル.csv」の形式で自動作成されます。[file:1]
-  </p>
-  <p>
-    CSVはUTF-8 BOM付きで出力されるため、日本語環境でも扱いやすい形式になっています。[file:1]
-  </p>
+    <table class="wiki-table">
+      <thead>
+        <tr>
+          <th>分類</th>
+          <th>主な項目</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>基本情報</td>
+          <td>No、年度、開催日、タイトル、講師名、名前</td>
+        </tr>
+        <tr>
+          <td>時刻情報</td>
+          <td>講義開始、研修会開始、終了、事前打合せ、質疑応答締切</td>
+        </tr>
+        <tr>
+          <td>開催設定</td>
+          <td>対象、対象詳細、開催方法、共催、共催3</td>
+        </tr>
+        <tr>
+          <td>配信情報</td>
+          <td>Zoom ID、パスコード、Zoom URL、HP URL</td>
+        </tr>
+        <tr>
+          <td>説明文</td>
+          <td>目的、進行表導入、趣旨説明、講師紹介</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 
-  <h2>10. テンプレート一括差し込み</h2>
-  <p>
-    Template Injection では、docx / pptx / xlsx ファイルを複数まとめて選択し、差し込み対象Noを選ぶことで一括出力できます。[file:1]
-  </p>
-  <p>
-    差し込み時は、CSVヘッダー名に加えて、DATE_1、DATE_2、TITLE、SPEAKER、NO、PASSCODE、ZOOM_URL、WEBINER_ID などの別名キーにも対応しています。[file:1]
-    そのため、テンプレート側で置換文字列をそろえておけば、Word・PowerPoint・Excelに対してまとめて差し込み可能です。[file:1]
-  </p>
-  <p>
-    出力ファイル名は「No{番号}_{タイトル}_{元ファイル名}」の形式になります。[file:1]
-  </p>
+  <section id="auto-calc" class="wiki-block">
+    <h2>6. 自動計算</h2>
+    <p>
+      開催日や時刻の入力内容に応じて、曜日、メール用開催日、入室時刻、所要時間、各締切日、
+      起案1、HP公開、起案2、起案3などが自動計算されます。
+    </p>
+    <ul>
+      <li>起案1は開催35日前です。</li>
+      <li>HP公開は開催28日前です。</li>
+      <li>起案2は開催7日前です。</li>
+      <li>起案3は開催翌営業日基準で計算されます。</li>
+      <li>院外締切は開催8日前基準で算出されます。</li>
+      <li>資料関連締切やメール用日付も自動反映されます。</li>
+    </ul>
+    <p>
+      また、対象区分や共催選択に応じて、対象詳細や共催関連の表示文言も自動補完されます。
+    </p>
+  </section>
 
-  <h2>11. テーマ切替</h2>
-  <p>
-    「表示テーマ切替」ボタンで、ダークテーマとライトテーマを切り替えられます。[file:1]
-    ダークテーマはグリーン端末調、ライトテーマは Notion 風の明るい業務UIとして設計されています。[file:1]
-  </p>
+  <section id="save-check" class="wiki-block">
+    <h2>7. 保存と確認画面</h2>
+    <p>
+      保存時は、入力中のNoを基準に、既存Noがある場合は上書き、ない場合は新規追加として処理されます。
+      同一Noが複数行として増えることはなく、マスター上では1つのNoにつき1行のみ保持されます。
+    </p>
+    <p>
+      Commit Check では、保存予定件数、要確認件数、状態、新規追加または上書きの判定、
+      入力不足や形式不正などの注意事項を確認できます。
+    </p>
+    <ul>
+      <li>No未入力</li>
+      <li>開催日未入力</li>
+      <li>タイトル未入力</li>
+      <li>講師名未入力</li>
+      <li>開始・終了時刻未入力</li>
+      <li>終了時刻が開始時刻以前</li>
+      <li>URL形式不正</li>
+      <li>謝金が数値でない</li>
+    </ul>
+  </section>
 
-  <h2>12. 使い方の例</h2>
-  <ol>
-    <li>「csv選択」から既存マスターCSVを読み込みます。[file:1]</li>
-    <li>Noを選択して既存研修会を反映し、開催日や講師名だけ修正します。[file:1]</li>
-    <li>自動計算された締切や起案日を右側で確認します。[file:1]</li>
-    <li>「確認画面へ進む」で内容を確認し、「この内容で保存」を押します。[file:1]</li>
-    <li>「更新CSVをダウンロード」で新しいマスターCSVを保存します。[file:1]</li>
-    <li>必要ならテンプレートファイルを選択し、同じNoで差し込み資料も出力します。[file:1]</li>
-  </ol>
+  <section id="export" class="wiki-block">
+    <h2>8. CSV出力</h2>
+    <p>
+      保存後は「更新CSVをダウンロード」から最新状態のCSVを取得できます。
+      出力ファイル名は、開催日とタイトルをもとに作成される運用です。
+    </p>
+    <p>
+      CSVには、基本項目に加えて、起案1 / HP / 起案2 / 起案3 のチェック状態も含めて保存されます。
+    </p>
+  </section>
 
-  <h2>13. 注意事項</h2>
-  <ul>
-    <li>CSVを差し替えたあとは、必ず最新の更新CSVをダウンロードして保管してください。[file:1]</li>
-    <li>同じNoで保存した場合は上書き更新になります。[file:1]</li>
-    <li>テンプレート差し込みは、docx / pptx / xlsx のみ対応です。[file:1]</li>
-    <li>URL項目は http または https で始まる形式で入力してください。[file:1]</li>
-    <li>開催日や時刻を変更した場合は、自動計算欄と確認画面を必ず確認してください。[file:1]</li>
-  </ul>
+  <section id="template" class="wiki-block">
+    <h2>9. テンプレート差し込み</h2>
+    <p>
+      Template Injection では、docx / pptx / xlsx を複数まとめて読み込み、選択Noのデータで一括差し込みできます。
+      テンプレート未選択時は待機表示となり、対象Noとテンプレートが揃うと一括出力が可能になります。
+    </p>
+    <p>
+      差し込みは、CSVヘッダー名に加えて、DATE_1、DATE_2、TITLE、SPEAKER、NO、PASSCODE、ZOOM_URL、
+      WEBINER_ID などの別名キーにも対応する構成です。出力ファイル名は No とタイトルを含む形で生成されます。
+    </p>
+  </section>
+
+  <section id="theme" class="wiki-block">
+    <h2>10. テーマ切替</h2>
+    <p>
+      「表示テーマ切替」ボタンで、ダークテーマとライトテーマを切り替えられます。
+      ダークテーマはグリーン端末調、ライトテーマは Notion 風の明るい業務UIとして設計されています。
+    </p>
+  </section>
+
+  <section id="notes" class="wiki-block">
+    <h2>11. 注意事項</h2>
+    <ul>
+      <li>CSV更新後は、必ず最新の更新CSVをダウンロードして保管してください。</li>
+      <li>同じNoで保存すると既存行の上書き更新になります。</li>
+      <li>テンプレート差し込みは docx / pptx / xlsx に対応しています。</li>
+      <li>URL項目は http または https 形式で入力してください。</li>
+      <li>開催日や時刻を変更したときは、自動計算欄と確認画面を必ず確認してください。</li>
+    </ul>
+  </section>
 </section>
