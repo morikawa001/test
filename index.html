@@ -1928,14 +1928,7 @@ function updateAnnualGauge(done,total,yearCount,soon,draftCount){
 function renderStats(){
   const total = dataRows.length;
 
-  const statsYearSource =
-    dataRows.length
-      ? String(dataRows[dataRows.length - 1][fullKeys.year] ?? '').trim()
-      : String(fields.year.value ?? '').trim();
-
-  const normalizedCurrentYear =
-    statsYearSource.match(/\d{4}/)?.[0] ||
-    String(new Date().getFullYear());
+  const normalizedCurrentYear = String(new Date().getFullYear());
 
   const yearCount = dataRows.filter(r=>{
     const rowYear = String(r[fullKeys.year] ?? '').trim();
