@@ -1928,13 +1928,19 @@ function updateAnnualGauge(done,total,yearCount,soon,draftCount){
 function renderStats(){
   const total = dataRows.length;
 
-  const normalizedCurrentYear = String(new Date().getFullYear());
+  const now = new Date();
+const currentYear = now.getFullYear();
+const currentMonth = now.getMonth() + 1;
 
-  const yearCount = dataRows.filter(r=>{
-    const rowYear = String(r[fullKeys.year] ?? '').trim();
-    const normalizedRowYear = rowYear.match(/\d{4}/)?.[0];
-    return normalizedRowYear === normalizedCurrentYear;
-  }).length;
+const fiscalStartYear = currentMonth >= 4 ? currentYear : currentYear - 1;
+const fiscalStart = new Date(fiscalStartYear, 3, 1);   // 4/1
+const fiscalEnd = new Date(fiscalStartYear + 1, 2, 31); // 翌年3/31
+
+const yearCount = dataRows.filter(r => {
+  const rowDate = parseShortJapaneseDate(r[fullKeys.date], r[fullKeys.year]);
+  if(!rowDate) return false;
+  return rowDate >= fiscalStart && rowDate <= fiscalEnd;
+}).length;
 
   const today = new Date();
   const today0 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
