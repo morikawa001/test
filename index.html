@@ -1627,10 +1627,10 @@ function prefillFromLast(){
 }
 
 function handleSelectRecord(){
-  const no = els.recordSelect.value;
-  selectedRow = dataRows.find(r => String(r[fullKeys.no]).trim() === String(no).trim()) || null;
+  const no=els.recordSelect.value;
+  selectedRow=dataRows.find(r=>String(r[fullKeys.no]).trim()===String(no).trim())||null;
   renderTasks(selectedRow);
-  if(selectedRow) setStatus(`No.${selectedRow[fullKeys.no]} を選択しました`);
+  if(selectedRow)setStatus(`No.${selectedRow[fullKeys.no]} を選択しました。`);
 }
 
 function loadSelectedIntoForm(){
