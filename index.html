@@ -1810,6 +1810,7 @@ function buildRow(){
   const auto=calcAutoDates(base);
   const row={};
   currentHeaders.forEach(h=>row[h]='');
+
   row[fullKeys.no]=String(fields.no.value||'').trim();
   row[fullKeys.year]=fields.year.value;
   row[fullKeys.date]=formatDate1Short(fields.date.value);
@@ -1830,8 +1831,8 @@ function buildRow(){
   row[fullKeys.subject]=fields.subject.value;
   row[fullKeys.subject2]=fields.subject2.value;
   row[fullKeys.site]=fields.site.value;
-  row[fullKeys.cohost]=fields.cohost.value||COHOST_OPTION_NONE;
-  row[fullKeys.cohost3]=String(fields.cohost.value||'').trim()===COHOST_OPTION_TEAM?COHOST3_TEXT_TEAM:'';
+  row[fullKeys.cohost]=fields.cohost.value||COHOSTOPTIONNONE;
+  row[fullKeys.cohost3]=String(fields.cohost.value||'').trim()===COHOSTOPTIONTEAM?COHOST3TEXTTEAM:'';
   row[fullKeys.head1]=getHead1ValueByCohost(fields.cohost.value);
   row[fullKeys.closing1]=getClosingTextBySubject(fields.subject.value);
   row[fullKeys.k1]=fmtMonthDay(auto.k1);
@@ -1854,68 +1855,19 @@ function buildRow(){
   row[fullKeys.checkHp]=boolToCsv(els.ckHp.checked);
   row[fullKeys.checkK2]=boolToCsv(els.ckK2.checked);
   row[fullKeys.checkK3]=boolToCsv(els.ckK3.checked);
-  function buildRow(){
-  const base = fields.date.value ? new Date(fields.date.value+'T00:00:00') : null;
-  const auto = calcAutoDates(base);
-  const row = {};
-  currentHeaders.forEach(h => row[h] = '');
 
-  row[fullKeys.no] = String(fields.no.value).trim();
-  row[fullKeys.year] = fields.year.value;
-  row[fullKeys.date] = formatDate1Short(fields.date.value);
-  row[fullKeys.day] = fields.day.value;
-  row[fullKeys.lectureStart] = fields.lectureStart.value;
-  row[fullKeys.start] = fields.start.value;
-  row[fullKeys.end] = fields.end.value;
-  row[fullKeys.qaDeadline] = fields.qaDeadline.value;
-  row[fullKeys.qaTime] = fields.qaTime.value;
-  row[fullKeys.preMeeting] = fields.preMeeting.value;
-  row[fullKeys.roomOpen] = fields.roomOpen.value;
-  row[fullKeys.duration] = fields.duration.value;
-  row[fullKeys.deadline1] = fields.deadline1.value;
-  row[fullKeys.deadline2] = fields.deadline2.value;
-  row[fullKeys.deadline3] = fields.deadline3.value;
-  row[fullKeys.title] = fields.title.value;
-  row[fullKeys.speaker] = fields.speaker.value;
-  row[fullKeys.subject] = fields.subject.value;
-  row[fullKeys.subject2] = fields.subject2.value;
-  row[fullKeys.site] = fields.site.value;
-  row[fullKeys.cohost] = fields.cohost.value || COHOST_OPTION_NONE;
-  row[fullKeys.cohost3] = String(fields.cohost.value).trim()===COHOST_OPTION_TEAM ? COHOST3_TEXT_TEAM : '';
-  row[fullKeys.head1] = getHead1ValueByCohost(fields.cohost.value);
-  row[fullKeys.closing1] = getClosingTextBySubject(fields.subject.value);
-  row[fullKeys.k1] = fmtMonthDay(auto.k1);
-  row[fullKeys.k2] = fmtMonthDay(auto.k2);
-  row[fullKeys.k3] = fmtMonthDay(auto.k3);
-  row[fullKeys.hp] = fmtMonthDay(auto.hp);
-  row[fullKeys.cost] = String(fields.cost.value).trim();
-  row[fullKeys.purpose] = fields.purpose.value;
-  row[fullKeys.date2] = fields.date2.value;
-  row[fullKeys.name] = fields.name.value;
-  row[fullKeys.zoomId] = fields.zoomId.value;
-  row[fullKeys.zoomUrl] = fields.zoomUrl.value;
-  row[fullKeys.hpUrl] = fields.hpUrl.value;
-  row[fullKeys.passcode] = fields.passcode.value;
-  row[fullKeys.intro1] = fields.intro1.value;
-  row[fullKeys.intro2] = fields.intro2.value;
-  row[fullKeys.intro3] = fields.intro3.value;
-  row[fullKeys.dataDeadline] = fields.dataDeadline.value;
-  row[fullKeys.checkK1] = boolToCsv(els.ckK1.checked);
-  row[fullKeys.checkHp] = boolToCsv(els.ckHp.checked);
-  row[fullKeys.checkK2] = boolToCsv(els.ckK2.checked);
-  row[fullKeys.checkK3] = boolToCsv(els.ckK3.checked);
+  row['TASK_01_OFFSET']='-35';
+  row['TASK_01_NAME']='1';
+  row['TASK_01_DATE']=row[fullKeys.k1]||'';
+  row['TASK_01_DAY']=row['TASK_01_DATE']?weekdayJa(toIsoDateFromShortDate(row['TASK_01_DATE'],row[fullKeys.year])):'';
+  row['TASK_01_STATUS']=row[fullKeys.checkK1]||'0';
 
-  TASK_DEFS.forEach(task => {
-    const taskDate = base ? addDays(base, task.offset) : null;
-    row[`TASK_${task.idx}_OFFSET`] = String(task.offset);
-    row[`TASK_${task.idx}_NAME`] = task.name;
-    row[`TASK_${task.idx}_DATE`] = taskDate ? fmtDate(taskDate) : '';
-    row[`TASK_${task.idx}_DAY`] = taskDate ? weekdayJa(fmtDate(taskDate)) : '';
-    row[`TASK_${task.idx}_STATUS`] = '未着手';
-  });
+  row['TASK_02_OFFSET']='-28';
+  row['TASK_02_NAME']='HP';
+  row['TASK_02_DATE']=row[fullKeys.hp]||'';
+  row['TASK_02_DAY']=row['TASK_02_DATE']?weekdayJa(toIsoDateFromShortDate(row['TASK_02_DATE'],row[fullKeys.year])):'';
+  row['TASK_02_STATUS']=row[fullKeys.checkHp]||'0';
 
-  return row;
-}
   return row;
 }
 
