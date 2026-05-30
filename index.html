@@ -294,6 +294,10 @@ input[readonly],textarea[readonly]{
 }
 .btn.small{min-height:38px;padding:0 12px;font-size:.84rem}
 .btn:disabled{opacity:.42;cursor:not-allowed}
+#openTaskSheetBtn{
+  width:100%;
+  margin-top:10px;
+}
 .file-pick{display:grid;gap:6px}
 .file-pick input[type=file]{padding:9px 11px}
   #csvFile {
@@ -644,12 +648,16 @@ label[for="templateFiles"] {
   <input id="csvFileName" value="" readonly placeholder="ファイル未選択">
 </div>
       <div class="action-grid">
-        <button class="btn" id="newDbBtn">新規DB作成</button>
-        <button class="btn primary" id="openConfirmBtn" disabled>確認画面へ進む</button>
-      </div>
-      <select class="btn" id="recordSelect" disabled>
-        <option value="">Noを選択して表示</option>
-      </select>
+  <button class="btn" id="newDbBtn">DB新規</button>
+  <button class="btn primary" id="openConfirmBtn" disabled>確認</button>
+</div>
+
+<div class="action-grid">
+  <select class="btn" id="recordSelect" disabled>
+    <option value="">No選択</option>
+  </select>
+  <button class="btn" id="openTaskSheetBtn" disabled>タスクシート</button>
+</div>
       <div class="mini-grid">
         <div class="mini-box"><span>Database</span><b id="miniDbState">CSV未読込</b><p id="miniDbText">CSVまたは新規DBを選択してください</p></div>
         <div class="mini-box"><span>Next</span><b id="miniNext">-</b><p>次回採番候補</p></div>
@@ -1084,13 +1092,14 @@ const fullKeys={
   checkK3:'起案3チェック_CHECK_K3'
 };
 
-const els={
-  csvFile:document.getElementById('csvFile'),
-　csvFileName:document.getElementById('csvFileName'),
-　newDbBtn:document.getElementById('newDbBtn'),
-  recordSelect:document.getElementById('recordSelect'),
-  openConfirmBtn:document.getElementById('openConfirmBtn'),
-  appendBtn:document.getElementById('appendBtn'),
+const els = {
+  csvFile: document.getElementById('csvFile'),
+  csvFileName: document.getElementById('csvFileName'),
+  newDbBtn: document.getElementById('newDbBtn'),
+  recordSelect: document.getElementById('recordSelect'),
+  openTaskSheetBtn: document.getElementById('openTaskSheetBtn'),
+  openConfirmBtn: document.getElementById('openConfirmBtn'),
+  appendBtn: document.getElementById('appendBtn'),
   prefillBtn:document.getElementById('prefillBtn'),
   loadSelectedBtn:document.getElementById('loadSelectedBtn'),
   confirmAppendBtn:document.getElementById('confirmAppendBtn'),
@@ -1198,6 +1207,13 @@ const fields={
 
 let currentHeaders=[],rawRows=[],dataRows=[],selectedRow=null,stagedRow=null,lastSaveMode='',selectedTemplates=[];
 
+const TASK_SHEET_URL = 'https://example.com';
+
+function openTaskSheet(){
+  if(!selectedRow) return;
+  window.open(TASK_SHEET_URL, '_blank', 'noopener,noreferrer');
+}
+  
 const HEAD_TEXT_DEFAULT='2026年度　臨床研究研修会';
 const HEAD_TEXT_COHOST='2026年度　臨床腫瘍学コース・臨床研究研修会（共催）';
 const COHOST_OPTION_NONE='なし';
@@ -1212,10 +1228,11 @@ els.csvFile.addEventListener('change',loadCsv);
 els.templateFiles.addEventListener('change',handleTemplateFiles);
 els.mergeRecordSelect.addEventListener('change',()=>setMergeState());
 els.mergeAllBtn.addEventListener('click',mergeAllTemplates);
-els.newDbBtn.addEventListener('click',createNewDatabase);
-els.recordSelect.addEventListener('change',handleSelectRecord);
-els.loadSelectedBtn.addEventListener('click',loadSelectedIntoForm);
-els.prefillBtn.addEventListener('click',prefillFromLast);
+els.newDbBtn.addEventListener('click', createNewDatabase);
+els.recordSelect.addEventListener('change', handleSelectRecord);
+els.openTaskSheetBtn.addEventListener('click', openTaskSheet);
+els.loadSelectedBtn.addEventListener('click', loadSelectedIntoForm);
+els.prefillBtn.addEventListener('click', prefillFromLast);
 els.appendBtn.addEventListener('click',stageDraft);
 els.openConfirmBtn.addEventListener('click',stageDraft);
 els.confirmAppendBtn.addEventListener('click',commitDraft);
@@ -1436,9 +1453,10 @@ function createNewDatabase(){
   syncCohostFields();
   resetScheduleChecks();
   els.recordSelect.innerHTML='<option value="">Noを選択して表示</option>';
-  els.recordSelect.disabled=true;
-  els.prefillBtn.disabled=true;
-  els.loadSelectedBtn.disabled=true;
+  els.recordSelect.disabled = true;
+  els.openTaskSheetBtn.disabled = true;
+  els.prefillBtn.disabled = true;
+  els.loadSelectedBtn.disabled = true;
   els.appendBtn.disabled=false;
   els.openConfirmBtn.disabled=false;
   els.confirmAppendBtn.disabled=false;
@@ -1477,9 +1495,10 @@ function loadCsv(e){
       els.openConfirmBtn.disabled=false;
       els.confirmAppendBtn.disabled=false;
       els.downloadBtn.disabled=false;
-      els.prefillBtn.disabled=dataRows.length===0;
-      els.loadSelectedBtn.disabled=dataRows.length===0;
-      els.recordSelect.disabled=dataRows.length===0;
+      els.prefillBtn.disabled = !dataRows.length;
+      els.loadSelectedBtn.disabled = !dataRows.length;
+      els.recordSelect.disabled = !dataRows.length;
+      els.openTaskSheetBtn.disabled = true;
       renderRecordOptions();
       setNextNo();
       if(dataRows.length) prefillFromLast();
@@ -1586,9 +1605,10 @@ function prefillFromLast(){
 }
 
 function handleSelectRecord(){
-  const no=els.recordSelect.value;
-  selectedRow=dataRows.find(r=>String(r[fullKeys.no]||'').trim()===String(no||'').trim())||null;
-  if(selectedRow)setStatus(`No.${selectedRow[fullKeys.no]} を選択しました。`);
+  const no = els.recordSelect.value;
+  selectedRow = dataRows.find(r => String(r[fullKeys.no]).trim() === String(no).trim()) || null;
+  els.openTaskSheetBtn.disabled = !selectedRow;
+  if(selectedRow) setStatus(`No.${selectedRow[fullKeys.no]} を選択`);
 }
 
 function loadSelectedIntoForm(){
