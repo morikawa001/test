@@ -2068,48 +2068,49 @@ function updateAnnualGauge(done,total,yearCount,soon,draftCount){
 
 function renderStats(){
   const total = dataRows.length;
-
   const now = new Date();
-const currentYear = now.getFullYear();
-const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
 
-const fiscalStartYear = currentMonth >= 4 ? currentYear : currentYear - 1;
-const fiscalStart = new Date(fiscalStartYear, 3, 1);   // 4/1
-const fiscalEnd = new Date(fiscalStartYear + 1, 2, 31); // 翌年3/31
+  const fiscalStartYear = currentMonth >= 4 ? currentYear : currentYear - 1;
+  const fiscalStart = new Date(fiscalStartYear, 3, 1);
+  const fiscalEnd = new Date(fiscalStartYear + 1, 2, 31);
 
-const yearCount = dataRows.filter(r => {
-  const rowDate = parseShortJapaneseDate(r[fullKeys.date], r[fullKeys.year]);
-  if(!rowDate) return false;
-  return rowDate >= fiscalStart && rowDate <= fiscalEnd;
-}).length;
+  const yearCount = dataRows.filter(r => {
+    const rowDate = parseShortJapaneseDate(r[fullKeys.date], r[fullKeys.year]);
+    if(!rowDate) return false;
+    return rowDate >= fiscalStart && rowDate <= fiscalEnd;
+  }).length;
 
   const today = new Date();
   const today0 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-  const soon = dataRows.filter(r=>{
+  const soon = dataRows.filter(r => {
     const d = parseShortJapaneseDate(r[fullKeys.date], r[fullKeys.year]);
     if(!d) return false;
-    const diff = (d - today0) / 86400000;
+    const diff = Math.round((d - today0) / 86400000);
     return diff >= 0 && diff <= 30;
   }).length;
 
-  const done = dataRows.filter(r=>{
+  const done = dataRows.filter(r => {
     const d = parseShortJapaneseDate(r[fullKeys.date], r[fullKeys.year]);
     return d && d < today0;
   }).length;
 
-  const next = dataRows.reduce((m,r)=>Math.max(m, Number(r[fullKeys.no] || 0)), 0) + 1;
+  const next = dataRows.reduce((m, r) => Math.max(m, Number(r[fullKeys.no]) || 0), 0) + 1;
   const draftCount = stagedRow ? 1 : 0;
 
-  els.sumAll.textContent = total;
-  els.sumYear.textContent = yearCount;
-  els.sumSoon.textContent = `${soon}件`;
-  els.sumDone.textContent = `${done}件`;
-  els.sumDraft.textContent = `${draftCount}件`;
+  els.sumAll.textContent = String(total);
+  els.sumYear.textContent = String(yearCount);
+  els.sumSoon.textContent = String(soon);
+  els.sumDone.textContent = String(done);
+  els.sumDraft.textContent = String(draftCount);
   els.sumSubject.textContent = fields.subject.value || '-';
+
   els.miniYearCount.textContent = String(yearCount);
   els.miniNext.textContent = `No.${next}`;
   els.sumNext.textContent = String(next);
+
   els.sumAllTop.textContent = String(total);
   els.sumYearTop.textContent = String(yearCount);
   els.sumNextTop.textContent = String(next);
