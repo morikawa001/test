@@ -487,6 +487,45 @@ label[for="templateFiles"] {
   gap:12px;
   align-items:center;
 }
+.alert-wrap,.template-list,.table-list,.confirm-list,.folder-list,.schedule-list{
+  display:grid;
+  gap:10px;
+}
+
+.alert-item{
+  padding:13px 14px;
+  display:grid;
+  grid-template-columns:120px 1fr 130px;
+  gap:12px;
+  align-items:center;
+}
+
+.task-list{
+  display:grid;
+  gap:10px;
+}
+
+.task-row{
+  padding:14px;
+  display:grid;
+  grid-template-columns: 90px 1.2fr 140px 120px;
+  gap:12px;
+  align-items:center;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:12px;
+}
+
+.task-row p{
+  color:var(--muted);
+  font-size:.92rem;
+}
+
+@media (max-width:860px){
+  .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.template-row,.alert-item,.schedule-card,.task-row{
+    grid-template-columns:1fr;
+  }
+}
 .alert-tag,.badge,.status{
   display:inline-flex;
   align-items:center;
@@ -714,6 +753,25 @@ label[for="templateFiles"] {
       </div>
     </div>
   </section>
+
+  <section class="panel">
+  <div class="corner-label">Task Board</div>
+  <div class="panel-head">
+    <div>
+      <h2>Task Board</h2>
+      <p>CSV task columns</p>
+    </div>
+  </div>
+  <div class="task-list" id="taskList">
+    <div class="list-row">
+      <div>
+        <strong>Task data</strong>
+        <p>レコードを選択するとTASK一覧を表示します</p>
+      </div>
+      <div><span class="status s3">WAIT</span></div>
+    </div>
+  </div>
+</section>
 
   <section class="main-grid">
     <section class="panel">
@@ -1142,6 +1200,7 @@ const els={
   resultHold:document.getElementById('resultHold'),
   resultZip:document.getElementById('resultZip'),
   alertList:document.getElementById('alertList'),
+  taskList:document.getElementById('taskList'),
   templateFiles:document.getElementById('templateFiles'),
   templateFilesName:document.getElementById('templateFilesName'),
   mergeRecordSelect:document.getElementById('mergeRecordSelect'),
@@ -1461,12 +1520,13 @@ function createNewDatabase(){
   els.miniDbState.textContent='新規DB作成済み';
   els.miniDbText.textContent='空マスターを初期化しました。1件目から登録できます。';
   renderTable();
-  setNextNo();
-  renderStats();
-  recalcDraft();
-  renderAlerts();
-  renderMergeOptions();
-  setStatus('空のマスターCSVを新規作成しました。');
+　setNextNo();
+　renderStats();
+　recalcDraft();
+　renderAlerts();
+　renderTasks();
+　renderMergeOptions();
+　setStatus('空のマスターCSVを新規作成しました。');
 }
 
 function loadCsv(e){
@@ -1504,16 +1564,17 @@ function loadCsv(e){
         syncCohostFields();
         resetScheduleChecks();
       }
-      renderTable();
-      renderStats();
-      recalcDraft();
-      renderAlerts();
-      els.miniDbState.textContent='CSV読込済';
-      els.miniDbText.textContent=dataRows.length?`${dataRows.length}件のCSVを読込済み`:'CSVに有効データがありません';
-      renderMergeOptions();
-      setStatus(dataRows.length?`CSVを読み込みました。${dataRows.length}件です。`:'CSVを読み込みましたが有効行はありません。');
-      e.target.value='';
-    },
+     　renderTable();
+　　　　renderStats();
+　　　　recalcDraft();
+　　　　renderAlerts();
+　　　　renderTasks();
+　　　　els.miniDbState.textContent='CSV読込済';
+　　　　els.miniDbText.textContent=dataRows.length?`${dataRows.length}件のCSVを読込済み`:'CSVに有効データがありません';
+　　　　renderMergeOptions();
+　　　　setStatus(dataRows.length?`CSVを読み込みました。${dataRows.length}件です。`:'CSVを読み込みましたが有効行はありません。');
+　　　　e.target.value='';
+    　　},
     error:(err)=>{
       els.csvFileName.value='ファイル未選択';
       setStatus(`CSV読込エラー: ${err?.message||err}`);
@@ -1875,6 +1936,7 @@ function commitDraft(){
   setNextNo();
   renderStats();
   renderAlerts();
+  renderTasks();
   renderConfirm([]);
   renderResult(true);
   els.recordSelect.disabled=!dataRows.length;
@@ -1988,6 +2050,49 @@ function renderAlerts(){
     return;
   }
   els.alertList.innerHTML=alerts.map(a=>`<div class="alert-item"><div><span class="alert-tag">${a.diff===0?'TODAY':a.diff===1?'TOMORROW':`+${a.diff}D`}</span></div><div><strong>No.${esc(a.no)} / ${esc(a.title)}</strong><p>${esc(a.label)} : ${esc(a.raw||'-')}</p></div><div class="mono">Task alert</div></div>`).join('');
+}
+
+function renderTasks(row){
+  if(!els.taskList) return;
+
+  const source = row || stagedRow || selectedRow;
+  if(!source){
+    els.taskList.innerHTML = `
+      <div class="list-row">
+        <div>
+          <strong>Task data</strong>
+          <p>レコードを選択するとTASK一覧を表示します</p>
+        </div>
+        <div><span class="status s3">WAIT</span></div>
+      </div>
+    `;
+    return;
+  }
+
+  els.taskList.innerHTML = TASK_DEFS.map(task => {
+    const name = source[`TASK_${task.idx}_NAME`] || task.name || '-';
+    const offset = source[`TASK_${task.idx}_OFFSET`] || String(task.offset);
+    const date = source[`TASK_${task.idx}_DATE`] || '-';
+    const day = source[`TASK_${task.idx}_DAY`] || '-';
+    const status = source[`TASK_${task.idx}_STATUS`] || '未着手';
+
+    const statusClass =
+      status === '完了' ? 's2' :
+      status === '進行中' ? 's3' :
+      status === '保留' ? 's4' : 's1';
+
+    return `
+      <div class="task-row">
+        <div><span class="badge">TASK ${task.idx}</span></div>
+        <div>
+          <strong>${esc(name)}</strong>
+          <p>Offset ${esc(offset)}日 / ${esc(date)}（${esc(day)}）</p>
+        </div>
+        <div class="mono">${esc(status)}</div>
+        <div><span class="status ${statusClass}">${esc(status)}</span></div>
+      </div>
+    `;
+  }).join('');
 }
 
 function updateAnnualGauge(done,total,yearCount,soon,draftCount){
