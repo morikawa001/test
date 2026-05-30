@@ -296,6 +296,9 @@ input[readonly],textarea[readonly]{
 .btn:disabled{opacity:.42;cursor:not-allowed}
 .file-pick{display:grid;gap:6px}
 .file-pick input[type=file]{padding:9px 11px}
+  #csvFile {
+  display: none;
+}
 .file-pick input[type=file],
 #templateFiles{
   padding:9px 11px;
@@ -605,9 +608,9 @@ input[readonly],textarea[readonly]{
       </div>
       <button class="btn" id="themeBtn">表示テーマ切替</button>
       <div class="file-pick">
-  <label for="csvFile">マスターCSV</label>
-  <input id="csvFile" type="file" accept=".csv,text/csv" />
-  <input id="csvFileName" value="選択可能です" readonly>
+  <label for="csvFile" class="btn">CSV 選択</label>
+  <input id="csvFile" type="file" accept=".csv,text/csv">
+  <input id="csvFileName" value="" readonly placeholder="ファイル未選択">
 </div>
       <div class="action-grid">
         <button class="btn" id="newDbBtn">新規DB作成</button>
