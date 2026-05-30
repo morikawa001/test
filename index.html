@@ -304,6 +304,15 @@ input[readonly],textarea[readonly]{
   align-items: center;
   justify-content: center;
 }
+  #templateFiles {
+  display: none;
+}
+
+label[for="templateFiles"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 .file-pick input[type=file],
 #templateFiles{
   padding:9px 11px;
@@ -928,7 +937,7 @@ input[readonly],textarea[readonly]{
     </div>
     <div class="master-grid">
       <div class="field full">
-  <label>テンプレートファイル</label>
+  <label for="templateFiles" class="btn">ファイル選択</label>
   <input id="templateFiles" type="file" multiple accept=".docx,.pptx,.xlsx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
   <input id="templateFilesName" value="選択可能です" readonly>
 </div>
