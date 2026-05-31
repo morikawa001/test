@@ -771,7 +771,7 @@ label[for="templateFiles"] {
 <div class="scanline"></div>
 <div class="wrap">
   <section class="hero-grid">
-    <section class="hero-panel">
+    <section class="hero-panel" id="topControlPanel">
       <div class="corner-label">Dual Theme Control UI</div>
       <div class="hero-head">
         <div class="id-block">
@@ -831,7 +831,11 @@ label[for="templateFiles"] {
         <h2>Annual Plan Parameter</h2>
         <p>年間計画の進み具合を、ダーク時はHUD風、ライト時は落ち着いた業務UI風リングで表示します。</p>
       </div>
-    </div>
+    
+        <div class="panel-nav-actions">
+          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
+        </div>
+      </div>
     <div class="parameter-wrap">
       <div class="param-gauge">
         <svg class="param-svg" viewBox="0 0 240 240" aria-hidden="true">
@@ -871,7 +875,11 @@ label[for="templateFiles"] {
         <h2>Deadline Alert</h2>
         <p>7日以内に期限が迫るタスクを上から優先表示します。</p>
       </div>
-    </div>
+    
+        <div class="panel-nav-actions">
+          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
+        </div>
+      </div>
     <div class="alert-wrap" id="alertList">
       <div class="alert-item">
         <div><span class="alert-tag">WAIT</span></div>
@@ -890,6 +898,10 @@ label[for="templateFiles"] {
           <p>ダークでは電子端末風、ライトでは Notion 風の落ち着いた視認性重視フォームになります。</p>
         </div>
         <button class="btn" id="loadSelectedBtn" disabled>選択Noを反映</button>
+      
+        <div class="panel-nav-actions">
+          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
+        </div>
       </div>
 
       <div class="master-grid">
@@ -966,7 +978,11 @@ label[for="templateFiles"] {
             <h2>Computed Schedule</h2>
             <p>起案スケジュールと各チェック状態を右側に固定表示します。</p>
           </div>
+        
+        <div class="panel-nav-actions">
+          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
         </div>
+      </div>
         <div class="schedule-list">
           <div class="schedule-card">
             <div class="schedule-left">
@@ -1023,7 +1039,11 @@ label[for="templateFiles"] {
             <h2>Operational Summary</h2>
             <p>年次の状況を補助数値でも確認できます。</p>
           </div>
+        
+        <div class="panel-nav-actions">
+          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
         </div>
+      </div>
         <div class="summary-grid">
           <div class="summary-box"><span>登録件数</span><b id="sumAll">0</b></div>
           <div class="summary-box"><span>年度件数</span><b id="sumYear">0</b></div>
@@ -1050,7 +1070,11 @@ label[for="templateFiles"] {
             <p>研修会運営の全タスクチェックリストです。CSV保存時にチェック状態を保持します。</p>
           </div>
           <button class="btn small" id="taskResetBtn" onclick="resetAllTasks()">全リセット</button>
+        
+        <div class="panel-nav-actions">
+          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
         </div>
+      </div>
         <div class="mini-grid" style="margin-bottom:4px">
           <div class="mini-box"><span>完了タスク</span><b id="taskDoneCount">0</b></div>
           <div class="mini-box"><span>残りタスク</span><b id="taskRemainCount">33</b></div>
@@ -1309,6 +1333,10 @@ label[for="templateFiles"] {
           <h2>Commit Check</h2>
           <p>保存直前の差分・注意点を一覧化します。</p>
         </div>
+      
+        <div class="panel-nav-actions">
+          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
+        </div>
       </div>
       <div class="mini-grid">
         <div class="mini-box"><span>保存予定</span><b id="confirmCount">0件</b></div>
@@ -1333,6 +1361,10 @@ label[for="templateFiles"] {
         <div>
           <h2>Export Result</h2>
           <p>保存後のCSV出力状態を表示します。</p>
+        </div>
+      
+        <div class="panel-nav-actions">
+          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
         </div>
       </div>
       <div class="mini-grid">
@@ -1359,7 +1391,11 @@ label[for="templateFiles"] {
         <h2>Template Injection</h2>
         <p>pptx / xlsx / docx を複数同時読込し、選択Noのデータで一括差し込みします。</p>
       </div>
-    </div>
+    
+        <div class="panel-nav-actions">
+          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
+        </div>
+      </div>
     <div class="master-grid">
       <div class="field full">
   <label for="templateFiles" class="btn">ファイル選択</label>
@@ -1399,7 +1435,11 @@ label[for="templateFiles"] {
         <h2>Master Table</h2>
         <p>同じNoは1行だけ保持し、保存時は既存行を上書き更新します。</p>
       </div>
-    </div>
+    
+        <div class="panel-nav-actions">
+          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
+        </div>
+      </div>
     <div class="table-head">
       <div>No</div><div>開催日</div><div>タイトル</div><div>講師</div><div>対象</div><div>起案1</div>
     </div>
