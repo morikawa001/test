@@ -143,6 +143,7 @@ window.updateTaskProgress = updateTaskProgress;
 </script>
 <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 :root,[data-theme="dark"]{
   --bg:#040807;
   --bg2:#07100d;
@@ -495,6 +496,13 @@ label[for="templateFiles"] {
   gap:18px;
   align-items:start;
 }
+.main-grid>#nixieClockPanel{
+  grid-column:1;
+}
+.main-grid>.side-stack{
+  grid-column:2;
+  grid-row:1 / span 2;
+}
 .master-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -740,6 +748,7 @@ label[for="templateFiles"] {
 }
 @media (max-width:1240px){
   .hero-grid,.main-grid,.dual-grid,.parameter-wrap{grid-template-columns:1fr}
+  .main-grid>#nixieClockPanel,.main-grid>.side-stack{grid-column:auto;grid-row:auto}
 }
 @media (max-width:860px){
   .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.template-row,.alert-item,.schedule-card{
@@ -751,6 +760,15 @@ label[for="templateFiles"] {
 #taskBody{
   display:grid;
   gap:10px;
+  overflow:hidden;
+  max-height:4000px;
+  transition:max-height .35s ease, opacity .3s ease;
+  opacity:1;
+}
+#taskBody.collapsed{
+  max-height:0;
+  opacity:0;
+  pointer-events:none;
 }
 
 .task-phase-label{
@@ -771,21 +789,18 @@ label[for="templateFiles"] {
   color:var(--muted);
 }
 
-/* ── Task + Commit/Export 3カラムレイアウト ── */
+/* ── Task + Commit/Export レイアウト ── */
+/* 上段：Commit Check + Export Result 横並び、下段：Task Checklist 全幅 */
 .task-main-grid{
   display:grid;
-  grid-template-columns:1.55fr 1fr;
+  grid-template-columns:1fr;
   gap:18px;
-  align-items:start;
 }
 .task-sub-grid{
   display:grid !important;
-  grid-template-columns:1fr !important;
+  grid-template-columns:1fr 1fr !important;
   gap:18px;
-}
-@media (max-width:1240px){
-  .task-main-grid{grid-template-columns:1fr}
-  .task-sub-grid{grid-template-columns:1fr 1fr !important}
+  align-items:start;
 }
 @media (max-width:860px){
   .task-sub-grid{grid-template-columns:1fr !important}
@@ -817,6 +832,149 @@ label[for="templateFiles"] {
   background:rgba(26,127,90,.09);
   border-color:rgba(26,127,90,.42);
 }
+/* ── Nixie Clock Panel ── */
+.nixie-panel{
+  padding:18px 22px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  position:relative;
+  overflow:hidden;
+}
+.nixie-panel::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at 50% 0%, rgba(255,140,0,.06) 0%, transparent 70%);
+  pointer-events:none;
+}
+.nixie-date-row{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.nixie-digit{
+  font-family:'Share Tech Mono', 'Courier New', monospace;
+  background:linear-gradient(180deg,#1a0e00 0%,#120900 100%);
+  color:#ff8c00;
+  border:1px solid #3a2000;
+  border-radius:5px;
+  padding:2px 7px;
+  font-size:1.05rem;
+  letter-spacing:.05em;
+  box-shadow:
+    0 0 6px rgba(255,120,0,.55),
+    0 0 14px rgba(255,80,0,.25),
+    inset 0 1px 3px rgba(0,0,0,.7);
+  text-shadow:
+    0 0 6px #ff8c00,
+    0 0 14px rgba(255,140,0,.7);
+  transition:color .1s;
+  user-select:none;
+}
+[data-theme="light"] .nixie-digit{
+  background:linear-gradient(180deg,#1a0e00 0%,#0d0600 100%);
+  color:#ffa030;
+  border-color:#4a2800;
+  box-shadow:
+    0 0 8px rgba(255,140,0,.7),
+    0 0 18px rgba(255,100,0,.35),
+    inset 0 1px 3px rgba(0,0,0,.8);
+  text-shadow:
+    0 0 8px #ff9000,
+    0 0 18px rgba(255,160,0,.8);
+}
+.nixie-sep{
+  font-family:'Share Tech Mono', monospace;
+  color:rgba(255,140,0,.5);
+  font-size:1.0rem;
+  text-shadow:0 0 6px rgba(255,120,0,.4);
+  line-height:1;
+  padding-bottom:2px;
+}
+.nixie-time-row{
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+.nixie-time-digit{
+  font-family:'Share Tech Mono', 'Courier New', monospace;
+  background:linear-gradient(180deg,#0e1800 0%,#080e00 100%);
+  color:#39ff14;
+  border:1px solid #1a3000;
+  border-radius:5px;
+  padding:4px 10px;
+  font-size:1.7rem;
+  letter-spacing:.08em;
+  box-shadow:
+    0 0 8px rgba(57,255,20,.5),
+    0 0 20px rgba(57,255,20,.2),
+    inset 0 1px 4px rgba(0,0,0,.8);
+  text-shadow:
+    0 0 8px #39ff14,
+    0 0 20px rgba(57,255,20,.6);
+  min-width:2.2ch;
+  text-align:center;
+  user-select:none;
+}
+[data-theme="light"] .nixie-time-digit{
+  background:linear-gradient(180deg,#0a1200 0%,#060b00 100%);
+  color:#50ff20;
+  border-color:#224400;
+  box-shadow:
+    0 0 10px rgba(80,255,32,.6),
+    0 0 24px rgba(80,255,32,.25),
+    inset 0 1px 4px rgba(0,0,0,.85);
+  text-shadow:
+    0 0 10px #50ff20,
+    0 0 24px rgba(80,255,32,.7);
+}
+.nixie-colon{
+  font-family:'Share Tech Mono', monospace;
+  color:rgba(57,255,20,.6);
+  font-size:1.7rem;
+  text-shadow:0 0 8px rgba(57,255,20,.5);
+  line-height:1;
+  margin-bottom:2px;
+  animation:nixie-blink 1s step-end infinite;
+}
+@keyframes nixie-blink{
+  0%,100%{opacity:1}
+  50%{opacity:.15}
+}
+.nixie-day-badge{
+  font-family:'Share Tech Mono', monospace;
+  font-size:.78rem;
+  color:rgba(255,140,0,.75);
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  text-shadow:0 0 6px rgba(255,120,0,.4);
+  border-top:1px solid rgba(255,140,0,.18);
+  padding-top:6px;
+  width:100%;
+  text-align:center;
+}
+/* ── Task Checklist トグル ── */
+.task-toggle-btn{
+  display:inline-flex; align-items:center; gap:5px;
+  background:none; border:1px solid var(--line);
+  border-radius:6px; padding:3px 10px;
+  font-size:.78rem; color:var(--muted);
+  cursor:pointer; transition:color .2s,border-color .2s;
+  white-space:nowrap;
+}
+.task-toggle-btn:hover{ color:var(--text-strong); border-color:var(--text-strong); }
+.task-toggle-btn .toggle-icon{
+  display:inline-block; transition:transform .3s;
+  font-style:normal; font-size:.85rem;
+}
+.task-toggle-btn.open .toggle-icon{ transform:rotate(180deg); }
 </style>
 </head>
 <body>
@@ -1024,6 +1182,25 @@ label[for="templateFiles"] {
       <div class="status-box" id="statusBox">CSVを読み込むか、新規データベースを作成すると入力を開始できます。</div>
     </section>
 
+    <!-- Nixie Clock Panel -->
+    <section class="nixie-panel" id="nixieClockPanel">
+      <div class="nixie-date-row">
+        <span class="nixie-digit" id="nixieYear">2026</span>
+        <span class="nixie-sep">/</span>
+        <span class="nixie-digit" id="nixieMonth">01</span>
+        <span class="nixie-sep">/</span>
+        <span class="nixie-digit" id="nixieDay">01</span>
+      </div>
+      <div class="nixie-time-row">
+        <span class="nixie-time-digit" id="nixieHour">00</span>
+        <span class="nixie-colon">:</span>
+        <span class="nixie-time-digit" id="nixieMin">00</span>
+        <span class="nixie-colon">:</span>
+        <span class="nixie-time-digit" id="nixieSec">00</span>
+      </div>
+      <div class="nixie-day-badge" id="nixieDow">月曜日</div>
+    </section>
+
     <aside class="side-stack">
       <!-- AI Brushup Panel -->
       <section class="panel" id="aiBrushupPanel">
@@ -1148,6 +1325,64 @@ label[for="templateFiles"] {
 
 
   <section class="task-main-grid">
+      <section class="dual-grid task-sub-grid">
+    <section class="panel">
+      <div class="corner-label">Verify</div>
+      <div class="panel-head">
+        <div>
+          <h2>Commit Check</h2>
+          <p>保存直前の差分・注意点を一覧化します。</p>
+        </div>
+      
+        <div class="panel-nav-actions">
+          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
+        </div>
+      </div>
+      <div class="mini-grid">
+        <div class="mini-box"><span>保存予定</span><b id="confirmCount">0件</b></div>
+        <div class="mini-box"><span>要確認</span><b id="confirmWarn">0件</b></div>
+        <div class="mini-box"><span>状態</span><b id="confirmState">待機</b></div>
+      </div>
+      <div class="confirm-list" id="checkList">
+        <div class="list-row">
+          <div><strong>次回研修会</strong><p>CSVを読み込んだ後に入力内容が表示されます。</p></div>
+          <div><span class="status s3">待機</span></div>
+        </div>
+      </div>
+      <div class="footer-actions">
+        <button class="btn" id="backBtn">戻る</button>
+        <button class="btn primary" id="confirmAppendBtn" disabled>この内容で保存</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="corner-label">Output</div>
+      <div class="panel-head">
+        <div>
+          <h2>Export Result</h2>
+          <p>保存後のCSV出力状態を表示します。</p>
+        </div>
+      
+        <div class="panel-nav-actions">
+          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
+        </div>
+      </div>
+      <div class="mini-grid">
+        <div class="mini-box"><span>保存完了</span><b id="resultDone">0件</b></div>
+        <div class="mini-box"><span>保留</span><b id="resultHold">0件</b></div>
+        <div class="mini-box"><span>CSV</span><b id="resultZip">0式</b></div>
+      </div>
+      <div class="folder-list" id="folderView">
+        <div class="list-row">
+          <div><strong>更新CSV</strong><p>まだ作成していません。</p></div>
+          <div><span class="status s3">待機</span></div>
+        </div>
+      </div>
+      <div class="footer-actions">
+        <button class="btn primary" id="downloadBtn" disabled>更新CSVをダウンロード</button>
+      </div>
+    </section>
+      </section><!-- /task-sub-grid -->
       <section class="panel" id="taskChecklistPanel">
         <div class="corner-label">Task Checklist</div>
         <div class="panel-head">
@@ -1155,8 +1390,12 @@ label[for="templateFiles"] {
             <h2>Task Checklist</h2>
             <p>研修会運営の全タスクチェックリストです。CSV保存時にチェック状態を保持します。</p>
           </div>
-          <button class="btn small" id="taskResetBtn" onclick="resetAllTasks()">全リセット</button>
-        
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <button class="btn small" id="taskResetBtn" onclick="resetAllTasks()">全リセット</button>
+            <button class="task-toggle-btn open" id="taskToggleBtn" onclick="toggleTaskBody()">
+              <i class="toggle-icon">&#9660;</i><span id="taskToggleLabel">閉じる</span>
+            </button>
+          </div>
         <div class="panel-nav-actions">
           <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
         </div>
@@ -1410,64 +1649,6 @@ label[for="templateFiles"] {
         <div class="hint-box">各タスクを完了したらチェックを入れてください。CSV保存時に状態が保持されます。</div>
         </div>
       </section>
-      <section class="dual-grid task-sub-grid">
-    <section class="panel">
-      <div class="corner-label">Verify</div>
-      <div class="panel-head">
-        <div>
-          <h2>Commit Check</h2>
-          <p>保存直前の差分・注意点を一覧化します。</p>
-        </div>
-      
-        <div class="panel-nav-actions">
-          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
-        </div>
-      </div>
-      <div class="mini-grid">
-        <div class="mini-box"><span>保存予定</span><b id="confirmCount">0件</b></div>
-        <div class="mini-box"><span>要確認</span><b id="confirmWarn">0件</b></div>
-        <div class="mini-box"><span>状態</span><b id="confirmState">待機</b></div>
-      </div>
-      <div class="confirm-list" id="checkList">
-        <div class="list-row">
-          <div><strong>次回研修会</strong><p>CSVを読み込んだ後に入力内容が表示されます。</p></div>
-          <div><span class="status s3">待機</span></div>
-        </div>
-      </div>
-      <div class="footer-actions">
-        <button class="btn" id="backBtn">戻る</button>
-        <button class="btn primary" id="confirmAppendBtn" disabled>この内容で保存</button>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="corner-label">Output</div>
-      <div class="panel-head">
-        <div>
-          <h2>Export Result</h2>
-          <p>保存後のCSV出力状態を表示します。</p>
-        </div>
-      
-        <div class="panel-nav-actions">
-          <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
-        </div>
-      </div>
-      <div class="mini-grid">
-        <div class="mini-box"><span>保存完了</span><b id="resultDone">0件</b></div>
-        <div class="mini-box"><span>保留</span><b id="resultHold">0件</b></div>
-        <div class="mini-box"><span>CSV</span><b id="resultZip">0式</b></div>
-      </div>
-      <div class="folder-list" id="folderView">
-        <div class="list-row">
-          <div><strong>更新CSV</strong><p>まだ作成していません。</p></div>
-          <div><span class="status s3">待機</span></div>
-        </div>
-      </div>
-      <div class="footer-actions">
-        <button class="btn primary" id="downloadBtn" disabled>更新CSVをダウンロード</button>
-      </div>
-    </section>
-      </section><!-- /task-sub-grid -->
   </section><!-- /task-main-grid -->
 
   <section class="panel" id="templateInjectionSection">
@@ -2892,6 +3073,48 @@ async function runAiBrushup(){
     statusBox.textContent = '⚠ エラー：' + e.message;
   } finally{
     btn.disabled = false;
+  }
+}
+
+/* ── Nixie Clock ── */
+(function(){
+  const DOW_JA = ['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'];
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function tick(){
+    const now = new Date();
+    const yEl  = document.getElementById('nixieYear');
+    const moEl = document.getElementById('nixieMonth');
+    const dEl  = document.getElementById('nixieDay');
+    const hEl  = document.getElementById('nixieHour');
+    const miEl = document.getElementById('nixieMin');
+    const sEl  = document.getElementById('nixieSec');
+    const dwEl = document.getElementById('nixieDow');
+    if(!yEl) return;
+    yEl.textContent  = now.getFullYear();
+    moEl.textContent = pad(now.getMonth()+1);
+    dEl.textContent  = pad(now.getDate());
+    hEl.textContent  = pad(now.getHours());
+    miEl.textContent = pad(now.getMinutes());
+    sEl.textContent  = pad(now.getSeconds());
+    dwEl.textContent = DOW_JA[now.getDay()];
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+
+function toggleTaskBody(){
+  const body = document.getElementById('taskBody');
+  const btn  = document.getElementById('taskToggleBtn');
+  const lbl  = document.getElementById('taskToggleLabel');
+  const isOpen = !body.classList.contains('collapsed');
+  if(isOpen){
+    body.classList.add('collapsed');
+    btn.classList.remove('open');
+    lbl.textContent = '開く';
+  } else {
+    body.classList.remove('collapsed');
+    btn.classList.add('open');
+    lbl.textContent = '閉じる';
   }
 }
 
