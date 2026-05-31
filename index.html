@@ -1,5 +1,6 @@
 
 
+
 <!doctype html>
 <html lang="ja" data-theme="dark">
 <head>
@@ -785,6 +786,8 @@ label[for="templateFiles"] {
           <div class="stat-box"><span>Current Year</span><b id="sumYearTop">0</b></div>
           <div class="stat-box"><span>Next No</span><b id="sumNextTop">-</b></div>
            <a class="btn manual-btn" href="https://morikawa001.github.io/seminar/seminar.html" target="_blank" rel="noopener noreferrer">取扱説明</a>
+          <a class="btn manual-btn" href="https://example.com" target="_blank" rel="noopener noreferrer">受講者管理</a>
+          <a class="btn manual-btn" href="#masterTableSection">Master Table</a>
         </div>
       </div>
     </section>
@@ -1294,23 +1297,6 @@ label[for="templateFiles"] {
         <div class="hint-box">各タスクを完了したらチェックを入れてください。CSV保存時に状態が保持されます。</div>
         </div>
       </section>
-  <section class="panel">
-    <div class="corner-label">Master Table</div>
-    <div class="panel-head">
-      <div>
-        <h2>Master Table</h2>
-        <p>同じNoは1行だけ保持し、保存時は既存行を上書き更新します。</p>
-      </div>
-    </div>
-    <div class="table-head">
-      <div>No</div><div>開催日</div><div>タイトル</div><div>講師</div><div>対象</div><div>起案1</div>
-    </div>
-    <div class="table-list" id="tableList">
-      <div class="table-row">
-        <div>-</div><div>-</div><div>CSVを読み込むか、新規データベースを作成してください。</div><div>-</div><div>-</div><div>-</div>
-      </div>
-    </div>
-  </section>
 
   <section class="dual-grid">
     <section class="panel">
@@ -1402,6 +1388,23 @@ label[for="templateFiles"] {
       <button class="btn primary" id="mergeAllBtn" disabled>選択テンプレートを一括差し込み出力</button>
     </div>
     <div class="status-box" id="mergeStatusBox">テンプレートファイルを複数選択すると、一括差し込み出力できます。</div>
+  </section>
+  <section class="panel" id="masterTableSection">
+    <div class="corner-label">Master Table</div>
+    <div class="panel-head">
+      <div>
+        <h2>Master Table</h2>
+        <p>同じNoは1行だけ保持し、保存時は既存行を上書き更新します。</p>
+      </div>
+    </div>
+    <div class="table-head">
+      <div>No</div><div>開催日</div><div>タイトル</div><div>講師</div><div>対象</div><div>起案1</div>
+    </div>
+    <div class="table-list" id="tableList">
+      <div class="table-row">
+        <div>-</div><div>-</div><div>CSVを読み込むか、新規データベースを作成してください。</div><div>-</div><div>-</div><div>-</div>
+      </div>
+    </div>
   </section>
 </div>
 
