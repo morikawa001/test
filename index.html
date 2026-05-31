@@ -491,7 +491,7 @@ label[for="templateFiles"] {
 }
 .main-grid{
   display:grid;
-  grid-template-columns:1.32fr .92fr;
+  grid-template-columns:1.4fr 1fr;
   gap:18px;
   align-items:start;
 }
@@ -764,6 +764,26 @@ label[for="templateFiles"] {
   color:var(--muted);
 }
 
+/* ── Task + Commit/Export 3カラムレイアウト ── */
+.task-main-grid{
+  display:grid;
+  grid-template-columns:1.55fr 1fr;
+  gap:18px;
+  align-items:start;
+}
+.task-sub-grid{
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:18px;
+}
+@media (max-width:1240px){
+  .task-main-grid{grid-template-columns:1fr}
+  .task-sub-grid{grid-template-columns:1fr 1fr !important}
+}
+@media (max-width:860px){
+  .task-sub-grid{grid-template-columns:1fr !important}
+}
+
 /* ── Dual Theme Control UI ナビゲーションボタン ── */
 .btn.small.manual-btn{
   min-height:28px;
@@ -849,6 +869,7 @@ label[for="templateFiles"] {
     </section>
   </section>
 
+  <section class="dual-grid">
   <section class="panel">
     <div class="corner-label">Annual Parameter</div>
     <div class="panel-head">
@@ -913,6 +934,7 @@ label[for="templateFiles"] {
       </div>
     </div>
   </section>
+  </section><!-- /dual-grid: Annual+Deadline -->
 
   <section class="main-grid">
     <section class="panel" id="entryConsoleSection">
@@ -1057,6 +1079,37 @@ label[for="templateFiles"] {
         <div class="hint-box">CSV保存時には、起案1 / HP / 起案2 / 起案3 のチェック状態も一緒に保持します。</div>
       </section>
 
+      <!-- AI Brushup Panel -->
+      <section class="panel" id="aiBrushupPanel">
+        <div class="corner-label">AI Brushup</div>
+        <div class="panel-head">
+          <div>
+            <h2>AI Brushup</h2>
+            <p>講師情報を入力すると、Gemini AIが司会進行テキストを自動作成します。</p>
+          </div>
+          <div class="panel-nav-actions">
+            <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>講師情報</label>
+          <textarea id="aiBrushupInput" rows="10" placeholder="講師の氏名・所属・役職・略歴・演題名・研修終了時刻などをここに貼り付けてください。"></textarea>
+        </div>
+
+        <div class="control-row">
+          <button class="btn primary" id="aiBrushupBtn" onclick="runAiBrushup()">司会進行テキストを作成</button>
+          <button class="btn" id="aiBrushupCopyBtn" onclick="copyAiBrushupResult()" disabled>結果をコピー</button>
+        </div>
+
+        <div class="status-box" id="aiBrushupStatus" style="display:none"></div>
+
+        <div class="field" id="aiBrushupResultWrap" style="display:none">
+          <label>生成結果（司会進行テキスト）</label>
+          <textarea id="aiBrushupResult" readonly rows="12"></textarea>
+        </div>
+      </section>
+
       <section class="panel" id="operationalSummaryPanel" style="display:none">
         <div class="corner-label">Operational Summary</div>
         <div class="panel-head">
@@ -1087,6 +1140,7 @@ label[for="templateFiles"] {
   </section>
 
 
+  <section class="task-main-grid">
       <section class="panel" id="taskChecklistPanel">
         <div class="corner-label">Task Checklist</div>
         <div class="panel-head">
@@ -1349,8 +1403,7 @@ label[for="templateFiles"] {
         <div class="hint-box">各タスクを完了したらチェックを入れてください。CSV保存時に状態が保持されます。</div>
         </div>
       </section>
-
-  <section class="dual-grid">
+      <section class="dual-grid task-sub-grid">
     <section class="panel">
       <div class="corner-label">Verify</div>
       <div class="panel-head">
@@ -1407,7 +1460,8 @@ label[for="templateFiles"] {
         <button class="btn primary" id="downloadBtn" disabled>更新CSVをダウンロード</button>
       </div>
     </section>
-  </section>
+      </section><!-- /task-sub-grid -->
+  </section><!-- /task-main-grid -->
 
   <section class="panel" id="templateInjectionSection">
     <div class="corner-label">Template Merge</div>
@@ -2730,6 +2784,122 @@ function safeName(s){return String(s).replace(/[\\/:*?"<>|\s]+/g,'-')}
 syncCohostFields();
 recalcDraft();
 renderTemplateList();
+
+// ── AI Brushup （司会進行テキスト生成） ──
+function buildMcPrompt(inputText) {
+  return `あなたは臨床研究研修会の司会者です。
+以下の講師情報をもとに、研修会の司会進行テキストを作成してください。
+
+「出力形式」以下のテンプレートの「」内を講師情報から読み取って埋め、完成文を出力してください。
+文末に引用先を表示しない
+演題名の「」以外は「」は削除
+
+＜開始アナウンス＞
+定刻となりましたので、2026年度　静岡がんセンター臨床研究研修会「演題名」を開始いたします。
+本日は、お忙しい中、ご参加まことにありがとうございます。
+
+今回の研修会は、「研究者・研究支援者・倫理審査委員会委員のうち情報にあるもの1つのみを記載」を対象とした内容となっております。
+本講演では、「講師所属・ただし静岡がんセンター所属の場合は所属の記載を省略」「講師役職と氏名」（「講師氏名のふりがな」）先生より、「目的文の内容を自然な話し言葉に変換し、語尾が『についてご解説いただきます。』で終るよう文章全体を一文に整える。です・ます調で100文字以内」
+なお、本日は最後に質疑応答の時間を設けており、講師にご質問のある方は「研修終了時刻から20分前の時刻をXX時XX分の形式で記載」までにQ&A機能でご質問をお願いいたします。
+
+＜講師紹介＞
+「静岡がんセンター所属の講師の場合はこのブロック全体を省略する」
+「静岡がんセンター以外の所属の場合のみ以下を出力する」
+本日の講師「講師の姓」先生のご略歴をご紹介いたします。
+「講師の姓」先生は、「略歴を以下のルールで300文字以内にまとめる。
+・学歴→職歴→現職→委員会活動→論文・著書の順で記載する
+・敗称は～されました・～務められ・～現在に至るに統一する
+・西暦と和暦が混在している場合は西暦に統一する
+・同一機関の連続した職歴はできるだけ１文にまとめる
+・論文は代表的なものを1～2件のみ記載する」
+・講師紹介は、文章の流れを意識して、視聴者が聴き取りやすいように、適宜、接続詞を入れる
+それでは「講師の姓」先生、どうぞよろしくお願いいたします。
+
+【条件】
+講師が静岡がんセンター所属の場合：所属の記載を省略し、講師紹介ブロックを丸ごと省略する
+講師が静岡がんセンター以外の所属の場合：所属を記載し、講師紹介ブロックを出力する
+「今回の研修は」の後の対象の記載は、情報にある研究者・研究支援者・倫理審査委員会委員のうち、1つのみ記載、（薬剤師、看護師等）や（医師、歯科医師等）も記載しない
+固有名詞・年号・役職名・論文タイトルは正確に保持する
+研修終了時刻の20分前を計算してXX時XX分の形式で記載する
+西暦と和暦が混在している場合は西暦に統一する
+読み上げに適した自然な日本語にする
+テンプレートの構造を必ず守る
+出力は完成文のみとし、余分な説明は不要
+
+《講師情報》
+${inputText}`;
+}
+
+async function runAiBrushup(){
+  const gasUrl   = 'https://script.google.com/macros/s/AKfycbwFGWXonRPSDqhToxurlrxmvb0oMydOdM18_2Jy5aQWDXP60o6bKjkjYYfu741dgkqB/exec';
+  const inputText= document.getElementById('aiBrushupInput').value.trim();
+  const btn      = document.getElementById('aiBrushupBtn');
+  const copyBtn  = document.getElementById('aiBrushupCopyBtn');
+  const statusBox= document.getElementById('aiBrushupStatus');
+  const resultWrap= document.getElementById('aiBrushupResultWrap');
+  const resultArea= document.getElementById('aiBrushupResult');
+
+  const showErr = msg => {
+    statusBox.style.display='';
+    statusBox.style.color='var(--danger)';
+    statusBox.textContent='⚠ ' + msg;
+  };
+
+  if(!inputText){ showErr('講師情報を入力してください。'); return; }
+
+  btn.disabled = true;
+  copyBtn.disabled = true;
+  resultWrap.style.display = 'none';
+  statusBox.style.display = '';
+  statusBox.style.color = 'var(--muted)';
+  statusBox.textContent = '⏳ Gemini AIが司会進行テキストを生成中です...';
+
+  const prompt = buildMcPrompt(inputText);
+
+  try{
+    const res = await fetch(gasUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.2, topP: 0.9, maxOutputTokens: 4096 }
+      })
+    });
+
+    if(!res.ok){
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.error?.message || 'APIエラー ' + res.status);
+    }
+
+    const data = await res.json();
+    const output = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+    if(!output) throw new Error('レスポンスが空です。');
+
+    resultArea.value = output;
+    resultWrap.style.display = '';
+    copyBtn.disabled = false;
+    statusBox.style.color = 'var(--success)';
+    statusBox.textContent = '✓ 司会進行テキストの生成が完了しました。';
+  } catch(e){
+    statusBox.style.color = 'var(--danger)';
+    statusBox.textContent = '⚠ エラー：' + e.message;
+  } finally{
+    btn.disabled = false;
+  }
+}
+
+function copyAiBrushupResult(){
+  const resultArea = document.getElementById('aiBrushupResult');
+  if(!resultArea.value) return;
+  navigator.clipboard.writeText(resultArea.value).then(()=>{
+    const btn = document.getElementById('aiBrushupCopyBtn');
+    const orig = btn.textContent;
+    btn.textContent = 'コピー完了';
+    setTimeout(()=>{ btn.textContent = orig; }, 1800);
+  });
+}
+window.runAiBrushup = runAiBrushup;
+window.copyAiBrushupResult = copyAiBrushupResult;
 </script>
 </body>
 </html>
