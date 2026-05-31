@@ -513,7 +513,14 @@ label[for="templateFiles"] {
 }
 .status-box{color:var(--text-strong)}
 .hint-box{color:var(--muted)}
-.side-stack{display:grid;gap:18px}
+.side-stack{
+  display:grid;
+  gap:18px;
+}
+.side-stack #aiBrushupPanel #aiBrushupResult{
+  min-height:160px;
+  resize:vertical;
+}
 .auto-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -875,7 +882,7 @@ label[for="templateFiles"] {
     <div class="panel-head">
       <div>
         <h2>Annual Plan Parameter</h2>
-        <p>年間計画の進み具合を表示します。</p>
+        <p>年間計画の進み具合を、ダーク時はHUD風、ライト時は落ち着いた業務UI風リングで表示します。</p>
       </div>
     
         <div class="panel-nav-actions">
@@ -1018,6 +1025,37 @@ label[for="templateFiles"] {
     </section>
 
     <aside class="side-stack">
+      <!-- AI Brushup Panel -->
+      <section class="panel" id="aiBrushupPanel">
+        <div class="corner-label">AI Brushup</div>
+        <div class="panel-head">
+          <div>
+            <h2>AI Brushup</h2>
+            <p>講師情報を入力すると、Gemini AIが司会進行テキストを自動作成します。</p>
+          </div>
+          <div class="panel-nav-actions">
+            <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>講師情報</label>
+          <textarea id="aiBrushupInput" rows="10" placeholder="講師の氏名・所属・役職・略歴・演題名・研修終了時刻などをここに貼り付けてください。"></textarea>
+        </div>
+
+        <div class="control-row">
+          <button class="btn primary" id="aiBrushupBtn" onclick="runAiBrushup()">司会進行テキストを作成</button>
+          <button class="btn" id="aiBrushupCopyBtn" onclick="copyAiBrushupResult()" disabled>結果をコピー</button>
+        </div>
+
+        <div class="status-box" id="aiBrushupStatus" style="display:none"></div>
+
+        <div class="field" id="aiBrushupResultWrap" style="display:none">
+          <label>生成結果（司会進行テキスト）</label>
+          <textarea id="aiBrushupResult" rows="12"></textarea>
+        </div>
+      </section>
+
       <section class="panel">
         <div class="corner-label">Computed Schedule</div>
         <div class="panel-head">
@@ -1077,37 +1115,6 @@ label[for="templateFiles"] {
           <div class="date-card"><span>SUBJECT_2</span><b id="dSubject2">-</b></div>
         </div>
         <div class="hint-box">CSV保存時には、起案1 / HP / 起案2 / 起案3 のチェック状態も一緒に保持します。</div>
-      </section>
-
-      <!-- AI Brushup Panel -->
-      <section class="panel" id="aiBrushupPanel">
-        <div class="corner-label">AI Brushup</div>
-        <div class="panel-head">
-          <div>
-            <h2>AI Brushup</h2>
-            <p>講師情報を入力すると、Gemini AIが司会進行テキストを自動作成します。</p>
-          </div>
-          <div class="panel-nav-actions">
-            <a class="btn small manual-btn" href="#topControlPanel">Dual Theme Control UI</a>
-          </div>
-        </div>
-
-        <div class="field">
-          <label>講師情報</label>
-          <textarea id="aiBrushupInput" rows="10" placeholder="講師の氏名・所属・役職・略歴・演題名・研修終了時刻などをここに貼り付けてください。"></textarea>
-        </div>
-
-        <div class="control-row">
-          <button class="btn primary" id="aiBrushupBtn" onclick="runAiBrushup()">司会進行テキストを作成</button>
-          <button class="btn" id="aiBrushupCopyBtn" onclick="copyAiBrushupResult()" disabled>結果をコピー</button>
-        </div>
-
-        <div class="status-box" id="aiBrushupStatus" style="display:none"></div>
-
-        <div class="field" id="aiBrushupResultWrap" style="display:none">
-          <label>生成結果（司会進行テキスト）</label>
-          <textarea id="aiBrushupResult" readonly rows="12"></textarea>
-        </div>
       </section>
 
       <section class="panel" id="operationalSummaryPanel" style="display:none">
@@ -2876,7 +2883,7 @@ async function runAiBrushup(){
     if(!output) throw new Error('レスポンスが空です。');
 
     resultArea.value = output;
-    resultWrap.style.display = '';
+    resultWrap.style.display = 'block';
     copyBtn.disabled = false;
     statusBox.style.color = 'var(--success)';
     statusBox.textContent = '✓ 司会進行テキストの生成が完了しました。';
