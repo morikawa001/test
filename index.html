@@ -788,6 +788,9 @@ label[for="templateFiles"] {
            <a class="btn manual-btn" href="https://morikawa001.github.io/seminar/seminar.html" target="_blank" rel="noopener noreferrer">取扱説明</a>
           <a class="btn manual-btn" href="https://example.com" target="_blank" rel="noopener noreferrer">受講者管理</a>
           <a class="btn manual-btn" href="#masterTableSection">Master Table</a>
+          <a class="btn manual-btn" href="#entryConsoleSection">Entry Console</a>
+          <a class="btn manual-btn" href="#templateInjectionSection">Template Injection</a>
+          <a class="btn manual-btn" href="https://example.com" target="_blank" rel="noopener noreferrer">Live Session</a>
         </div>
       </div>
     </section>
@@ -808,7 +811,7 @@ label[for="templateFiles"] {
 </div>
       <div class="action-grid">
         <button class="btn" id="newDbBtn">新規DB作成</button>
-        <button class="btn primary" id="openConfirmBtn" disabled>確認画面へ進む</button>
+        <button class="btn primary" id="openConfirmBtn">入力画面に進む</button>
       </div>
       <select class="btn" id="recordSelect" disabled>
         <option value="">Noを選択して表示</option>
@@ -879,7 +882,7 @@ label[for="templateFiles"] {
   </section>
 
   <section class="main-grid">
-    <section class="panel">
+    <section class="panel" id="entryConsoleSection">
       <div class="corner-label">Entry Console</div>
       <div class="panel-head">
         <div>
@@ -1349,7 +1352,7 @@ label[for="templateFiles"] {
     </section>
   </section>
 
-  <section class="panel">
+  <section class="panel" id="templateInjectionSection">
     <div class="corner-label">Template Merge</div>
     <div class="panel-head">
       <div>
@@ -1705,10 +1708,10 @@ els.recordSelect.addEventListener('change',handleSelectRecord);
 els.loadSelectedBtn.addEventListener('click',loadSelectedIntoForm);
 els.prefillBtn.addEventListener('click',prefillFromLast);
 els.appendBtn.addEventListener('click',stageDraft);
-els.openConfirmBtn.addEventListener('click',stageDraft);
+els.openConfirmBtn.addEventListener('click',()=>{stageDraft();const el=document.getElementById('entryConsoleSection');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});});
 els.confirmAppendBtn.addEventListener('click',commitDraft);
 els.downloadBtn.addEventListener('click',downloadCsv);
-els.backBtn.addEventListener('click',()=>setStatus('入力内容を調整できます。必要なら項目を修正してください。'));
+els.backBtn.addEventListener('click',()=>{setStatus('入力内容を調整できます。必要なら項目を修正してください。');const el=document.getElementById('entryConsoleSection');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});});
 fields.cohost.addEventListener('change',()=>{syncCohostFields();recalcDraft();});
 fields.subject.addEventListener('change',recalcDraft);
 
