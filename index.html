@@ -1,6 +1,5 @@
-＃全リセットボタンがうごきません
-＃完了タスクと進捗もカウントされません
-＃修正しフルコードを出力
+
+
 <!doctype html>
 <html lang="ja" data-theme="dark">
 <head>
@@ -8,7 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>臨床研究研修会 ダッシュボード / dual-theme control ui</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
+
+
 function updateTaskProgress(){
   const total=33;
   let done=0;
@@ -51,8 +53,8 @@ function updateTaskProgress(){
   const remEl=document.getElementById('taskRemainCount');
   const pctEl=document.getElementById('taskProgressPct');
   const barEl=document.getElementById('taskProgressBar');
-  if(doneEl)doneEl.textContent=done;
-  if(remEl)remEl.textContent=remain;
+  if(doneEl)doneEl.textContent=String(done);
+  if(remEl)remEl.textContent=String(remain);
   if(pctEl)pctEl.textContent=pct+'%';
   if(barEl)barEl.style.width=pct+'%';
     const _tc_task01=document.getElementById('taskcard_task01');const _cb_task01=document.getElementById('ck_task01');if(_tc_task01)_tc_task01.classList.toggle('done',_cb_task01?.checked||false);
@@ -133,6 +135,11 @@ function resetAllTasks(){
     setTimeout(updateTaskProgress,100);
   }
 })();
+
+
+// グローバル公開（onclickから呼べるように）
+window.resetAllTasks = resetAllTasks;
+window.updateTaskProgress = updateTaskProgress;
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
@@ -734,6 +741,12 @@ label[for="templateFiles"] {
   }
 }
 
+
+#taskBody{
+  display:grid;
+  gap:10px;
+}
+
 .task-phase-label{
   padding:8px 4px 4px;
   border-bottom:1px solid var(--line2);
@@ -1038,6 +1051,7 @@ label[for="templateFiles"] {
           <div class="mini-box"><span>進捗</span><b id="taskProgressPct">0%</b></div>
         </div>
         <div class="progress-shell" style="margin-bottom:8px"><div class="progress-bar" id="taskProgressBar"></div></div>
+        <div id="taskBody">
         <div class="schedule-list" id="taskCheckList">
 <div class="task-phase-label"><span class="small-label">準備フェーズ（開催前〜起案1）</span></div>
           <div class="schedule-card" id="taskcard_task01">
@@ -1278,6 +1292,7 @@ label[for="templateFiles"] {
           </div>
         </div>
         <div class="hint-box">各タスクを完了したらチェックを入れてください。CSV保存時に状態が保持されます。</div>
+        </div>
       </section>
   <section class="panel">
     <div class="corner-label">Master Table</div>
@@ -2045,6 +2060,7 @@ function resetScheduleChecks(){
   const _r_task31=document.getElementById('ck_task31');if(_r_task31)_r_task31.checked=false;
   const _r_task32=document.getElementById('ck_task32');if(_r_task32)_r_task32.checked=false;
   const _r_task33=document.getElementById('ck_task33');if(_r_task33)_r_task33.checked=false;
+  updateTaskProgress();
 }
 function applyScheduleChecksFromRow(row){
   els.ckK1.checked=isCheckedValue(row?.[fullKeys.checkK1]);
@@ -2084,6 +2100,7 @@ function applyScheduleChecksFromRow(row){
   const _el_task31=document.getElementById('ck_task31');if(_el_task31)_el_task31.checked=isCheckedValue(row?.[fullKeys.task31]);
   const _el_task32=document.getElementById('ck_task32');if(_el_task32)_el_task32.checked=isCheckedValue(row?.[fullKeys.task32]);
   const _el_task33=document.getElementById('ck_task33');if(_el_task33)_el_task33.checked=isCheckedValue(row?.[fullKeys.task33]);
+  updateTaskProgress();
 }
 function isCheckedValue(v){
   const s=String(v??'').trim().toLowerCase();
