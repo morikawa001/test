@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>臨床研究研修会 ダッシュボード / dual-theme control ui</title>
+<title>臨床研究研修会 ダッシュボード</title>
+
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
+
 <style>
 :root,[data-theme="dark"]{
   --bg:#040807;
@@ -16,36 +18,22 @@
   --panel3:#10201a;
   --line:#163328;
   --line2:#24543f;
-  --line3:#3a8162;
   --text:#b8ffd3;
   --text-strong:#d8ffe7;
   --muted:#75c79a;
   --faint:#458161;
   --green:#5bff9c;
   --green2:#35ff86;
-  --green3:#a9ffca;
   --cyan:#74e9d6;
-  --warn:#ffe680;
   --danger:#ff8fb1;
-  --success:#72ffb3;
+  --warn:#ffe680;
   --shadow:0 18px 40px rgba(0,0,0,.34);
-  --glow:0 0 0 1px rgba(91,255,156,.08),0 0 24px rgba(53,255,134,.06);
   --radius:18px;
-  --radius-sm:12px;
-  --page-grid-line:rgba(91,255,156,.03);
-  --page-glow-a:rgba(53,255,134,.06);
-  --page-glow-b:rgba(116,233,214,.035);
-  --hero-title-shadow:0 0 12px rgba(91,255,156,.08);
   --input-bg:rgba(2,8,6,.88);
   --readonly-bg:rgba(10,20,16,.95);
   --button-bg:rgba(6,14,11,.95);
   --button-primary-bg:rgba(8,26,16,.98);
   --progress-grad:linear-gradient(90deg,var(--green2),var(--green),var(--cyan));
-  --ring-track:rgba(91,255,156,.10);
-  --ring-dash:rgba(116,233,214,.10);
-  --ring-dots:rgba(91,255,156,.14);
-  --core-bg:rgba(4,12,9,.94);
-  --scanline-opacity:.07;
 }
 [data-theme="light"]{
   --bg:#ffffff;
@@ -55,51 +43,29 @@
   --panel3:#f3f2ef;
   --line:#e8e5df;
   --line2:#d9d5ce;
-  --line3:#c9c4bc;
   --text:#37352f;
   --text-strong:#2f2d28;
   --muted:rgba(55,53,47,.7);
   --faint:rgba(55,53,47,.48);
   --green:#2eaadc;
   --green2:#2eaadc;
-  --green3:#1f6feb;
   --cyan:#0f7b6c;
-  --warn:#b98900;
   --danger:#d44c47;
-  --success:#0f7b6c;
+  --warn:#b98900;
   --shadow:0 1px 2px rgba(15,23,42,.04),0 6px 18px rgba(15,23,42,.03);
-  --glow:none;
   --radius:14px;
-  --radius-sm:10px;
-  --page-grid-line:rgba(0,0,0,0);
-  --page-glow-a:rgba(0,0,0,0);
-  --page-glow-b:rgba(0,0,0,0);
-  --hero-title-shadow:none;
   --input-bg:#ffffff;
   --readonly-bg:#f7f6f3;
   --button-bg:#ffffff;
   --button-primary-bg:#2f2d28;
   --progress-grad:linear-gradient(90deg,#2eaadc,#2eaadc);
-  --ring-track:#ece9e3;
-  --ring-dash:#e4e1da;
-  --ring-dots:#ddd8cf;
-  --core-bg:#ffffff;
-  --scanline-opacity:0;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{
   min-height:100%;
-  background:
-    linear-gradient(var(--page-grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--page-grid-line) 1px, transparent 1px),
-    radial-gradient(circle at 12% 0%, var(--page-glow-a), transparent 26%),
-    radial-gradient(circle at 100% 20%, var(--page-glow-b), transparent 20%),
-    var(--bg);
-  background-size:24px 24px,24px 24px,auto,auto,auto;
+  background:var(--bg);
   color:var(--text);
   font-family:'Satoshi','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  letter-spacing:.01em;
-  text-rendering:optimizeLegibility;
 }
 body{line-height:1.55}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -113,76 +79,41 @@ input,select,textarea{
   min-height:48px;
   padding:12px 14px;
   font-size:1rem;
-  letter-spacing:.01em;
 }
-input::placeholder,textarea::placeholder{color:var(--faint)}
-textarea{min-height:102px;resize:vertical}
+input[readonly],textarea[readonly]{background:var(--readonly-bg)}
 input:focus,select:focus,textarea:focus{
   outline:none;
   border-color:var(--green);
   box-shadow:0 0 0 3px color-mix(in srgb, var(--green) 14%, transparent);
 }
-input[readonly],textarea[readonly]{
-  background:var(--readonly-bg);
-  color:var(--text-strong);
-}
-.wrap{
-  max-width:1580px;
-  margin:0 auto;
-  padding:18px;
-  display:grid;
-  gap:18px;
-}
-.panel,.hero-panel{
+.wrap{max-width:1500px;margin:0 auto;padding:18px;display:grid;gap:18px}
+.panel{
   position:relative;
-  overflow:hidden;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--green) 3%, transparent), transparent 32%),
-    linear-gradient(90deg, color-mix(in srgb, var(--green) 2%, transparent), transparent 42%),
-    var(--panel);
+  background:var(--panel);
   border:1px solid var(--line);
   border-radius:var(--radius);
-  box-shadow:var(--shadow),var(--glow);
-}
-[data-theme="light"] .panel,
-[data-theme="light"] .hero-panel{
-  background:var(--panel);
-}
-.panel::before,.hero-panel::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.015), transparent 40%),
-    linear-gradient(90deg, transparent, color-mix(in srgb, var(--green) 3%, transparent), transparent);
-  opacity:.8;
-}
-[data-theme="light"] .panel::before,
-[data-theme="light"] .hero-panel::before{
-  background:none;
-  opacity:0;
-}
-.hero-grid{
+  box-shadow:var(--shadow);
+  padding:18px;
   display:grid;
-  grid-template-columns:1.35fr .95fr;
-  gap:18px;
+  gap:16px;
 }
-.hero-panel{padding:20px 22px}
-.hero-head{
-  display:flex;
-  justify-content:space-between;
-  gap:20px;
-  align-items:flex-start;
-  flex-wrap:wrap;
+.hero-grid{display:grid;grid-template-columns:1.3fr .9fr;gap:18px}
+.hero-panel{
+  position:relative;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:20px 22px;
 }
+.hero-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;flex-wrap:wrap}
 .kicker{
   display:inline-flex;
   align-items:center;
   padding:6px 10px;
   border-radius:999px;
-  border:1px solid color-mix(in srgb, var(--green) 18%, var(--line));
-  background:color-mix(in srgb, var(--green) 5%, var(--panel2));
+  border:1px solid var(--line2);
+  background:var(--panel2);
   color:var(--text-strong);
   font-size:.74rem;
   font-weight:900;
@@ -196,25 +127,15 @@ input[readonly],textarea[readonly]{
   font-weight:900;
   letter-spacing:.06em;
   color:var(--text-strong);
-  text-shadow:var(--hero-title-shadow);
 }
-.id-block p{
-  max-width:76ch;
-  color:var(--muted);
-  font-size:.98rem;
-}
-.hero-stats{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(130px,1fr));
-  gap:10px;
-  min-width:390px;
-}
-.stat-box,.mini-box,.summary-box,.date-card,.status-box,.hint-box,.table-row,.template-row,.alert-item,.list-row,.param-side,.schedule-card{
+.id-block p{max-width:76ch;color:var(--muted);font-size:.98rem}
+.hero-stats{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:10px;min-width:390px}
+.stat-box,.mini-box,.summary-box,.date-card,.schedule-card,.list-row{
   background:var(--panel2);
   border:1px solid var(--line);
   border-radius:12px;
 }
-.stat-box,.mini-box,.summary-box,.date-card,.param-side,.schedule-card{padding:13px 14px}
+.stat-box,.mini-box,.summary-box,.date-card,.schedule-card{padding:13px 14px}
 .stat-box span,.mini-box span,.summary-box span,.small-label,.field label{
   display:block;
   color:var(--muted);
@@ -228,17 +149,6 @@ input[readonly],textarea[readonly]{
   margin-top:5px;
   font-size:1.38rem;
   color:var(--text-strong);
-  text-shadow:none;
-}
-.command-panel{
-  padding:18px;
-  display:grid;
-  gap:12px;
-}
-.panel{
-  padding:18px;
-  display:grid;
-  gap:16px;
 }
 .panel-head{
   display:flex;
@@ -256,10 +166,7 @@ input[readonly],textarea[readonly]{
   text-transform:uppercase;
   color:var(--text-strong);
 }
-.panel-head p{
-  color:var(--muted);
-  font-size:.92rem;
-}
+.panel-head p{color:var(--muted);font-size:.92rem}
 .corner-label{
   position:absolute;
   top:12px;
@@ -278,118 +185,43 @@ input[readonly],textarea[readonly]{
   color:var(--text-strong);
   font-weight:800;
   letter-spacing:.03em;
-  transition:background 150ms ease,color 150ms ease,border-color 150ms ease,box-shadow 150ms ease;
-}
-.btn:hover{
-  background:var(--panel3);
 }
 .btn.primary{
   background:var(--button-primary-bg);
   border-color:var(--button-primary-bg);
-  color:#ffffff;
-  box-shadow:none;
-}
-.btn.primary:hover{
-  background:color-mix(in srgb, var(--button-primary-bg) 92%, white);
+  color:#fff;
 }
 .btn.small{min-height:38px;padding:0 12px;font-size:.84rem}
 .btn:disabled{opacity:.42;cursor:not-allowed}
-.file-pick{display:grid;gap:6px}
-.file-pick input[type=file]{padding:9px 11px}
-#csvFile {display:none;}
-label[for="csvFile"] {
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
+.file-pick{display:grid;gap:8px}
+.file-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#csvFile{
+  display:block;
+  width:100%;
+  padding:9px 11px;
 }
-.manual-btn {
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  text-decoration:none;
-}
-#templateFiles {display:none;}
-label[for="templateFiles"] {
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:50%;
-  font-size:inherit;
-  color:var(--text-strong);
-}
-#templateFilesName,
-#csvFileName {
+#csvFileName{
   font-size:1rem;
   color:var(--faint);
 }
-.file-pick input[type=file],
-#templateFiles{
-  padding:9px 11px;
-}
-.file-pick input[type=file]::file-selector-button,
-.file-pick input[type=file]::-webkit-file-upload-button,
-#templateFiles::file-selector-button,
-#templateFiles::-webkit-file-upload-button{
-  margin-right:12px;
-  border:none;
-  border-radius:8px;
-  padding:8px 12px;
-  background:var(--panel3);
-  color:var(--text-strong);
-  font-weight:800;
-  cursor:pointer;
-}
-.action-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-.mini-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px;
-}
-.main-grid{
-  display:grid;
-  grid-template-columns:1.32fr .92fr;
-  gap:18px;
-  align-items:start;
-}
-.master-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:12px;
-}
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.main-grid{display:grid;grid-template-columns:1.32fr .92fr;gap:18px;align-items:start}
+.master-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .field{display:grid;gap:6px}
 .field.full{grid-column:1/-1}
-.control-row,.footer-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
+.control-row,.footer-actions{display:flex;gap:10px;flex-wrap:wrap}
 .status-box,.hint-box{
   padding:14px 15px;
   font-size:.96rem;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:12px;
 }
 .status-box{color:var(--text-strong)}
 .hint-box{color:var(--muted)}
 .side-stack{display:grid;gap:18px}
-.auto-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
-}
-.date-card b{
-  display:block;
-  margin-top:5px;
-  color:var(--text-strong);
-  font-size:1.02rem;
-}
-.summary-grid{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:10px;
-}
+.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .progress-shell{
   height:14px;
   border-radius:999px;
@@ -401,163 +233,8 @@ label[for="templateFiles"] {
   height:100%;
   width:0%;
   background:var(--progress-grad);
-  box-shadow:none;
 }
-.parameter-wrap{
-  display:grid;
-  grid-template-columns:360px 1fr;
-  gap:16px;
-  align-items:center;
-}
-.param-gauge{
-  position:relative;
-  width:100%;
-  max-width:360px;
-  aspect-ratio:1/1;
-  margin:0 auto;
-  display:grid;
-  place-items:center;
-}
-.param-svg{
-  width:100%;
-  height:100%;
-  transform:rotate(-90deg);
-  filter:none;
-}
-.param-core{
-  position:absolute;
-  inset:18%;
-  border-radius:50%;
-  border:1px solid var(--line);
-  background:var(--core-bg);
-  display:grid;
-  place-items:center;
-  text-align:center;
-  box-shadow:none;
-}
-.param-core small{
-  display:block;
-  color:var(--muted);
-  font-size:.74rem;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-}
-.param-core strong{
-  display:block;
-  font-size:2.55rem;
-  color:var(--text-strong);
-  line-height:1.05;
-  font-weight:900;
-  text-shadow:none;
-}
-.param-core span{
-  display:block;
-  color:var(--muted);
-  font-size:.95rem;
-  margin-top:4px;
-}
-.param-meta{
-  display:grid;
-  gap:10px;
-}
-.param-side{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:12px;
-  align-items:center;
-}
-.param-side b{
-  font-size:1.22rem;
-  color:var(--text-strong);
-}
-.radar-note{
-  color:var(--muted);
-  font-size:.92rem;
-}
-.alert-wrap,.template-list,.table-list,.confirm-list,.folder-list,.schedule-list{display:grid;gap:10px}
-.alert-item{
-  padding:13px 14px;
-  display:grid;
-  grid-template-columns:120px 1fr 130px;
-  gap:12px;
-  align-items:center;
-}
-.alert-tag,.badge,.status{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:28px;
-  padding:4px 10px;
-  border-radius:999px;
-  font-size:.79rem;
-  font-weight:800;
-  letter-spacing:.05em;
-}
-.alert-tag,.badge{
-  background:var(--panel3);
-  color:var(--text-strong);
-  border:1px solid var(--line2);
-}
-.status.s2{background:#eef7f3;color:var(--success);border:1px solid #d7eee5}
-.status.s3{background:#eef5fb;color:var(--green);border:1px solid #d7e8f7}
-.status.s1{background:#fff8e7;color:var(--warn);border:1px solid #f2e3b4}
-.status.s4{background:#fff0ef;color:var(--danger);border:1px solid #f4d9d7}
-[data-theme="dark"] .status.s2{background:rgba(114,255,179,.08);color:var(--success);border:1px solid rgba(114,255,179,.16)}
-[data-theme="dark"] .status.s3{background:rgba(116,233,214,.08);color:var(--cyan);border:1px solid rgba(116,233,214,.15)}
-[data-theme="dark"] .status.s1{background:rgba(255,230,128,.08);color:var(--warn);border:1px solid rgba(255,230,128,.16)}
-[data-theme="dark"] .status.s4{background:rgba(255,143,177,.08);color:var(--danger);border:1px solid rgba(255,143,177,.15)}
-.table-head,.table-row{
-  display:grid;
-  grid-template-columns:90px 140px 1.2fr 1fr 140px 110px;
-  gap:12px;
-  align-items:start;
-}
-.table-head{
-  padding:0 6px 6px;
-  color:var(--muted);
-  font-size:.76rem;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-}
-.table-row{padding:14px}
-.table-row strong,.template-row strong,.alert-item strong,.list-row strong,.schedule-card strong{font-weight:900;color:var(--text-strong)}
-.list-row{
-  padding:14px;
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  align-items:flex-start;
-}
-.table-row p,.template-row p,.alert-item p,.list-row p,.mini-box p,.schedule-card p{
-  color:var(--muted);
-  font-size:.92rem;
-}
-.dual-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-}
-.template-row{
-  padding:14px;
-  display:grid;
-  grid-template-columns:1.2fr 90px 120px 150px;
-  gap:12px;
-  align-items:center;
-}
-.mono{
-  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-  font-size:.83rem;
-  color:var(--muted);
-}
-.scanline{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background:linear-gradient(to bottom, rgba(255,255,255,.02), rgba(255,255,255,0) 50%);
-  background-size:100% 4px;
-  opacity:var(--scanline-opacity);
-  mix-blend-mode:screen;
-}
+.schedule-list{display:grid;gap:10px}
 .schedule-card{
   display:grid;
   grid-template-columns:1fr auto;
@@ -581,15 +258,52 @@ label[for="templateFiles"] {
   accent-color:var(--green);
   cursor:pointer;
 }
-.schedule-meta{
+.date-card b{
+  display:block;
+  margin-top:5px;
+  color:var(--text-strong);
+  font-size:1.02rem;
+}
+.table-head,.table-row{
+  display:grid;
+  grid-template-columns:90px 140px 1.2fr 1fr 140px 110px;
+  gap:12px;
+  align-items:start;
+}
+.table-head{
+  padding:0 6px 6px;
+  color:var(--muted);
+  font-size:.76rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.table-row{
+  padding:14px;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:12px;
+}
+.table-row strong,.list-row strong,.schedule-card strong{font-weight:900;color:var(--text-strong)}
+.table-row p,.list-row p,.schedule-card p,.mini-box p{color:var(--muted);font-size:.92rem}
+.badge,.status{
   display:inline-flex;
   align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
+  justify-content:center;
+  min-height:28px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:.79rem;
+  font-weight:800;
+  letter-spacing:.05em;
 }
-.check-note{
-  color:var(--muted);
-  font-size:.86rem;
+.badge{background:var(--panel3);color:var(--text-strong);border:1px solid var(--line2)}
+.status.s3{background:var(--panel3);color:var(--text-strong);border:1px solid var(--line2)}
+.list-row{
+  padding:14px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
 }
 .task-phase-label{
   padding:8px 4px 4px;
@@ -601,32 +315,22 @@ label[for="templateFiles"] {
   letter-spacing:.18em;
   color:var(--cyan);
 }
-#taskChecklistPanel .schedule-card.done{
-  opacity:.55;
-}
+#taskChecklistPanel .schedule-card.done{opacity:.55}
 #taskChecklistPanel .schedule-card.done strong{
   text-decoration:line-through;
   color:var(--muted);
 }
-#taskChecklistBody{
-  display:grid;
-  gap:12px;
-}
-#taskChecklistPanel.is-collapsed #taskChecklistBody{
-  display:none;
-}
 @media (max-width:1240px){
-  .hero-grid,.main-grid,.dual-grid,.parameter-wrap{grid-template-columns:1fr}
+  .hero-grid,.main-grid{grid-template-columns:1fr}
 }
 @media (max-width:860px){
-  .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.template-row,.alert-item,.schedule-card{
+  .master-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.schedule-card{
     grid-template-columns:1fr;
   }
 }
 </style>
 </head>
 <body>
-<div class="scanline"></div>
 <div class="wrap">
   <section class="hero-grid">
     <section class="hero-panel">
@@ -636,39 +340,45 @@ label[for="templateFiles"] {
           <div class="kicker">Clinical Research Training Control</div>
           <h1>Clinical Research Training Dashboard</h1>
           <p>20XX年_臨床研究研修会計画_project_2501</p>
-          <p>It serves as an operation platform that centrally manages training session planning, and the light theme provides a bright, Notion-like business UI that is easy to read.</p>
-          <p>オペレーション_プラットフォームとして研修会開催計画を一元管理することができる / ライトテーマは Notion 風の明るく読みやすい業務UIとなっている</p>
+          <p>研修会開催計画を一元管理する業務ダッシュボードです。</p>
         </div>
         <div class="hero-stats">
           <div class="stat-box"><span>Records</span><b id="sumAllTop">0</b></div>
           <div class="stat-box"><span>Current Year</span><b id="sumYearTop">0</b></div>
           <div class="stat-box"><span>Next No</span><b id="sumNextTop">-</b></div>
-          <a class="btn manual-btn" href="https://morikawa001.github.io/seminar/seminar.html" target="_blank" rel="noopener noreferrer">取扱説明</a>
         </div>
       </div>
     </section>
 
-    <section class="panel command-panel">
+    <section class="panel">
       <div class="corner-label">Operation Console</div>
       <div class="panel-head">
         <div>
           <h2>Quick Operation</h2>
-          <p>テーマ切替を含む主要操作を右上に集約しています。</p>
+          <p>CSV選択と主要操作をここで行います。</p>
         </div>
       </div>
+
       <button class="btn" id="themeBtn">表示テーマ切替</button>
+
       <div class="file-pick">
-        <label for="csvFile" class="btn">CSV 選択</label>
+        <div class="file-row">
+          <label for="csvFile" class="btn">CSV 選択</label>
+          <button type="button" class="btn small" id="csvOpenBtn">ファイルを開く</button>
+        </div>
         <input id="csvFile" type="file" accept=".csv,text/csv">
         <input id="csvFileName" value="" readonly placeholder="ファイル未選択">
       </div>
+
       <div class="action-grid">
         <button class="btn" id="newDbBtn">新規DB作成</button>
         <button class="btn primary" id="openConfirmBtn" disabled>確認画面へ進む</button>
       </div>
+
       <select class="btn" id="recordSelect" disabled>
         <option value="">Noを選択して表示</option>
       </select>
+
       <div class="mini-grid">
         <div class="mini-box"><span>Database</span><b id="miniDbState">CSV未読込</b><p id="miniDbText">CSVまたは新規DBを選択してください</p></div>
         <div class="mini-box"><span>Next</span><b id="miniNext">-</b><p>次回採番候補</p></div>
@@ -677,70 +387,13 @@ label[for="templateFiles"] {
     </section>
   </section>
 
-  <section class="panel">
-    <div class="corner-label">Annual Parameter</div>
-    <div class="panel-head">
-      <div>
-        <h2>Annual Plan Parameter</h2>
-        <p>年間計画の進み具合を、ダーク時はHUD風、ライト時は落ち着いた業務UI風リングで表示します。</p>
-      </div>
-    </div>
-    <div class="parameter-wrap">
-      <div class="param-gauge">
-        <svg class="param-svg" viewBox="0 0 240 240" aria-hidden="true">
-          <circle cx="120" cy="120" r="92" fill="none" stroke="var(--ring-track)" stroke-width="10"></circle>
-          <circle cx="120" cy="120" r="72" fill="none" stroke="var(--ring-dash)" stroke-width="3" stroke-dasharray="3 7"></circle>
-          <circle cx="120" cy="120" r="92" fill="none" stroke="url(#progressGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="578" stroke-dashoffset="578" id="annualGauge"></circle>
-          <circle cx="120" cy="120" r="108" fill="none" stroke="var(--ring-dots)" stroke-width="1" stroke-dasharray="1 9"></circle>
-          <defs>
-            <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="var(--green2)"></stop>
-              <stop offset="60%" stop-color="var(--green)"></stop>
-              <stop offset="100%" stop-color="var(--cyan)"></stop>
-            </linearGradient>
-          </defs>
-        </svg>
-        <div class="param-core">
-          <div>
-            <small>Progress Ratio</small>
-            <strong id="annualGaugeText">0%</strong>
-            <span id="annualGaugeSub">0 / 0 Completed</span>
-          </div>
-        </div>
-      </div>
-      <div class="param-meta">
-        <div class="param-side"><div><span class="small-label">年度件数</span><p class="radar-note">現在年度に属する登録件数です。</p></div><b id="paramYearCount">0</b></div>
-        <div class="param-side"><div><span class="small-label">開催済み</span><p class="radar-note">今日より前に開催済みの件数です。</p></div><b id="paramDoneCount">0</b></div>
-        <div class="param-side"><div><span class="small-label">直近30日</span><p class="radar-note">30日以内に開催予定の件数です。</p></div><b id="paramSoonCount">0</b></div>
-        <div class="param-side"><div><span class="small-label">追加予定</span><p class="radar-note">現在フォームに保持している保存前データです。</p></div><b id="paramDraftCount">0</b></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="panel">
-    <div class="corner-label">Deadline Alert</div>
-    <div class="panel-head">
-      <div>
-        <h2>Deadline Alert</h2>
-        <p>7日以内に期限が迫るタスクを上から優先表示します。</p>
-      </div>
-    </div>
-    <div class="alert-wrap" id="alertList">
-      <div class="alert-item">
-        <div><span class="alert-tag">WAIT</span></div>
-        <div><strong>期限監視待機中</strong><p>CSVを読み込むと期限アラートがここに表示されます。</p></div>
-        <div class="mono">No data</div>
-      </div>
-    </div>
-  </section>
-
   <section class="main-grid">
     <section class="panel">
       <div class="corner-label">Entry Console</div>
       <div class="panel-head">
         <div>
           <h2>Entry Console</h2>
-          <p>ダークでは電子端末風、ライトでは Notion 風の落ち着いた視認性重視フォームになります。</p>
+          <p>CSV読込後に編集・保存できます。</p>
         </div>
         <button class="btn" id="loadSelectedBtn" disabled>選択Noを反映</button>
       </div>
@@ -751,52 +404,31 @@ label[for="templateFiles"] {
         <div class="field"><label>開催日_DATE_1</label><input id="fDate" type="date"></div>
         <div class="field"><label>曜日_DAY</label><input id="fDay" readonly></div>
         <div class="field"><label>メール用開催日_DATE_2</label><input id="fDate2" readonly></div>
-        <div class="field"><label>名前_NAME</label><input id="fName" value=""></div>
+        <div class="field"><label>名前_NAME</label><input id="fName"></div>
         <div class="field"><label>研修会タイトル_TITLE</label><input id="fTitle" value="臨床研究データ管理実務"></div>
         <div class="field"><label>講師名_SPEAKER</label><input id="fSpeaker" value="サンプル 講師"></div>
-
         <div class="field"><label>講義開始_START_TIME</label><input id="fLectureStart" type="time" value="17:30"></div>
         <div class="field"><label>研修会開始_START_1</label><input id="fStart" type="time" value="17:30"></div>
         <div class="field"><label>終了_END_1</label><input id="fEnd" type="time" value="19:00"></div>
-        <div class="field"><label>事前打合せ開始時間_PRE_MEETING</label><input id="fPreMeeting" type="time" value=""></div>
-        <div class="field"><label>質疑応答締切_QA_DADLINE</label><input id="fQaDeadline" type="time" value=""></div>
-        <div class="field"><label>質疑応答_QA_TIME</label><input id="fQaTime" value=""></div>
-
+        <div class="field"><label>事前打合せ開始時間_PRE_MEETING</label><input id="fPreMeeting" type="time"></div>
+        <div class="field"><label>質疑応答締切_QA_DADLINE</label><input id="fQaDeadline" type="time"></div>
+        <div class="field"><label>質疑応答_QA_TIME</label><input id="fQaTime"></div>
         <div class="field"><label>入室_TIME_1</label><input id="fRoomOpen" readonly></div>
         <div class="field"><label>時間_TIME_2</label><input id="fDuration" readonly></div>
         <div class="field"><label>〆切_DEADLINE_1</label><input id="fDeadline1" readonly></div>
         <div class="field"><label>院内〆切_DEADLINE_2</label><input id="fDeadline2" readonly></div>
         <div class="field"><label>資料DL_DEADLINE_3</label><input id="fDeadline3" readonly></div>
         <div class="field"><label>講義資料締切_DATA_deadline</label><input id="fDataDeadline" readonly></div>
-        <div class="field"><label>謝金_COST</label><input id="fCost" value=""></div>
-
-        <div class="field"><label>対象_SUBJECT_1</label>
-          <select id="fSubject">
-            <option>研究者</option>
-            <option>研究支援者</option>
-            <option>倫理審査委員会委員</option>
-          </select>
-        </div>
+        <div class="field"><label>謝金_COST</label><input id="fCost"></div>
+        <div class="field"><label>対象_SUBJECT_1</label><select id="fSubject"><option>研究者</option><option>研究支援者</option><option>倫理審査委員会委員</option></select></div>
         <div class="field"><label>対象詳細_SUBJECT_2</label><input id="fSubject2" readonly></div>
-        <div class="field"><label>開催方法_SITE</label>
-          <select id="fSite">
-            <option>Web会議室</option>
-            <option>（研修室１）</option>
-            <option>会議室</option>
-            <option>ハイブリッド</option>
-          </select>
-        </div>
-        <div class="field"><label>共催_COHOST_1</label>
-          <select id="fCohost">
-            <option value="なし">なし</option>
-            <option value="企画人材班">企画人材班</option>
-          </select>
-        </div>
+        <div class="field"><label>開催方法_SITE</label><select id="fSite"><option>Web会議室</option><option>（研修室１）</option><option>会議室</option><option>ハイブリッド</option></select></div>
+        <div class="field"><label>共催_COHOST_1</label><select id="fCohost"><option value="なし">なし</option><option value="企画人材班">企画人材班</option></select></div>
         <div class="field"><label>共催3_COHOST_3</label><input id="fCohost3" readonly></div>
-        <div class="field"><label>Zoom ID</label><input id="fZoomId" value=""></div>
-        <div class="field"><label>パスコード_PASSCODE</label><input id="fPasscode" value=""></div>
+        <div class="field"><label>Zoom ID</label><input id="fZoomId"></div>
+        <div class="field"><label>パスコード_PASSCODE</label><input id="fPasscode"></div>
         <div class="field full"><label>Zoom URL</label><input id="fZoomUrl" value="https://zoom.us/"></div>
-        <div class="field full"><label>HP_URL_url_1</label><input id="fHpUrl" value=""></div>
+        <div class="field full"><label>HP_URL_url_1</label><input id="fHpUrl"></div>
         <div class="field full"><label>目的_PURPOSE</label><textarea id="fPurpose">本研修会では、臨床研究に必要な実務の基本をわかりやすく学びます。</textarea></div>
         <div class="field full"><label>進行表導入_INTRO_1</label><textarea id="fIntro1">本日は臨床研究研修会にご参加いただきありがとうございます。</textarea></div>
         <div class="field full"><label>趣旨説明_INTRO_2</label><textarea id="fIntro2">本研修会では、臨床研究を進めるうえで必要となる基本事項と実務上のポイントを共有します。</textarea></div>
@@ -805,7 +437,6 @@ label[for="templateFiles"] {
 
       <div class="control-row">
         <button class="btn primary" id="appendBtn" disabled>保存する</button>
-        <button class="btn" id="prefillBtn" disabled>直近行を複製</button>
       </div>
 
       <div class="status-box" id="statusBox">CSVを読み込むか、新規データベースを作成すると入力を開始できます。</div>
@@ -817,40 +448,24 @@ label[for="templateFiles"] {
         <div class="panel-head">
           <div>
             <h2>Computed Schedule</h2>
-            <p>起案スケジュールと各チェック状態を右側に固定表示します。</p>
+            <p>計算結果と主要チェックです。</p>
           </div>
         </div>
         <div class="schedule-list">
           <div class="schedule-card">
-            <div class="schedule-left">
-              <span class="small-label">起案1</span>
-              <strong id="dK1">-</strong>
-              <p>開催35日前の起案予定です。</p>
-            </div>
+            <div class="schedule-left"><span class="small-label">起案1</span><strong id="dK1">-</strong><p>開催35日前</p></div>
             <label class="schedule-check"><input type="checkbox" id="ckK1"><span>実施済み</span></label>
           </div>
           <div class="schedule-card">
-            <div class="schedule-left">
-              <span class="small-label">HP公開</span>
-              <strong id="dHp">-</strong>
-              <p>開催28日前の案内開始予定です。</p>
-            </div>
+            <div class="schedule-left"><span class="small-label">HP公開</span><strong id="dHp">-</strong><p>開催28日前</p></div>
             <label class="schedule-check"><input type="checkbox" id="ckHp"><span>実施済み</span></label>
           </div>
           <div class="schedule-card">
-            <div class="schedule-left">
-              <span class="small-label">起案2</span>
-              <strong id="dK2">-</strong>
-              <p>開催7日前の資料起案予定です。</p>
-            </div>
+            <div class="schedule-left"><span class="small-label">起案2</span><strong id="dK2">-</strong><p>開催7日前</p></div>
             <label class="schedule-check"><input type="checkbox" id="ckK2"><span>実施済み</span></label>
           </div>
           <div class="schedule-card">
-            <div class="schedule-left">
-              <span class="small-label">起案3</span>
-              <strong id="dK3">-</strong>
-              <p>開催翌営業日の受講証・修了証起案予定です。</p>
-            </div>
+            <div class="schedule-left"><span class="small-label">起案3</span><strong id="dK3">-</strong><p>翌営業日</p></div>
             <label class="schedule-check"><input type="checkbox" id="ckK3"><span>実施済み</span></label>
           </div>
           <div class="date-card"><span>入室</span><b id="dRoomOpen">-</b></div>
@@ -866,210 +481,28 @@ label[for="templateFiles"] {
           <div class="date-card"><span>DATE_2</span><b id="dDate2">-</b></div>
           <div class="date-card"><span>SUBJECT_2</span><b id="dSubject2">-</b></div>
         </div>
-        <div class="hint-box">CSV保存時には、起案1 / HP / 起案2 / 起案3 のチェック状態も一緒に保持します。</div>
       </section>
 
-      <section class="panel">
-        <div class="corner-label">Operational Summary</div>
+      <section class="panel" id="taskChecklistPanel">
+        <div class="corner-label">Task Checklist</div>
         <div class="panel-head">
           <div>
-            <h2>Operational Summary</h2>
-            <p>年次の状況を補助数値でも確認できます。</p>
+            <h2>Task Checklist</h2>
+            <p>CSV保存時にチェック状態を保持します。</p>
           </div>
+          <button class="btn small" id="taskResetBtn" type="button">全リセット</button>
         </div>
-        <div class="summary-grid">
-          <div class="summary-box"><span>登録件数</span><b id="sumAll">0</b></div>
-          <div class="summary-box"><span>年度件数</span><b id="sumYear">0</b></div>
-          <div class="summary-box"><span>次No</span><b id="sumNext">-</b></div>
-          <div class="summary-box"><span>対象</span><b id="sumSubject">-</b></div>
+
+        <div class="mini-grid" style="margin-bottom:4px">
+          <div class="mini-box"><span>完了タスク</span><b id="taskDoneCount">0</b></div>
+          <div class="mini-box"><span>残りタスク</span><b id="taskRemainCount">33</b></div>
+          <div class="mini-box"><span>進捗</span><b id="taskProgressPct">0%</b></div>
         </div>
-        <div class="summary-grid">
-          <div class="summary-box"><span>直近30日</span><b id="sumSoon">0件</b></div>
-          <div class="summary-box"><span>開催済み</span><b id="sumDone">0件</b></div>
-          <div class="summary-box"><span>追加予定</span><b id="sumDraft">0件</b></div>
-          <div class="summary-box"><span>比率</span><b id="roadmapLabel">0 / 0</b></div>
-        </div>
-        <div class="progress-shell"><div class="progress-bar" id="roadmapBar"></div></div>
+        <div class="progress-shell" style="margin-bottom:8px"><div class="progress-bar" id="taskProgressBar"></div></div>
+
+        <div class="schedule-list" id="taskCheckList"></div>
       </section>
     </aside>
-  </section>
-
-  <section class="panel" id="taskChecklistPanel">
-    <div class="corner-label">Task Checklist</div>
-    <div class="panel-head">
-      <div>
-        <h2>Task Checklist</h2>
-        <p>研修会運営の全タスクチェックリストです。CSV保存時にチェック状態を保持します。</p>
-      </div>
-      <div class="control-row">
-        <button class="btn small" id="taskToggleBtn" type="button" aria-expanded="true" aria-controls="taskChecklistBody" onclick="toggleTaskChecklist()">閉じる</button>
-        <button class="btn small" id="taskResetBtn" type="button" onclick="resetAllTasks()">全リセット</button>
-      </div>
-    </div>
-
-    <div id="taskChecklistBody">
-      <div class="mini-grid" style="margin-bottom:4px">
-        <div class="mini-box"><span>完了タスク</span><b id="taskDoneCount">0</b></div>
-        <div class="mini-box"><span>残りタスク</span><b id="taskRemainCount">33</b></div>
-        <div class="mini-box"><span>進捗</span><b id="taskProgressPct">0%</b></div>
-      </div>
-
-      <div class="progress-shell" style="margin-bottom:8px"><div class="progress-bar" id="taskProgressBar"></div></div>
-
-      <div class="schedule-list" id="taskCheckList">
-        <div class="task-phase-label"><span class="small-label">準備フェーズ（開催前〜起案1）</span></div>
-
-        <div class="schedule-card" id="taskcard_task01">
-          <div class="schedule-left"><span class="small-label">Task 01</span><strong>研修会演題と目的案を作成</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task01" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task02">
-          <div class="schedule-left"><span class="small-label">Task 02</span><strong>講師にメールで確認</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task02" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task03">
-          <div class="schedule-left"><span class="small-label">Task 03</span><strong>マネジメントセンターにHP個別ページブランチ作成依頼</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task03" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task04">
-          <div class="schedule-left"><span class="small-label">Task 04</span><strong>WordPressでHPページ更新を設定と予約投稿設定</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task04" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task05">
-          <div class="schedule-left"><span class="small-label">Task 05</span><strong>起案1_開催</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task05" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-
-        <div class="task-phase-label"><span class="small-label">広報・HP公開フェーズ</span></div>
-
-        <div class="schedule-card" id="taskcard_task06">
-          <div class="schedule-left"><span class="small-label">Task 06</span><strong>HP公開設定依頼</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task06" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task07">
-          <div class="schedule-left"><span class="small-label">Task 07</span><strong>HP公開・受付開始</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task07" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task08">
-          <div class="schedule-left"><span class="small-label">Task 08</span><strong>HP公開開始のご案内メール</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task08" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task09">
-          <div class="schedule-left"><span class="small-label">Task 09</span><strong>電子カルテ掲示板の掲載内容確認</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task09" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task10">
-          <div class="schedule-left"><span class="small-label">Task 10</span><strong>院内配布用チラシ１回目配布</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task10" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-
-        <div class="task-phase-label"><span class="small-label">チラシ・講師対応フェーズ</span></div>
-
-        <div class="schedule-card" id="taskcard_task11">
-          <div class="schedule-left"><span class="small-label">Task 11</span><strong>院内配布用チラシ２回目配布</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task11" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task12">
-          <div class="schedule-left"><span class="small-label">Task 12</span><strong>講師リマインドメール</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task12" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task13">
-          <div class="schedule-left"><span class="small-label">Task 13</span><strong>講師スライド入手</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task13" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task14">
-          <div class="schedule-left"><span class="small-label">Task 14</span><strong>共催枠について企画人材班への協力要請文作成</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task14" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task15">
-          <div class="schedule-left"><span class="small-label">Task 15</span><strong>事前受付終了・Web受講希望者リストの書き出し</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task15" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-
-        <div class="task-phase-label"><span class="small-label">起案2・資料準備フェーズ</span></div>
-
-        <div class="schedule-card" id="taskcard_task16">
-          <div class="schedule-left"><span class="small-label">Task 16</span><strong>起案2_資料</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task16" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task17">
-          <div class="schedule-left"><span class="small-label">Task 17</span><strong>追加資料の有無を確認</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task17" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task18">
-          <div class="schedule-left"><span class="small-label">Task 18</span><strong>企画人材班と配布資料を共有</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task18" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task19">
-          <div class="schedule-left"><span class="small-label">Task 19</span><strong>防災センターに報告</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task19" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task20">
-          <div class="schedule-left"><span class="small-label">Task 20</span><strong>講師と受講者にリマインドメール①</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task20" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-
-        <div class="task-phase-label"><span class="small-label">当日直前・本番フェーズ</span></div>
-
-        <div class="schedule-card" id="taskcard_task21">
-          <div class="schedule-left"><span class="small-label">Task 21</span><strong>研修会当日の準備</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task21" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task22">
-          <div class="schedule-left"><span class="small-label">Task 22</span><strong>講師と受講者にリマインドメール②</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task22" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task23">
-          <div class="schedule-left"><span class="small-label">Task 23</span><strong>使用するパソコンのシステム更新確認</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task23" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task24">
-          <div class="schedule-left"><span class="small-label">Task 24</span><strong>研修会本番</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task24" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-
-        <div class="task-phase-label"><span class="small-label">事後処理フェーズ（起案3〜完了）</span></div>
-
-        <div class="schedule-card" id="taskcard_task25">
-          <div class="schedule-left"><span class="small-label">Task 25</span><strong>Zoomレポートダウンロード</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task25" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task26">
-          <div class="schedule-left"><span class="small-label">Task 26</span><strong>会場参加者のデータを企画人材班に提供依頼</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task26" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task27">
-          <div class="schedule-left"><span class="small-label">Task 27</span><strong>出席者を受講者リストに入力</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task27" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task28">
-          <div class="schedule-left"><span class="small-label">Task 28</span><strong>起案3_受講証</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task28" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task29">
-          <div class="schedule-left"><span class="small-label">Task 29</span><strong>講師へお礼の連絡</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task29" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task30">
-          <div class="schedule-left"><span class="small-label">Task 30</span><strong>受講者数と内訳報告</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task30" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task31">
-          <div class="schedule-left"><span class="small-label">Task 31</span><strong>謝金支払い</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task31" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task32">
-          <div class="schedule-left"><span class="small-label">Task 32</span><strong>謝金の支払について講師にメール</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task32" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-        <div class="schedule-card" id="taskcard_task33">
-          <div class="schedule-left"><span class="small-label">Task 33</span><strong>受講証・修了証書メール交付</strong></div>
-          <label class="schedule-check"><input type="checkbox" id="ck_task33" onchange="updateTaskProgress()"><span>完了</span></label>
-        </div>
-      </div>
-
-      <div class="hint-box">各タスクを完了したらチェックを入れてください。CSV保存時に状態が保持されます。</div>
-    </div>
   </section>
 
   <section class="panel">
@@ -1077,7 +510,7 @@ label[for="templateFiles"] {
     <div class="panel-head">
       <div>
         <h2>Master Table</h2>
-        <p>同じNoは1行だけ保持し、保存時は既存行を上書き更新します。</p>
+        <p>保存時は同じNoを上書き更新します。</p>
       </div>
     </div>
     <div class="table-head">
@@ -1089,164 +522,630 @@ label[for="templateFiles"] {
       </div>
     </div>
   </section>
-
-  <section class="dual-grid">
-    <section class="panel">
-      <div class="corner-label">Verify</div>
-      <div class="panel-head">
-        <div>
-          <h2>Commit Check</h2>
-          <p>保存直前の差分・注意点を一覧化します。</p>
-        </div>
-      </div>
-      <div class="mini-grid">
-        <div class="mini-box"><span>保存予定</span><b id="confirmCount">0件</b></div>
-        <div class="mini-box"><span>要確認</span><b id="confirmWarn">0件</b></div>
-        <div class="mini-box"><span>状態</span><b id="confirmState">待機</b></div>
-      </div>
-      <div class="confirm-list" id="checkList">
-        <div class="list-row">
-          <div><strong>次回研修会</strong><p>CSVを読み込んだ後に入力内容が表示されます。</p></div>
-          <div><span class="status s3">待機</span></div>
-        </div>
-      </div>
-      <div class="footer-actions">
-        <button class="btn" id="backBtn">戻る</button>
-        <button class="btn primary" id="confirmAppendBtn" disabled>この内容で保存</button>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="corner-label">Output</div>
-      <div class="panel-head">
-        <div>
-          <h2>Export Result</h2>
-          <p>保存後のCSV出力状態を表示します。</p>
-        </div>
-      </div>
-      <div class="mini-grid">
-        <div class="mini-box"><span>保存完了</span><b id="resultDone">0件</b></div>
-        <div class="mini-box"><span>保留</span><b id="resultHold">0件</b></div>
-        <div class="mini-box"><span>CSV</span><b id="resultZip">0式</b></div>
-      </div>
-      <div class="folder-list" id="folderView">
-        <div class="list-row">
-          <div><strong>更新CSV</strong><p>まだ作成していません。</p></div>
-          <div><span class="status s3">待機</span></div>
-        </div>
-      </div>
-      <div class="footer-actions">
-        <button class="btn primary" id="downloadBtn" disabled>更新CSVをダウンロード</button>
-      </div>
-    </section>
-  </section>
-
-  <section class="panel">
-    <div class="corner-label">Template Merge</div>
-    <div class="panel-head">
-      <div>
-        <h2>Template Injection</h2>
-        <p>pptx / xlsx / docx を複数同時読込し、選択Noのデータで一括差し込みします。</p>
-      </div>
-    </div>
-    <div class="master-grid">
-      <div class="field full">
-        <label for="templateFiles" class="btn">ファイル選択</label>
-        <input id="templateFiles" type="file" multiple accept=".docx,.pptx,.xlsx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-        <input id="templateFilesName" value="ファイル未選択" readonly>
-      </div>
-      <div class="field">
-        <label>差し込み対象No</label>
-        <select id="mergeRecordSelect" disabled>
-          <option value="">Noを選択して差し込み</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>登録テンプレート数</label>
-        <input id="templateState" value="0件" readonly>
-      </div>
-    </div>
-
-    <div class="template-list" id="templateList">
-      <div class="template-row">
-        <div><strong>テンプレート未選択</strong><p>pptx / xlsx / docx を複数まとめて選択できます。</p></div>
-        <div><span class="status s3">待機</span></div>
-        <div class="mono">-</div>
-        <div class="mono">-</div>
-      </div>
-    </div>
-
-    <div class="footer-actions">
-      <button class="btn primary" id="mergeAllBtn" disabled>選択テンプレートを一括差し込み出力</button>
-    </div>
-    <div class="status-box" id="mergeStatusBox">テンプレートファイルを複数選択すると、一括差し込み出力できます。</div>
-  </section>
 </div>
 
 <script>
-const root=document.documentElement;
-document.getElementById('themeBtn').addEventListener('click',()=>{
-  root.setAttribute('data-theme',root.getAttribute('data-theme')==='dark'?'light':'dark');
-});
+const TASK_DEFS = [
+  {id:'task01', label:'研修会演題と目的案を作成', key:'研修会演題と目的案を作成_CHECK', phase:'準備フェーズ（開催前〜起案1）'},
+  {id:'task02', label:'講師にメールで確認', key:'講師にメールで確認_CHECK'},
+  {id:'task03', label:'マネジメントセンターにHP個別ページブランチ作成依頼', key:'HPブランチ作成依頼_CHECK'},
+  {id:'task04', label:'WordPressでHPページ更新を設定と予約投稿設定', key:'WordPress設定予約投稿_CHECK'},
+  {id:'task05', label:'起案1_開催', key:'起案1_開催_CHECK'},
+  {id:'task06', label:'HP公開設定依頼', key:'HP公開設定依頼_CHECK', phase:'広報・HP公開フェーズ'},
+  {id:'task07', label:'HP公開・受付開始', key:'HP公開受付開始_CHECK'},
+  {id:'task08', label:'HP公開開始のご案内メール', key:'HP公開開始案内メール_CHECK'},
+  {id:'task09', label:'電子カルテ掲示板の掲載内容確認', key:'電子カルテ掲示板掲載確認_CHECK'},
+  {id:'task10', label:'院内配布用チラシ１回目配布', key:'院内チラシ1回目配布_CHECK'},
+  {id:'task11', label:'院内配布用チラシ２回目配布', key:'院内チラシ2回目配布_CHECK', phase:'チラシ・講師対応フェーズ'},
+  {id:'task12', label:'講師リマインドメール', key:'講師リマインドメール_CHECK'},
+  {id:'task13', label:'講師スライド入手', key:'講師スライド入手_CHECK'},
+  {id:'task14', label:'共催枠について、企画人材班への協力要請文作成', key:'共催企画人材班協力要請_CHECK'},
+  {id:'task15', label:'事前受付終了・Web受講希望者リストの書き出し', key:'事前受付終了Webリスト書出し_CHECK'},
+  {id:'task16', label:'起案2_資料', key:'起案2_資料_CHECK', phase:'起案2・資料準備フェーズ'},
+  {id:'task17', label:'追加資料の有無を確認', key:'追加資料有無確認_CHECK'},
+  {id:'task18', label:'企画人材班と配布資料を共有', key:'企画人材班配布資料共有_CHECK'},
+  {id:'task19', label:'防災センターに報告', key:'防災センター報告_CHECK'},
+  {id:'task20', label:'講師と受講者にリマインドメール①', key:'講師受講者リマインド1_CHECK'},
+  {id:'task21', label:'研修会当日の準備', key:'研修会当日準備_CHECK', phase:'当日直前・本番フェーズ'},
+  {id:'task22', label:'講師と受講者にリマインドメール②', key:'講師受講者リマインド2_CHECK'},
+  {id:'task23', label:'使用するパソコンのシステム更新確認', key:'PCシステム更新確認_CHECK'},
+  {id:'task24', label:'研修会本番', key:'研修会本番_CHECK'},
+  {id:'task25', label:'Zoomレポートダウンロード', key:'Zoomレポートダウンロード_CHECK', phase:'事後処理フェーズ（起案3〜完了）'},
+  {id:'task26', label:'会場参加者のデータを企画人材班に提供依頼', key:'会場参加者データ企画人材班_CHECK'},
+  {id:'task27', label:'出席者を受講者リストに入力', key:'出席者受講者リスト入力_CHECK'},
+  {id:'task28', label:'起案3_受講証', key:'起案3_受講証_CHECK'},
+  {id:'task29', label:'講師へお礼の連絡', key:'講師へお礼連絡_CHECK'},
+  {id:'task30', label:'受講者数と内訳報告', key:'受講者数内訳報告_CHECK'},
+  {id:'task31', label:'謝金支払い', key:'謝金支払い_CHECK'},
+  {id:'task32', label:'謝金の支払について講師にメール', key:'謝金講師メール_CHECK'},
+  {id:'task33', label:'受講証・修了証書メール交付', key:'受講証修了証メール交付_CHECK'}
+];
 
+const DEFAULT_HEADERS = [
+  '起案行No','年度_YEAR_1','開催日_DATE_1','曜日 _DAY','講義開始_START_TIME','研修会開始_START_1','研修会終了_END_1',
+  '質疑応答締切_QA_DADLINE','質疑応答_QA_TIME','事前打合せ開始時間_PRE_MEETING','研修会入室開始時間_TIME_1','時間（分）_TIME_2',
+  '〆切院外_DEADLINE_1','〆切時間院内_DEADLINE_2','配布資料DL〆切_DEADLINE_3','テーマ(標題)_TITLE','担当講師_SPEAKER',
+  '対象_SUBJECT_1','対象詳細_SUBJECT_2','講演場所_SITE','共催_COHOST_1','共催3(選択）_COHOST_3',
+  '起案1開催DATE_KIAN_1','起案2資料_DATE_KIAN_2','起案3受講証修了証_DATE_KIAN_3','HP案内開始チラシ配布',
+  '謝金_COST','目的_PURPOSE','メール用研修会開催日付_DATE_2','名前_NAME','Zoom_ID_WEBINER_ID','zoom_url_zoom_url',
+  'HP_URL_url_1','Zoom_パスコード_PASSCODE','進行表導入_INTRO_1','進行表研修会趣旨説明_INTRO_2',
+  '進行表講師紹介_INTRO_3','講義資料提供の締切_DATA_deadline','起案1チェック_CHECK_K1','HPチェック_CHECK_HP',
+  '起案2チェック_CHECK_K2','起案3チェック_CHECK_K3',
+  ...TASK_DEFS.map(t=>t.key)
+];
+
+const fullKeys = {
+  no:'起案行No',
+  year:'年度_YEAR_1',
+  date:'開催日_DATE_1',
+  day:'曜日 _DAY',
+  lectureStart:'講義開始_START_TIME',
+  start:'研修会開始_START_1',
+  end:'研修会終了_END_1',
+  qaDeadline:'質疑応答締切_QA_DADLINE',
+  qaTime:'質疑応答_QA_TIME',
+  preMeeting:'事前打合せ開始時間_PRE_MEETING',
+  roomOpen:'研修会入室開始時間_TIME_1',
+  duration:'時間（分）_TIME_2',
+  deadline1:'〆切院外_DEADLINE_1',
+  deadline2:'〆切時間院内_DEADLINE_2',
+  deadline3:'配布資料DL〆切_DEADLINE_3',
+  title:'テーマ(標題)_TITLE',
+  speaker:'担当講師_SPEAKER',
+  subject:'対象_SUBJECT_1',
+  subject2:'対象詳細_SUBJECT_2',
+  site:'講演場所_SITE',
+  cohost:'共催_COHOST_1',
+  cohost3:'共催3(選択）_COHOST_3',
+  k1:'起案1開催DATE_KIAN_1',
+  k2:'起案2資料_DATE_KIAN_2',
+  k3:'起案3受講証修了証_DATE_KIAN_3',
+  hp:'HP案内開始チラシ配布',
+  cost:'謝金_COST',
+  purpose:'目的_PURPOSE',
+  date2:'メール用研修会開催日付_DATE_2',
+  name:'名前_NAME',
+  zoomId:'Zoom_ID_WEBINER_ID',
+  zoomUrl:'zoom_url_zoom_url',
+  hpUrl:'HP_URL_url_1',
+  passcode:'Zoom_パスコード_PASSCODE',
+  intro1:'進行表導入_INTRO_1',
+  intro2:'進行表研修会趣旨説明_INTRO_2',
+  intro3:'進行表講師紹介_INTRO_3',
+  dataDeadline:'講義資料提供の締切_DATA_deadline',
+  checkK1:'起案1チェック_CHECK_K1',
+  checkHp:'HPチェック_CHECK_HP',
+  checkK2:'起案2チェック_CHECK_K2',
+  checkK3:'起案3チェック_CHECK_K3'
+};
+TASK_DEFS.forEach(t=>fullKeys[t.id]=t.key);
+
+let currentHeaders = [...DEFAULT_HEADERS];
+let rawRows = [];
+let dataRows = [];
+let selectedRow = null;
+let latestCsvBlob = null;
+let latestCsvName = 'clinical_research_training.csv';
+
+const els = {
+  themeBtn: document.getElementById('themeBtn'),
+  csvFile: document.getElementById('csvFile'),
+  csvOpenBtn: document.getElementById('csvOpenBtn'),
+  csvFileName: document.getElementById('csvFileName'),
+  newDbBtn: document.getElementById('newDbBtn'),
+  openConfirmBtn: document.getElementById('openConfirmBtn'),
+  recordSelect: document.getElementById('recordSelect'),
+  loadSelectedBtn: document.getElementById('loadSelectedBtn'),
+  appendBtn: document.getElementById('appendBtn'),
+  statusBox: document.getElementById('statusBox'),
+  miniDbState: document.getElementById('miniDbState'),
+  miniDbText: document.getElementById('miniDbText'),
+  miniNext: document.getElementById('miniNext'),
+  miniYearCount: document.getElementById('miniYearCount'),
+  sumAllTop: document.getElementById('sumAllTop'),
+  sumYearTop: document.getElementById('sumYearTop'),
+  sumNextTop: document.getElementById('sumNextTop'),
+  tableList: document.getElementById('tableList')
+};
+
+const fields = {
+  no: document.getElementById('fNo'),
+  year: document.getElementById('fYear'),
+  date: document.getElementById('fDate'),
+  day: document.getElementById('fDay'),
+  date2: document.getElementById('fDate2'),
+  name: document.getElementById('fName'),
+  title: document.getElementById('fTitle'),
+  speaker: document.getElementById('fSpeaker'),
+  lectureStart: document.getElementById('fLectureStart'),
+  start: document.getElementById('fStart'),
+  end: document.getElementById('fEnd'),
+  preMeeting: document.getElementById('fPreMeeting'),
+  qaDeadline: document.getElementById('fQaDeadline'),
+  qaTime: document.getElementById('fQaTime'),
+  roomOpen: document.getElementById('fRoomOpen'),
+  duration: document.getElementById('fDuration'),
+  deadline1: document.getElementById('fDeadline1'),
+  deadline2: document.getElementById('fDeadline2'),
+  deadline3: document.getElementById('fDeadline3'),
+  dataDeadline: document.getElementById('fDataDeadline'),
+  cost: document.getElementById('fCost'),
+  subject: document.getElementById('fSubject'),
+  subject2: document.getElementById('fSubject2'),
+  site: document.getElementById('fSite'),
+  cohost: document.getElementById('fCohost'),
+  cohost3: document.getElementById('fCohost3'),
+  zoomId: document.getElementById('fZoomId'),
+  passcode: document.getElementById('fPasscode'),
+  zoomUrl: document.getElementById('fZoomUrl'),
+  hpUrl: document.getElementById('fHpUrl'),
+  purpose: document.getElementById('fPurpose'),
+  intro1: document.getElementById('fIntro1'),
+  intro2: document.getElementById('fIntro2'),
+  intro3: document.getElementById('fIntro3')
+};
+
+function esc(v){return String(v ?? '').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]))}
+function setStatus(msg){els.statusBox.textContent = msg}
+function boolToCsv(v){return v ? '1' : '0'}
+function isCheckedValue(v){
+  const s = String(v ?? '').trim().toLowerCase();
+  return ['1','true','yes','y','on','checked','済','済み'].includes(s);
+}
+function pad(n){return String(n).padStart(2,'0')}
+function formatJapaneseDate(iso){
+  if(!iso) return '';
+  const d = new Date(iso + 'T00:00:00');
+  if(isNaN(d)) return '';
+  return `${d.getMonth()+1}/${d.getDate()}（${'日月火水木金土'[d.getDay()]}）`;
+}
+function calcWeekday(iso){
+  if(!iso) return '';
+  const d = new Date(iso + 'T00:00:00');
+  if(isNaN(d)) return '';
+  return '日月火水木金土'[d.getDay()];
+}
+function addDays(iso, days){
+  if(!iso) return '';
+  const d = new Date(iso + 'T00:00:00');
+  if(isNaN(d)) return '';
+  d.setDate(d.getDate() + days);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function fmtMonthDay(iso){
+  if(!iso) return '';
+  const d = new Date(iso + 'T00:00:00');
+  if(isNaN(d)) return '';
+  return `${d.getMonth()+1}/${d.getDate()}（${'日月火水木金土'[d.getDay()]}）`;
+}
+function timeToMinutes(t){
+  if(!t || !/^\d{2}:\d{2}$/.test(t)) return null;
+  const [h,m] = t.split(':').map(Number);
+  return h*60+m;
+}
+function minutesToTime(v){
+  if(v == null) return '';
+  const h = Math.floor(v/60);
+  const m = v%60;
+  return `${pad(h)}:${pad(m)}`;
+}
+function parseShortJapaneseDate(v, yearText){
+  const s = String(v||'').trim();
+  const m = s.match(/(\d{1,2})\/(\d{1,2})/);
+  const y = String(yearText||'').match(/(\d{4})/);
+  if(!m || !y) return null;
+  return new Date(`${y[1]}-${pad(m[1])}-${pad(m[2])}T00:00:00`);
+}
+function toIsoDateFromShortDate(v, yearText){
+  const d = parseShortJapaneseDate(v, yearText);
+  if(!d || isNaN(d)) return '';
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function nextNo(){
+  return String(dataRows.reduce((m,r)=>Math.max(m, Number(r[fullKeys.no]||0)), 0) + 1);
+}
+function ensureAdditionalHeaders(headers){
+  const set = new Set(headers);
+  DEFAULT_HEADERS.forEach(h=>set.add(h));
+  return Array.from(set);
+}
+
+function buildTaskChecklist(){
+  const box = document.getElementById('taskCheckList');
+  let html = '';
+  let currentPhase = '';
+  TASK_DEFS.forEach((t, idx)=>{
+    if(t.phase && t.phase !== currentPhase){
+      currentPhase = t.phase;
+      html += `<div class="task-phase-label"><span class="small-label">${esc(currentPhase)}</span></div>`;
+    }
+    html += `
+      <div class="schedule-card" id="taskcard_${t.id}">
+        <div class="schedule-left">
+          <span class="small-label">Task ${String(idx+1).padStart(2,'0')}</span>
+          <strong>${esc(t.label)}</strong>
+        </div>
+        <label class="schedule-check">
+          <input type="checkbox" id="ck_${t.id}">
+          <span>完了</span>
+        </label>
+      </div>
+    `;
+  });
+  box.innerHTML = html;
+  TASK_DEFS.forEach(t=>{
+    const el = document.getElementById(`ck_${t.id}`);
+    if(el) el.addEventListener('change', updateTaskProgress);
+  });
+}
 function updateTaskProgress(){
-  const total=33;
-  let done=0;
-  for(let i=1;i<=33;i++){
-    const num=String(i).padStart(2,'0');
-    const cb=document.getElementById('ck_task'+num);
-    const card=document.getElementById('taskcard_task'+num);
-    if(cb&&cb.checked) done++;
-    if(card) card.classList.toggle('done',cb?.checked||false);
-  }
-  const remain=total-done;
-  const pct=Math.round(done/total*100);
-  const doneEl=document.getElementById('taskDoneCount');
-  const remEl=document.getElementById('taskRemainCount');
-  const pctEl=document.getElementById('taskProgressPct');
-  const barEl=document.getElementById('taskProgressBar');
-  if(doneEl)doneEl.textContent=done;
-  if(remEl)remEl.textContent=remain;
-  if(pctEl)pctEl.textContent=pct+'%';
-  if(barEl)barEl.style.width=pct+'%';
+  const total = TASK_DEFS.length;
+  let done = 0;
+  TASK_DEFS.forEach(t=>{
+    const cb = document.getElementById(`ck_${t.id}`);
+    const card = document.getElementById(`taskcard_${t.id}`);
+    const checked = !!cb?.checked;
+    if(checked) done++;
+    if(card) card.classList.toggle('done', checked);
+  });
+  const remain = total - done;
+  const pct = Math.round(done / total * 100);
+  document.getElementById('taskDoneCount').textContent = String(done);
+  document.getElementById('taskRemainCount').textContent = String(remain);
+  document.getElementById('taskProgressPct').textContent = `${pct}%`;
+  document.getElementById('taskProgressBar').style.width = `${pct}%`;
 }
-
-function toggleTaskChecklist(forceOpen){
-  const panel=document.getElementById('taskChecklistPanel');
-  const btn=document.getElementById('taskToggleBtn');
-  if(!panel||!btn)return;
-
-  const shouldOpen=
-    typeof forceOpen==='boolean'
-      ? forceOpen
-      : panel.classList.contains('is-collapsed');
-
-  panel.classList.toggle('is-collapsed',!shouldOpen);
-  btn.textContent=shouldOpen?'閉じる':'開く';
-  btn.setAttribute('aria-expanded',shouldOpen?'true':'false');
-}
-
 function resetAllTasks(){
-  for(let i=1;i<=33;i++){
-    const num=String(i).padStart(2,'0');
-    const el=document.getElementById('ck_task'+num);
-    if(el) el.checked=false;
-  }
+  TASK_DEFS.forEach(t=>{
+    const cb = document.getElementById(`ck_${t.id}`);
+    if(cb) cb.checked = false;
+  });
   updateTaskProgress();
 }
+function resetScheduleChecks(){
+  ['ckK1','ckHp','ckK2','ckK3'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.checked = false;
+  });
+  resetAllTasks();
+}
+function applyScheduleChecksFromRow(row){
+  document.getElementById('ckK1').checked = isCheckedValue(row?.[fullKeys.checkK1]);
+  document.getElementById('ckHp').checked = isCheckedValue(row?.[fullKeys.checkHp]);
+  document.getElementById('ckK2').checked = isCheckedValue(row?.[fullKeys.checkK2]);
+  document.getElementById('ckK3').checked = isCheckedValue(row?.[fullKeys.checkK3]);
+  TASK_DEFS.forEach(t=>{
+    const el = document.getElementById(`ck_${t.id}`);
+    if(el) el.checked = isCheckedValue(row?.[t.key]);
+  });
+  updateTaskProgress();
+}
+function syncCohostFields(){
+  fields.cohost3.value = fields.cohost.value === '企画人材班' ? '企画人材班' : '';
+}
+function syncComputedFields(){
+  const date = fields.date.value;
+  fields.day.value = calcWeekday(date);
+  fields.date2.value = formatJapaneseDate(date);
+  fields.subject2.value = fields.subject.value;
 
-(function(){
-  const initTaskChecklist=()=>{
-    toggleTaskChecklist(true);
-    updateTaskProgress();
-  };
+  const startMin = timeToMinutes(fields.start.value);
+  const endMin = timeToMinutes(fields.end.value);
+  const lectureMin = timeToMinutes(fields.lectureStart.value);
 
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',initTaskChecklist);
-  }else{
-    setTimeout(initTaskChecklist,100);
+  if(startMin != null) fields.roomOpen.value = minutesToTime(startMin - 15);
+  if(startMin != null && endMin != null && endMin >= startMin) fields.duration.value = `${endMin - startMin}分`;
+
+  fields.deadline1.value = fmtMonthDay(addDays(date,-14));
+  fields.deadline2.value = fmtMonthDay(addDays(date,-10));
+  fields.deadline3.value = fmtMonthDay(addDays(date,-3));
+  fields.dataDeadline.value = fmtMonthDay(addDays(date,-7));
+
+  document.getElementById('dK1').textContent = fmtMonthDay(addDays(date,-35)) || '-';
+  document.getElementById('dHp').textContent = fmtMonthDay(addDays(date,-28)) || '-';
+  document.getElementById('dK2').textContent = fmtMonthDay(addDays(date,-7)) || '-';
+  document.getElementById('dK3').textContent = fmtMonthDay(addDays(date,1)) || '-';
+  document.getElementById('dRoomOpen').textContent = fields.roomOpen.value || '-';
+  document.getElementById('dDuration').textContent = fields.duration.value || '-';
+  document.getElementById('dLectureStart').textContent = fields.lectureStart.value || '-';
+  document.getElementById('dPreMeeting').textContent = fields.preMeeting.value || '-';
+  document.getElementById('dQaDeadline').textContent = fields.qaDeadline.value || '-';
+  document.getElementById('dQaTime').textContent = fields.qaTime.value || '-';
+  document.getElementById('dDeadline1').textContent = fields.deadline1.value || '-';
+  document.getElementById('dDeadline2').textContent = fields.deadline2.value || '-';
+  document.getElementById('dDeadline3').textContent = fields.deadline3.value || '-';
+  document.getElementById('dDataDeadline').textContent = fields.dataDeadline.value || '-';
+  document.getElementById('dDate2').textContent = fields.date2.value || '-';
+  document.getElementById('dSubject2').textContent = fields.subject2.value || '-';
+
+  if(lectureMin != null && !fields.preMeeting.value){
+    fields.preMeeting.value = minutesToTime(Math.max(lectureMin - 15, 0));
+    document.getElementById('dPreMeeting').textContent = fields.preMeeting.value || '-';
   }
-})();
+}
+function buildRow(){
+  const row = {};
+  currentHeaders.forEach(h=>row[h]='');
+
+  row[fullKeys.no] = fields.no.value.trim();
+  row[fullKeys.year] = fields.year.value.trim();
+  row[fullKeys.date] = fields.date2.value.trim();
+  row[fullKeys.day] = fields.day.value.trim();
+  row[fullKeys.lectureStart] = fields.lectureStart.value.trim();
+  row[fullKeys.start] = fields.start.value.trim();
+  row[fullKeys.end] = fields.end.value.trim();
+  row[fullKeys.qaDeadline] = fields.qaDeadline.value.trim();
+  row[fullKeys.qaTime] = fields.qaTime.value.trim();
+  row[fullKeys.preMeeting] = fields.preMeeting.value.trim();
+  row[fullKeys.roomOpen] = fields.roomOpen.value.trim();
+  row[fullKeys.duration] = fields.duration.value.trim();
+  row[fullKeys.deadline1] = fields.deadline1.value.trim();
+  row[fullKeys.deadline2] = fields.deadline2.value.trim();
+  row[fullKeys.deadline3] = fields.deadline3.value.trim();
+  row[fullKeys.title] = fields.title.value.trim();
+  row[fullKeys.speaker] = fields.speaker.value.trim();
+  row[fullKeys.subject] = fields.subject.value.trim();
+  row[fullKeys.subject2] = fields.subject2.value.trim();
+  row[fullKeys.site] = fields.site.value.trim();
+  row[fullKeys.cohost] = fields.cohost.value.trim();
+  row[fullKeys.cohost3] = fields.cohost3.value.trim();
+  row[fullKeys.k1] = document.getElementById('dK1').textContent.trim();
+  row[fullKeys.k2] = document.getElementById('dK2').textContent.trim();
+  row[fullKeys.k3] = document.getElementById('dK3').textContent.trim();
+  row[fullKeys.hp] = document.getElementById('dHp').textContent.trim();
+  row[fullKeys.cost] = fields.cost.value.trim();
+  row[fullKeys.purpose] = fields.purpose.value.trim();
+  row[fullKeys.date2] = fields.date2.value.trim();
+  row[fullKeys.name] = fields.name.value.trim();
+  row[fullKeys.zoomId] = fields.zoomId.value.trim();
+  row[fullKeys.zoomUrl] = fields.zoomUrl.value.trim();
+  row[fullKeys.hpUrl] = fields.hpUrl.value.trim();
+  row[fullKeys.passcode] = fields.passcode.value.trim();
+  row[fullKeys.intro1] = fields.intro1.value.trim();
+  row[fullKeys.intro2] = fields.intro2.value.trim();
+  row[fullKeys.intro3] = fields.intro3.value.trim();
+  row[fullKeys.dataDeadline] = fields.dataDeadline.value.trim();
+  row[fullKeys.checkK1] = boolToCsv(document.getElementById('ckK1').checked);
+  row[fullKeys.checkHp] = boolToCsv(document.getElementById('ckHp').checked);
+  row[fullKeys.checkK2] = boolToCsv(document.getElementById('ckK2').checked);
+  row[fullKeys.checkK3] = boolToCsv(document.getElementById('ckK3').checked);
+
+  TASK_DEFS.forEach(t=>{
+    row[t.key] = boolToCsv(document.getElementById(`ck_${t.id}`)?.checked);
+  });
+
+  return row;
+}
+function renderRecordOptions(){
+  const options = ['<option value="">Noを選択して表示</option>']
+    .concat(dataRows.map(r=>`<option value="${esc(r[fullKeys.no]||'')}">No.${esc(r[fullKeys.no]||'')} / ${esc(r[fullKeys.date]||'-')} / ${esc(r[fullKeys.title]||'-')}</option>`));
+  els.recordSelect.innerHTML = options.join('');
+}
+function renderTable(){
+  if(!dataRows.length){
+    els.tableList.innerHTML = '<div class="table-row"><div>-</div><div>-</div><div>現在は空のマスターです。最初の1件を登録してください。</div><div>-</div><div>-</div><div>-</div></div>';
+    return;
+  }
+  els.tableList.innerHTML = dataRows.map(r=>{
+    const mark = isCheckedValue(r[fullKeys.checkK1]) ? '✓ ' : '';
+    return `<div class="table-row"><div><span class="badge">${esc(r[fullKeys.no]||'')}</span></div><div>${esc(r[fullKeys.date]||'-')}</div><div><strong>${esc(r[fullKeys.title]||'-')}</strong></div><div><p>${esc(r[fullKeys.speaker]||'-')}</p></div><div>${esc(r[fullKeys.subject]||'-')}</div><div>${mark}${esc(r[fullKeys.k1]||'-')}</div></div>`;
+  }).join('');
+}
+function renderStats(){
+  const total = dataRows.length;
+  const next = nextNo();
+  const currentYearText = fields.year.value || `${new Date().getFullYear()}年`;
+  const yearCount = dataRows.filter(r=>String(r[fullKeys.year]||'').trim() === currentYearText.trim()).length;
+  els.sumAllTop.textContent = String(total);
+  els.sumYearTop.textContent = String(yearCount);
+  els.sumNextTop.textContent = next;
+  els.miniNext.textContent = next;
+  els.miniYearCount.textContent = String(yearCount);
+}
+function enableAfterLoad(){
+  els.recordSelect.disabled = false;
+  els.loadSelectedBtn.disabled = false;
+  els.appendBtn.disabled = false;
+  els.openConfirmBtn.disabled = false;
+}
+function createNewDb(){
+  currentHeaders = [...DEFAULT_HEADERS];
+  rawRows = [];
+  dataRows = [];
+  selectedRow = null;
+  latestCsvBlob = null;
+  els.csvFileName.value = '新規DB';
+  els.miniDbState.textContent = '新規DB';
+  els.miniDbText.textContent = '空のデータベースを作成しました';
+  fields.no.value = nextNo();
+  resetScheduleChecks();
+  syncComputedFields();
+  renderRecordOptions();
+  renderTable();
+  renderStats();
+  enableAfterLoad();
+  setStatus('新規データベースを作成しました。入力して保存できます。');
+}
+function loadCsvText(text, fileName='clinical_research_training.csv'){
+  const parsed = Papa.parse(text, {header:true, skipEmptyLines:true});
+  currentHeaders = ensureAdditionalHeaders(parsed.meta.fields || []);
+  rawRows = (parsed.data || []).map(r=>{
+    const row = {};
+    currentHeaders.forEach(h=>row[h] = r[h] ?? '');
+    return row;
+  });
+  dataRows = [...rawRows];
+  latestCsvName = fileName;
+  els.csvFileName.value = fileName;
+  els.miniDbState.textContent = 'CSV読込済';
+  els.miniDbText.textContent = `${dataRows.length}件のデータを読み込みました`;
+  fields.no.value = nextNo();
+  renderRecordOptions();
+  renderTable();
+  renderStats();
+  enableAfterLoad();
+  resetScheduleChecks();
+  syncComputedFields();
+  setStatus(`CSVを読み込みました: ${fileName}`);
+}
+function loadSelectedIntoForm(){
+  const no = els.recordSelect.value;
+  if(!no){
+    setStatus('先にNoを選択してください。');
+    return;
+  }
+  const row = dataRows.find(r=>String(r[fullKeys.no]||'').trim()===String(no).trim());
+  if(!row){
+    setStatus('該当Noが見つかりません。');
+    return;
+  }
+  selectedRow = row;
+
+  fields.no.value = row[fullKeys.no] || '';
+  fields.year.value = row[fullKeys.year] || '';
+  fields.date.value = toIsoDateFromShortDate(row[fullKeys.date], row[fullKeys.year]);
+  fields.day.value = row[fullKeys.day] || '';
+  fields.date2.value = row[fullKeys.date2] || '';
+  fields.name.value = row[fullKeys.name] || '';
+  fields.title.value = row[fullKeys.title] || '';
+  fields.speaker.value = row[fullKeys.speaker] || '';
+  fields.lectureStart.value = row[fullKeys.lectureStart] || '';
+  fields.start.value = row[fullKeys.start] || '';
+  fields.end.value = row[fullKeys.end] || '';
+  fields.preMeeting.value = row[fullKeys.preMeeting] || '';
+  fields.qaDeadline.value = row[fullKeys.qaDeadline] || '';
+  fields.qaTime.value = row[fullKeys.qaTime] || '';
+  fields.roomOpen.value = row[fullKeys.roomOpen] || '';
+  fields.duration.value = row[fullKeys.duration] || '';
+  fields.deadline1.value = row[fullKeys.deadline1] || '';
+  fields.deadline2.value = row[fullKeys.deadline2] || '';
+  fields.deadline3.value = row[fullKeys.deadline3] || '';
+  fields.dataDeadline.value = row[fullKeys.dataDeadline] || '';
+  fields.cost.value = row[fullKeys.cost] || '';
+  fields.subject.value = row[fullKeys.subject] || '研究者';
+  fields.subject2.value = row[fullKeys.subject2] || '';
+  fields.site.value = row[fullKeys.site] || 'Web会議室';
+  fields.cohost.value = row[fullKeys.cohost] || 'なし';
+  fields.cohost3.value = row[fullKeys.cohost3] || '';
+  fields.zoomId.value = row[fullKeys.zoomId] || '';
+  fields.passcode.value = row[fullKeys.passcode] || '';
+  fields.zoomUrl.value = row[fullKeys.zoomUrl] || '';
+  fields.hpUrl.value = row[fullKeys.hpUrl] || '';
+  fields.purpose.value = row[fullKeys.purpose] || '';
+  fields.intro1.value = row[fullKeys.intro1] || '';
+  fields.intro2.value = row[fullKeys.intro2] || '';
+  fields.intro3.value = row[fullKeys.intro3] || '';
+
+  document.getElementById('dK1').textContent = row[fullKeys.k1] || '-';
+  document.getElementById('dHp').textContent = row[fullKeys.hp] || '-';
+  document.getElementById('dK2').textContent = row[fullKeys.k2] || '-';
+  document.getElementById('dK3').textContent = row[fullKeys.k3] || '-';
+  document.getElementById('dRoomOpen').textContent = row[fullKeys.roomOpen] || '-';
+  document.getElementById('dDuration').textContent = row[fullKeys.duration] || '-';
+  document.getElementById('dLectureStart').textContent = row[fullKeys.lectureStart] || '-';
+  document.getElementById('dPreMeeting').textContent = row[fullKeys.preMeeting] || '-';
+  document.getElementById('dQaDeadline').textContent = row[fullKeys.qaDeadline] || '-';
+  document.getElementById('dQaTime').textContent = row[fullKeys.qaTime] || '-';
+  document.getElementById('dDeadline1').textContent = row[fullKeys.deadline1] || '-';
+  document.getElementById('dDeadline2').textContent = row[fullKeys.deadline2] || '-';
+  document.getElementById('dDeadline3').textContent = row[fullKeys.deadline3] || '-';
+  document.getElementById('dDataDeadline').textContent = row[fullKeys.dataDeadline] || '-';
+  document.getElementById('dDate2').textContent = row[fullKeys.date2] || '-';
+  document.getElementById('dSubject2').textContent = row[fullKeys.subject2] || '-';
+
+  applyScheduleChecksFromRow(row);
+  setStatus(`No.${row[fullKeys.no]} を入力欄へ反映しました。`);
+}
+function exportCsv(){
+  const csv = Papa.unparse(dataRows, {columns: currentHeaders});
+  latestCsvBlob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+}
+function downloadCsv(){
+  if(!latestCsvBlob){
+    exportCsv();
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(latestCsvBlob);
+  a.download = latestCsvName || 'clinical_research_training.csv';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+function saveCurrentRow(){
+  if(!currentHeaders.length){
+    setStatus('先にCSVを読み込むか、新規DBを作成してください。');
+    return;
+  }
+  if(!fields.no.value.trim()){
+    setStatus('No を入力してください。');
+    return;
+  }
+  syncComputedFields();
+  const row = buildRow();
+  const idx = dataRows.findIndex(r=>String(r[fullKeys.no]||'').trim()===String(row[fullKeys.no]).trim());
+  if(idx >= 0){
+    dataRows[idx] = row;
+  }else{
+    dataRows.push(row);
+  }
+  dataRows.sort((a,b)=>Number(a[fullKeys.no]||0)-Number(b[fullKeys.no]||0));
+  rawRows = [...dataRows];
+  renderRecordOptions();
+  renderTable();
+  renderStats();
+  exportCsv();
+  setStatus(`No.${row[fullKeys.no]} を保存しました。CSVを更新できます。`);
+}
+function bindRecalc(){
+  [fields.date,fields.start,fields.end,fields.lectureStart,fields.qaDeadline,fields.qaTime,fields.preMeeting,fields.subject,fields.cohost]
+    .forEach(el=>el.addEventListener('input', ()=>{
+      syncCohostFields();
+      syncComputedFields();
+    }));
+}
+
+document.getElementById('taskResetBtn').addEventListener('click', resetAllTasks);
+els.themeBtn.addEventListener('click', ()=>{
+  document.documentElement.setAttribute('data-theme',
+    document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+  );
+});
+els.csvOpenBtn.addEventListener('click', ()=>els.csvFile.click());
+els.csvFile.addEventListener('change', (e)=>{
+  const file = e.target.files && e.target.files[0];
+  if(!file){
+    els.csvFileName.value = '';
+    return;
+  }
+  els.csvFileName.value = file.name;
+  const reader = new FileReader();
+  reader.onload = ev => loadCsvText(String(ev.target.result || ''), file.name);
+  reader.readAsText(file, 'utf-8');
+});
+els.newDbBtn.addEventListener('click', createNewDb);
+els.loadSelectedBtn.addEventListener('click', loadSelectedIntoForm);
+els.appendBtn.addEventListener('click', saveCurrentRow);
+els.recordSelect.addEventListener('change', ()=>{
+  selectedRow = dataRows.find(r=>String(r[fullKeys.no]||'').trim()===String(els.recordSelect.value||'').trim()) || null;
+});
+
+fields.year.addEventListener('input', renderStats);
+fields.no.value = nextNo();
+buildTaskChecklist();
+bindRecalc();
+syncCohostFields();
+syncComputedFields();
+updateTaskProgress();
+
+document.addEventListener('keydown', (e)=>{
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's'){
+    e.preventDefault();
+    if(!els.appendBtn.disabled) saveCurrentRow();
+  }
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd'){
+    e.preventDefault();
+    downloadCsv();
+  }
+});
 </script>
 </body>
 </html>
