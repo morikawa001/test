@@ -225,6 +225,7 @@ window.updateTaskProgress = updateTaskProgress;
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{
   min-height:100%;
+  overflow-x:hidden;
   background:
     linear-gradient(var(--page-grid-line) 1px, transparent 1px),
     linear-gradient(90deg, var(--page-grid-line) 1px, transparent 1px),
@@ -343,9 +344,8 @@ input[readonly],textarea[readonly]{
 }
 .hero-stats{
   display:grid;
-  grid-template-columns:repeat(3,minmax(130px,1fr));
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:10px;
-  min-width:390px;
 }
 .stat-box,.mini-box,.summary-box,.date-card,.status-box,.hint-box,.table-row,.template-row,.alert-item,.list-row,.param-side,.schedule-card{
   background:var(--panel2);
@@ -754,7 +754,7 @@ label[for="templateFiles"] {
   .main-grid>#nixieClockPanel,.main-grid>.side-stack{grid-column:auto;grid-row:auto}
 }
 @media (max-width:860px){
-  .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.hero-stats,.table-head,.table-row,.template-row,.alert-item,.schedule-card{
+  .master-grid,.auto-grid,.summary-grid,.mini-grid,.action-grid,.table-head,.table-row,.template-row,.alert-item,.schedule-card{
     grid-template-columns:1fr;
   }
 }
@@ -807,6 +807,103 @@ label[for="templateFiles"] {
 }
 @media (max-width:860px){
   .task-sub-grid{grid-template-columns:1fr !important}
+}
+
+/* ── モバイル対応 (480px以下) ── */
+@media (max-width:480px){
+  /* 全体余白 */
+  .wrap{ padding:10px; gap:10px; }
+
+  /* パネル内余白 */
+  .panel,.hero-panel,.command-panel{ padding:12px; gap:12px; }
+
+  /* 全グリッドを各1カラム（hero-stats は除外） */
+  .hero-grid,.main-grid,.dual-grid,.parameter-wrap,
+  .master-grid,.auto-grid,.action-grid,.summary-grid,
+  .mini-grid,.task-sub-grid,
+  .table-head,.table-row,.template-row,.alert-item,
+  .schedule-card,.param-side{
+    grid-template-columns:1fr !important;
+  }
+
+  /* hero-stats は常に 3×3 グリッドを維持 */
+  .hero-stats{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:8px;
+  }
+  .hero-stats .stat-box{
+    padding:10px 8px;
+  }
+  .hero-stats .stat-box b{
+    font-size:1.0rem;
+  }
+  .hero-stats .stat-box span{
+    font-size:.62rem;
+    letter-spacing:.08em;
+  }
+  /* btn も3×3に並ぶよう幅100%・中央揃え */
+  .hero-stats .btn{
+    width:100%;
+    min-height:38px;
+    font-size:.72rem;
+    padding:0 6px;
+    text-align:center;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  /* main-grid 内のグリッド配置リセット */
+  .main-grid>#nixieClockPanel,
+  .main-grid>.side-stack{
+    grid-column:auto !important;
+    grid-row:auto !important;
+  }
+
+  /* ボタン */
+  .btn{ min-height:42px; font-size:.9rem; padding:0 12px; width:100%; }
+  .btn.small{ min-height:34px; font-size:.8rem; padding:0 10px; width:auto; }
+  .btn.small.manual-btn{ font-size:.68rem; padding:0 7px; min-height:26px; }
+  .control-row,.footer-actions,.panel-nav-actions{
+    flex-direction:column; gap:8px;
+  }
+  .control-row .btn,.footer-actions .btn{ width:100%; }
+
+  /* ヘッダ */
+  .panel-head{ flex-direction:column; align-items:flex-start; gap:8px; }
+  .panel-head h2{ font-size:.92rem; }
+  .panel-head p{ font-size:.82rem; }
+
+  /* テキストエリア */
+  textarea{ font-size:.88rem; }
+  input,select{ font-size:.88rem; }
+
+  /* テーブル */
+  .table-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+
+  /* stat/mini-box 文字サイズ */
+  .stat-box b,.summary-box b,.mini-box b{ font-size:1.1rem; }
+  .stat-box span,.mini-box span,.summary-box span{ font-size:.68rem; }
+
+  /* スケジュールカード */
+  .schedule-card{ padding:10px 12px; }
+  .date-card{ padding:10px 12px; }
+
+  /* parameter gauge */
+  .param-gauge{ max-width:220px; }
+
+  /* Nixie clock */
+  .nixie-time-digit{ font-size:1.3rem; padding:3px 7px; }
+  .nixie-digit{ font-size:.9rem; padding:2px 5px; }
+  .nixie-colon{ font-size:1.3rem; }
+
+  /* トグルボタン行 */
+  #taskToggleBtn{ width:auto; }
+  .task-toggle-btn{ font-size:.72rem; }
+
+  /* ヘイドローテキスト */
+  .hero-panel{ padding:12px 14px; }
+  .hero-panel h1{ font-size:1.1rem; }
 }
 
 /* ── Dual Theme Control UI ナビゲーションボタン ── */
