@@ -1,450 +1,245 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>研究計画書モック（ライトグリーン）</title>
+  <meta charset="UTF-8">
+  <title>事前申込者一覧 加工ツール（ブラウザ版）</title>
+  <!-- SheetJS (xlsx) CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
-    :root{
-      --bg:#f3fbf4;
-      --bg-soft:#eef8ef;
-      --panel:#ffffff;
-      --line:#7fbf90;
-      --line-soft:#cfe8d5;
-      --accent:#69b67a;
-      --accent-dark:#4e9d61;
-      --accent-pale:#dff3e3;
-      --text:#1f2a22;
-      --sub:#526057;
-      --warn:#c75b5b;
-      --paper:#ffffff;
-      --paper-line:#2c2c2c;
-      --shadow:0 8px 24px rgba(71, 118, 82, 0.12);
-      --radius:14px;
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
     }
-
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0}
-    body{
-      font-family:"Yu Gothic","Meiryo",system-ui,sans-serif;
-      background:linear-gradient(180deg,#f6fdf7 0%, #edf8ef 100%);
-      color:var(--text);
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
-
-    .wrap{
-      max-width:1600px;
-      margin:0 auto;
-      padding:16px;
+    h1 {
+      font-size: 20px;
+      margin-bottom: 8px;
     }
-
-    .topbar{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-bottom:16px;
+    p.description {
+      color: #555;
+      font-size: 14px;
+      margin-top: 0;
     }
-
-    .topbar button{
-      border:none;
-      border-radius:10px;
-      padding:11px 16px;
-      font-size:14px;
-      font-weight:700;
-      cursor:pointer;
-      background:var(--accent);
-      color:#fff;
-      box-shadow:var(--shadow);
+    .form-row {
+      margin-bottom: 16px;
     }
-
-    .topbar .secondary{
-      background:#fff;
-      color:var(--accent-dark);
-      border:1px solid var(--line);
-      box-shadow:none;
+    label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
     }
-
-    .layout{
-      display:grid;
-      grid-template-columns:400px 1fr;
-      gap:18px;
-      align-items:start;
-    }
-
-    .panel{
-      position:sticky;
-      top:16px;
-      background:rgba(255,255,255,0.92);
-      backdrop-filter:blur(8px);
-      border:1px solid var(--line-soft);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:18px;
-      max-height:calc(100vh - 32px);
-      overflow:auto;
-    }
-
-    .panel h1{
-      font-size:22px;
-      margin:0 0 6px;
-      color:var(--accent-dark);
-    }
-
-    .panel .lead{
-      font-size:13px;
-      color:var(--sub);
-      margin:0 0 16px;
-      line-height:1.6;
-    }
-
-    .section{
-      margin-top:18px;
-      padding-top:14px;
-      border-top:1px solid var(--line-soft);
-    }
-
-    .section h2{
-      font-size:15px;
-      margin:0 0 10px;
-      color:var(--accent-dark);
-    }
-
-    label{
-      display:block;
-      font-size:12px;
-      font-weight:700;
-      margin:8px 0 4px;
-      color:var(--text);
-    }
-
     input[type="text"],
-    textarea,
-    select{
-      width:100%;
-      border:1px solid #bdddc5;
-      border-radius:10px;
-      padding:10px 12px;
-      font-size:13px;
-      font-family:inherit;
-      color:var(--text);
-      background:#fff;
-      outline:none;
+    input[type="file"] {
+      width: 100%;
+      max-width: 300px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
     }
-
-    input[type="text"]:focus,
-    textarea:focus,
-    select:focus{
-      border-color:var(--accent);
-      box-shadow:0 0 0 4px rgba(105,182,122,.15);
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      background-color: #0078d4;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
     }
-
-    textarea{
-      min-height:72px;
-      resize:vertical;
-      line-height:1.6;
+    button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
     }
-
-    .grid2{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
+    .status {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #333;
+      white-space: pre-line;
     }
-
-    .check-list{
-      display:grid;
-      gap:6px;
-      margin-top:6px;
-    }
-
-    .check-list label{
-      margin:0;
-      font-weight:500;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      font-size:13px;
-    }
-
-    .small{
-      font-size:11px;
-      color:var(--sub);
-      line-height:1.6;
-    }
-
-    .preview-area{
-      display:flex;
-      flex-direction:column;
-      gap:20px;
-      align-items:center;
-      min-width:0;
-      overflow:auto;
-    }
-
-    .preview-head{
-      width:min(100%, 980px);
-      background:var(--accent-pale);
-      border:1px solid var(--line-soft);
-      border-radius:14px;
-      padding:14px 16px;
-      color:var(--text);
-      box-shadow:var(--shadow);
-    }
-
-    .preview-head strong{
-      color:var(--accent-dark);
-    }
-
-    .page{
-      width:210mm;
-      min-height:297mm;
-      background:var(--paper);
-      box-shadow:0 12px 32px rgba(0,0,0,.10);
-      padding:7mm 8mm 8mm;
-      position:relative;
-      page-break-after:always;
-      break-after:page;
-    }
-
-    .page-inner{
-      min-height:calc(297mm - 15mm);
-      border:1.5px solid var(--paper-line);
-      padding:3.5mm 4mm 4mm;
-      background:#fff;
-    }
-
-    .doc-meta{
-      display:flex;
-      justify-content:space-between;
-      gap:8px;
-      font-size:10px;
-      margin-bottom:1.5mm;
-    }
-
-    .doc-title{
-      text-align:center;
-      font-size:18px;
-      font-weight:700;
-      letter-spacing:.06em;
-      margin:1mm 0 2mm;
-    }
-
-    .notice{
-      color:var(--warn);
-      font-size:10px;
-      line-height:1.4;
-      margin-bottom:1.5mm;
-    }
-
-    .page-no{
-      text-align:right;
-      font-size:10px;
-      margin-bottom:1.5mm;
-    }
-
-    table.form{
-      width:100%;
-      border-collapse:collapse;
-      table-layout:fixed;
-      font-size:10.5px;
-      line-height:1.3;
-    }
-
-    table.form th,
-    table.form td{
-      border:1.2px solid #222;
-      padding:4px 6px;
-      vertical-align:top;
-      word-break:break-word;
-    }
-
-    table.form th{
-      width:22%;
-      text-align:left;
-      background:#f7fcf8;
-      font-weight:700;
-    }
-
-    .cell-lines{
-      white-space:pre-wrap;
-    }
-
-    .tag{
-      display:inline-block;
-      padding:2px 8px;
-      border-radius:999px;
-      background:#e7f6ea;
-      color:#3f8450;
-      font-size:11px;
-      font-weight:700;
-      margin-right:6px;
-      margin-bottom:4px;
-    }
-
-    @media (max-width:1300px){
-      .layout{grid-template-columns:1fr}
-      .panel{position:static;max-height:none}
-      .page{width:100%;min-height:auto}
-      .page-inner{min-height:auto}
-    }
-
-    @media print{
-      body{background:#fff}
-      .topbar,.panel,.preview-head{display:none !important}
-      .wrap{max-width:none;padding:0}
-      .preview-area{gap:0;overflow:visible}
-      .page{
-        width:210mm;
-        height:297mm;
-        margin:0;
-        box-shadow:none;
-        padding:4mm;
-      }
+    .note {
+      margin-top: 24px;
+      font-size: 12px;
+      color: #777;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <button type="button">プレビュー更新</button>
-      <button type="button">入力クリア</button>
-      <button type="button" class="secondary" onclick="window.print()">PDF出力確認</button>
+  <div class="container">
+    <h1>事前申込者一覧 加工ツール（ブラウザ版）</h1>
+    <p class="description">
+      Excel の「事前申込者一覧.xlsx」をアップロードして、承認済みの登録者を抽出し、表記ゆれ修正・氏名列の作成などをブラウザ上で行います。
+    </p>
+
+    <div class="form-row">
+      <label for="dateInput">開催日（例：250401）</label>
+      <input id="dateInput" type="text" placeholder="250401">
     </div>
 
-    <div class="layout">
-      <aside class="panel">
-        <h1>研究計画書モック</h1>
-        <p class="lead">
-          ライトグリーン基調で、見やすさと操作しやすさを重視したモックです。
-          左で入力し、右でA4の仕上がりを確認できます。
-        </p>
+    <div class="form-row">
+      <label for="fileInput">事前申込者一覧.xlsx</label>
+      <input id="fileInput" type="file" accept=".xlsx,.xls">
+    </div>
 
-        <div class="section">
-          <h2>基本情報</h2>
-          <label>文書日付</label>
-          <input type="text" value="2026年5月27日" />
+    <div class="form-row">
+      <button id="runButton">実行してダウンロード</button>
+    </div>
 
-          <div class="grid2">
-            <div>
-              <label>ページ表記</label>
-              <input type="text" value="1/12" />
-            </div>
-            <div>
-              <label>様式番号</label>
-              <input type="text" value="8-2" />
-            </div>
-          </div>
+    <div id="status" class="status"></div>
 
-          <label>研究課題名</label>
-          <textarea>高齢者における生活習慣介入と転倒予防効果に関する前向き観察研究</textarea>
-        </div>
-
-        <div class="section">
-          <h2>研究体制</h2>
-          <label>研究責任者</label>
-          <input type="text" value="山田 太郎" />
-
-          <label>共同研究者</label>
-          <textarea>鈴木 花子
-佐藤 健
-田中 一郎</textarea>
-
-          <div class="check-list">
-            <label><input type="checkbox" checked> 単施設研究</label>
-            <label><input type="checkbox"> 多機関共同研究</label>
-            <label><input type="checkbox" checked> 侵襲なし</label>
-            <label><input type="checkbox" checked> 軽微な負担</label>
-          </div>
-        </div>
-
-        <div class="section">
-          <h2>研究概要</h2>
-          <label>研究目的</label>
-          <textarea>転倒リスクが高い高齢者に対し、生活習慣・運動・服薬確認を組み合わせた支援の実施可能性と有効性を評価する。</textarea>
-
-          <label>方法</label>
-          <textarea>外来通院中の対象者を登録し、ベースライン評価後、12週間の介入と経過観察を行う。</textarea>
-
-          <label>主要評価項目</label>
-          <textarea>転倒回数、歩行機能、自己効力感スコア</textarea>
-
-          <p class="small">
-            実装時は、ここに各項目 1〜29 の入力欄を順次追加し、右のA4プレビューに即時反映させる想定です。
-          </p>
-        </div>
-      </aside>
-
-      <main class="preview-area">
-        <div class="preview-head">
-          <strong>モック表示：</strong>
-          A4枠・明るい画面・高い視認性を優先したプレビューです。印刷時は白背景の帳票として出力されます。
-        </div>
-
-        <section class="page">
-          <div class="page-inner">
-            <div class="doc-meta">
-              <div>2026年5月27日</div>
-              <div>様式8-2</div>
-            </div>
-
-            <div class="doc-title">研究計画書（モック）</div>
-
-            <div class="notice">
-              ※この画面はモックです。最終版では入力内容がリアルタイム反映され、A4印刷に対応します。
-            </div>
-
-            <div class="page-no">1 / 12</div>
-
-            <table class="form">
-              <tr>
-                <th>1. 研究課題名</th>
-                <td class="cell-lines">高齢者における生活習慣介入と転倒予防効果に関する前向き観察研究</td>
-              </tr>
-              <tr>
-                <th>2. 研究の区分</th>
-                <td>
-                  <span class="tag">単施設研究</span>
-                  <span class="tag">侵襲なし</span>
-                  <span class="tag">軽微な負担</span>
-                </td>
-              </tr>
-              <tr>
-                <th>3. 研究責任者</th>
-                <td>山田 太郎</td>
-              </tr>
-              <tr>
-                <th>4. 共同研究者</th>
-                <td class="cell-lines">鈴木 花子
-佐藤 健
-田中 一郎</td>
-              </tr>
-              <tr>
-                <th>5. 研究目的</th>
-                <td class="cell-lines">転倒リスクが高い高齢者に対し、生活習慣・運動・服薬確認を組み合わせた支援の実施可能性と有効性を評価する。</td>
-              </tr>
-              <tr>
-                <th>6. 研究方法</th>
-                <td class="cell-lines">外来通院中の対象者を登録し、ベースライン評価後、12週間の介入と経過観察を行う。</td>
-              </tr>
-              <tr>
-                <th>7. 主要評価項目</th>
-                <td class="cell-lines">転倒回数、歩行機能、自己効力感スコア</td>
-              </tr>
-              <tr>
-                <th>8. 予定症例数</th>
-                <td>60例</td>
-              </tr>
-              <tr>
-                <th>9. 研究期間</th>
-                <td>承認後 ～ 2027年12月31日</td>
-              </tr>
-              <tr>
-                <th>10. 備考</th>
-                <td class="cell-lines">本モックでは、読みやすい罫線、余白、行間、見出し階層を優先して調整しています。</td>
-              </tr>
-            </table>
-          </div>
-        </section>
-      </main>
+    <div class="note">
+      ※実際の UiPath ワークフローと同じルール（承認ステータスでの抽出、表記ゆれ修正、氏名列の作成など）を JavaScript で再現しています。<br>
+      ※ネットワークフォルダは参照できないため、ファイルは手動でアップロードしてください。
     </div>
   </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const dateInput = document.getElementById('dateInput');
+    const runButton = document.getElementById('runButton');
+    const statusEl = document.getElementById('status');
+
+    function setStatus(message) {
+      statusEl.textContent = message;
+    }
+
+    runButton.addEventListener('click', async () => {
+      const file = fileInput.files[0];
+      const dateStr = (dateInput.value || '').trim();
+
+      if (!file) {
+        alert('Excel ファイルを選択してください。');
+        return;
+      }
+
+      if (!dateStr) {
+        if (!confirm('開催日が未入力です。本当に続行しますか？')) {
+          return;
+        }
+      }
+
+      runButton.disabled = true;
+      setStatus('Excel ファイルを読み込み中...');
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+
+        // シート名は「事前申込者一覧」を想定
+        const sheetName = workbook.SheetNames.find(n => n === '事前申込者一覧') || workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+
+        // シートを JSON 配列に変換（ヘッダあり）
+        let data = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+        // 1〜5行を削除（ヘッダを含まない前提で、必要なら調整）
+        // UiPath 側では Excel 上の 1〜5行目を削除していたので、それに対応。
+        data = data.slice(5);
+
+        // 承認ステータス == "承認済み" だけ残す（列名は実際のヘッダに合わせて変更）
+        data = data.filter(row => row['承認ステータス'] === '承認済み');
+
+        // 表記ゆれ修正（ご所属施設：H列相当）
+        const facilityKey = 'ご所属施設'; // 実際のヘッダ名に合わせてください
+        const facilityReplaceMap = {
+          '静岡県立静岡がんセンター': '静岡がんセンター',
+          '静岡県⽴静岡がんセンター': '静岡がんセンター',
+          '静岡県静岡がんセンター': '静岡がんセンター',
+          '静岡県立がんセンター': '静岡がんセンター',
+          'scc': '静岡がんセンター'
+        };
+
+        // 部署（I列相当）
+        const deptKey = '部署'; // 実際のヘッダ名に合わせてください
+        const deptReplaceMap = {
+          '臨床研究支援センター　臨床研究管理・調整室': '臨床研究管理・調整室',
+          '臨床研究管理調整室': '臨床研究管理・調整室'
+        };
+
+        data = data.map(row => {
+          // 所属施設の表記ゆれ
+          if (row[facilityKey]) {
+            let v = String(row[facilityKey]).trim();
+            if (facilityReplaceMap[v] !== undefined) {
+              v = facilityReplaceMap[v];
+            }
+            // 最後に「静岡がんセンター」→「静岡県立静岡がんセンター」に統一
+            if (v === '静岡がんセンター') {
+              v = '静岡県立静岡がんセンター';
+            }
+            row[facilityKey] = v;
+          }
+
+          // 部署の表記ゆれ
+          if (row[deptKey]) {
+            let v = String(row[deptKey]).trim();
+            if (deptReplaceMap[v] !== undefined) {
+              v = deptReplaceMap[v];
+            }
+            // 必要に応じてここに追加
+            row[deptKey] = v;
+          }
+
+          return row;
+        });
+
+        // 列「氏名」「#」を追加
+        // 既に列がある場合は上書き、ない場合は追加のイメージ
+        data = data.map((row, index) => {
+          const sei = String(row['姓'] || '').trim();
+          const mei = String(row['名'] || '').trim();
+          row['姓'] = sei;
+          row['名'] = mei;
+          row['氏名'] = sei && mei ? `${sei} ${mei}` : (sei || mei);
+          row['#'] = index + 1; // 1,2,3,... を付与
+          return row;
+        });
+
+        setStatus('Excel データを加工完了。ファイルを作成中...');
+
+        // JSON 配列からシートに戻す
+        const newSheet = XLSX.utils.json_to_sheet(data);
+
+        // 新しいブックを作成してシートを追加
+        const newWb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(newWb, newSheet, sheetName);
+
+        // ダウンロード用にバイナリへ
+        const wbout = XLSX.write(newWb, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([wbout], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+
+        // ダウンロードリンクを自動クリック
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const dateSuffix = dateStr || 'no_date';
+        a.href = url;
+        a.download = `事前申込者一覧_加工_${dateSuffix}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+        setStatus('完了しました。ダウンロードが開始されました。');
+
+      } catch (e) {
+        console.error(e);
+        setStatus('エラーが発生しました。コンソールを確認してください。');
+        alert('処理中にエラーが発生しました。');
+      } finally {
+        runButton.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>
